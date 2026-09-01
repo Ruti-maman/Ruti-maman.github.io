@@ -35,7 +35,7 @@ const TARGETS = [
   { id: "taskman",  url: `${BASE}/Task-manager/` },
   { id: "country",  url: `${BASE}/ProjectFluter/`, wait: 7000, settle: searchCountry },
   { id: "sqlsales", url: `${BASE}/sql-final-project/` },
-  { id: "jones",    url: `${BASE}/Project-Jones-Automation-Exercise/` },
+  { id: "jones",    url: `${BASE}/Project-Jones-Automation-Exercise/`, settle: seekVideo },
 
   {
     id: "helpdesk",
@@ -48,6 +48,33 @@ const TARGETS = [
     settle: async (page) => signIn(page, "demo", "demo"),
   },
 ];
+
+/**
+ * Headless Chromium will not autoplay, so the <video> element sits on a blank
+ * first frame and the preview looks like a broken player. Seeking a few
+ * seconds in forces a real frame to decode and paint.
+ */
+async function seekVideo(page) {
+  const video = page.locator("video");
+  if (!(await video.count())) return;
+
+  await video.evaluate(
+    (el) =>
+      new Promise((resolve) => {
+        const go = () => {
+          el.pause();
+          // far enough in that the browser window is open and the form visible
+          el.currentTime = Math.min(6, (el.duration || 12) * 0.45);
+          el.addEventListener("seeked", resolve, { once: true });
+          setTimeout(resolve, 4000);
+        };
+        if (el.readyState >= 1) go();
+        else el.addEventListener("loadedmetadata", go, { once: true });
+        setTimeout(resolve, 8000);
+      })
+  );
+  await page.waitForTimeout(900);
+}
 
 /**
  * Flutter web paints into a canvas, so there is no <input> to fill — the only
