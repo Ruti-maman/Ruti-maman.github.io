@@ -2146,7 +2146,13 @@ RM.PROJECTS = [
    `hint` is what a visitor needs in order to get past a login screen. */
 RM.LIVE = {
   memory:   {url:"https://ruti-maman.github.io/memory-game/",     shot:"shots/memory.png"},
-  taskman:  {url:"https://ruti-maman.github.io/Task-manager/",    shot:"shots/taskman.png"},
+  // Straight to the board rather than the app root: the app has no route
+  // guards, and landing a visitor on an empty login form would not match the
+  // preview they just clicked.
+  taskman:  {url:"https://ruti-maman.github.io/Task-manager/teams/1/projects/1/tasks",
+             shot:"shots/taskman.png",
+             hint:{he:"התחברות (אם יוצאים): כל כתובת מייל תקינה וסיסמה בת 6 תווים לפחות.",
+                   en:"Sign in (if you log out): any valid email and a password of 6+ characters."}},
   country:  {url:"https://ruti-maman.github.io/ProjectFluter/",   shot:"shots/country.png"},
   sqlsales: {url:"https://ruti-maman.github.io/sql-final-project/", shot:"shots/sqlsales.png"},
   jones:    {url:"https://ruti-maman.github.io/Project-Jones-Automation-Exercise/", shot:"shots/jones.png"},

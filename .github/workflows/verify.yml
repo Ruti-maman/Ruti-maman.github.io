@@ -30,10 +30,19 @@ jobs:
           npm install --no-audit --no-fund playwright@latest
           npx playwright install --with-deps chromium
 
+      # pipefail, or `| tee` hands back its own exit code and a crashed run
+      # reports green. The result is recorded and re-raised after the commit,
+      # so a failure still leaves its screenshots behind to look at.
       - name: Drive the published site
-        run: node tools/verify-site.js | tee verify.log
+        id: drive
+        run: |
+          set -o pipefail
+          node tools/verify-site.js 2>&1 | tee verify.log && code=0 || code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "verify-site.js exited $code"
 
       - name: Commit the evidence
+        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -43,3 +52,9 @@ jobs:
           git diff --staged --quiet && { echo "nothing changed"; exit 0; }
           git commit -m "test(verify): capture live-preview run"
           git push
+
+      - name: Fail the run if any check failed
+        if: always() && steps.drive.outputs.code != '0'
+        run: |
+          echo "verify-site.js reported failures - see verify/verify.log"
+          exit 1

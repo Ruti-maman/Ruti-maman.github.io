@@ -61,11 +61,36 @@ function check(ok, what) {
   const tiles = await page.locator(".itm").count();
   check(tiles > 0, `project list rendered (${tiles} tiles)`);
 
-  for (const { id, expect } of CASES) {
+  for (const c of CASES) {
+    // Isolate each project: one timeout used to kill the run silently and the
+    // remaining projects were never checked at all.
+    try {
+      await runCase(page, c);
+    } catch (e) {
+      check(false, `${c.id}: check crashed (${String(e).split("\n")[0]})`);
+    }
+    try {
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(900);
+    } catch {}
+  }
+
+  await browser.close();
+
+  console.log(`\n${problems.length ? `${problems.length} PROBLEM(S)` : "ALL CHECKS PASSED"}`);
+  problems.forEach((p) => console.log(`  - ${p}`));
+
+  // Non-zero on failure so the workflow cannot report a green run over a red
+  // result — but the screenshots are committed either way.
+  process.exit(problems.length ? 1 : 0);
+})();
+
+async function runCase(page, { id, expect }) {
+  {
     const item = page.locator(`.itm[data-id="${id}"]`);
     if (!(await item.count())) {
       check(false, `${id}: project tile exists`);
-      continue;
+      return;
     }
 
     // ---- hover: the sticky preview swaps to this project's screenshot ----
@@ -101,9 +126,7 @@ function check(ok, what) {
     const frame = page.locator("#liveFrame");
     if (!(await frame.count())) {
       check(false, `${id}: opening the project mounts a live iframe`);
-      await page.keyboard.press("Escape");
-      await page.waitForTimeout(900);
-      continue;
+      return;
     }
 
     const src = await frame.getAttribute("src");
@@ -152,16 +175,5 @@ function check(ok, what) {
     }
 
     await page.screenshot({ path: path.join(OUT, `20-${id}-open.png`) });
-    await page.keyboard.press("Escape");
-    await page.waitForTimeout(900);
   }
-
-  await browser.close();
-
-  console.log(`\n${problems.length ? `${problems.length} PROBLEM(S)` : "ALL CHECKS PASSED"}`);
-  problems.forEach((p) => console.log(`  - ${p}`));
-
-  // Always exit 0: the screenshots are the point and must get committed even
-  // when a check fails, or there is nothing to look at while debugging.
-  process.exit(0);
-})();
+}
