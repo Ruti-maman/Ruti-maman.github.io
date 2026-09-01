@@ -148,7 +148,7 @@ async function shoot(browser, target) {
 
   if (target.init) await page.addInitScript(target.init);
 
-  const file = path.join(OUT, `${target.id}.png`);
+  const file = path.join(OUT, `${target.id}.jpg`);
   try {
     const resp = await page.goto(target.url, {
       waitUntil: "networkidle",
@@ -183,7 +183,15 @@ async function shoot(browser, target) {
     });
     await page.waitForTimeout(400);
 
-    await page.screenshot({ path: file, animations: "disabled" });
+    // JPEG, not PNG: two of these frames are photographic (a video still, a
+    // board of photos) and came out at 700-800 KB as PNG — heavy enough that
+    // hovering away mid-download aborted the fetch and flashed the fallback.
+    await page.screenshot({
+      path: file,
+      type: "jpeg",
+      quality: 85,
+      animations: "disabled",
+    });
     console.log(`OK   ${target.id}  <- ${target.url}`);
     return true;
   } catch (e) {

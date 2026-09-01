@@ -36,6 +36,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # the shots moved to JPEG; leftover PNGs would sit unreferenced forever
+          git rm -q shots/*.png 2>/dev/null || true
           git add shots
           # Nothing changed is the normal weekly outcome, not a failure.
           git diff --staged --quiet && { echo "screenshots unchanged"; exit 0; }
