@@ -49,8 +49,21 @@ function check(ok, what) {
   const jsErrors = [];
   page.on("pageerror", (e) => jsErrors.push(String(e)));
 
-  await page.goto(SITE, { waitUntil: "networkidle", timeout: 60000 });
+  // Pages serves index.html with max-age=600, so a verify run inside ten
+  // minutes of a deploy can drive the PREVIOUS bundle and fail on bugs that
+  // are already fixed. The query string busts that cache; record which build
+  // actually answered so a stale run is visible instead of mystifying.
+  await page.goto(SITE + "?verify=" + Date.now(), {
+    waitUntil: "networkidle",
+    timeout: 60000,
+  });
   await page.waitForTimeout(2500);
+  {
+    const marker = await page.evaluate(() =>
+      document.documentElement.outerHTML.includes("data-src")
+    );
+    console.log(`INFO  bundle served: ${marker ? "current (data-src present)" : "STALE"}`);
+  }
   await page.screenshot({ path: path.join(OUT, "00-landing.png") });
   check(jsErrors.length === 0, `no JS errors on load (${jsErrors.join(" | ") || "clean"})`);
 
