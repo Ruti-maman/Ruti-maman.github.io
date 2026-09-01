@@ -1,0 +1,21 @@
+PASS  no JS errors on load (clean)
+PASS  helpdesk: preview renders a real screenshot
+PASS  helpdesk: the screenshot file actually loaded (naturalWidth=2560)
+PASS  helpdesk: preview holds 16/10 (measured 1.596)
+PASS  helpdesk: opening the project mounts a live iframe
+PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
+PASS  helpdesk: the app finished loading inside the page
+PASS  memory: preview renders a real screenshot
+PASS  memory: the screenshot file actually loaded (naturalWidth=2560)
+PASS  memory: preview holds 16/10 (measured 1.596)
+PASS  memory: opening the project mounts a live iframe
+PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
+PASS  memory: the app finished loading inside the page
+PASS  sqlsales: preview renders a real screenshot
+PASS  sqlsales: the screenshot file actually loaded (naturalWidth=2560)
+PASS  sqlsales: preview holds 16/10 (measured 1.596)
+PASS  sqlsales: opening the project mounts a live iframe
+PASS  sqlsales: iframe points at the published build (https://ruti-maman.github.io/sql-final-project/)
+PASS  sqlsales: the app finished loading inside the page
+
+all checks passed
