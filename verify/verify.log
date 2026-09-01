@@ -1,21 +1,29 @@
 PASS  no JS errors on load (clean)
+PASS  projects heading is honest ("הפרויקטים")
+PASS  project list rendered (13 tiles)
 PASS  helpdesk: preview renders a real screenshot
-PASS  helpdesk: the screenshot file actually loaded (naturalWidth=2560)
+PASS  helpdesk: the screenshot file loaded (naturalWidth=2560)
 PASS  helpdesk: preview holds 16/10 (measured 1.596)
-PASS  helpdesk: opening the project mounts a live iframe
 PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
-PASS  helpdesk: the app finished loading inside the page
-PASS  memory: preview renders a real screenshot
-PASS  memory: the screenshot file actually loaded (naturalWidth=2560)
-PASS  memory: preview holds 16/10 (measured 1.596)
-PASS  memory: opening the project mounts a live iframe
-PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
-PASS  memory: the app finished loading inside the page
-PASS  sqlsales: preview renders a real screenshot
-PASS  sqlsales: the screenshot file actually loaded (naturalWidth=2560)
-PASS  sqlsales: preview holds 16/10 (measured 1.596)
-PASS  sqlsales: opening the project mounts a live iframe
-PASS  sqlsales: iframe points at the published build (https://ruti-maman.github.io/sql-final-project/)
-PASS  sqlsales: the app finished loading inside the page
-
-all checks passed
+PASS  helpdesk: the app fired load inside the page
+PASS  helpdesk: the app rendered content (48 chars)
+PASS  helpdesk: shows its own UI (found "התחברות")
+PASS  taskman: preview renders a real screenshot
+PASS  taskman: the screenshot file loaded (naturalWidth=2560)
+PASS  taskman: preview holds 16/10 (measured 1.596)
+PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/)
+PASS  taskman: the app fired load inside the page
+PASS  taskman: the app rendered content (101 chars)
+FAIL  taskman: shows its own UI (found "Tasks")
+PASS  todofull: preview renders a real screenshot
+PASS  todofull: the screenshot file loaded (naturalWidth=2560)
+PASS  todofull: preview holds 16/10 (measured 1.596)
+PASS  todofull: iframe points at the published build (https://ruti-maman.github.io/practicode-3-todolists/)
+PASS  todofull: the app fired load inside the page
+PASS  todofull: the app rendered content (34 chars)
+PASS  country: preview renders a real screenshot
+PASS  country: the screenshot file loaded (naturalWidth=2560)
+PASS  country: preview holds 16/10 (measured 1.596)
+PASS  country: iframe points at the published build (https://ruti-maman.github.io/ProjectFluter/)
+PASS  country: the app fired load inside the page
+PASS  country: the app rendered (Flutter canvas present)
