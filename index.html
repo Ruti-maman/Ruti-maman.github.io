@@ -613,6 +613,8 @@ section{scroll-margin-block-start:78px}
   color:var(--ink-3); padding:.5rem .7rem; border-radius:var(--r-1);
   background:var(--glass); border:1px solid var(--line-0);
 }
+.live-warn{border-inline-start:2px solid var(--warn,#F0A05A)}
+.live-warn a{color:color-mix(in srgb,var(--h) 90%,var(--ink-0)); text-decoration:underline}
 
 /* A phone screen is nowhere near 16/10; letting it stay that wide leaves the
    app a letterbox slit. Taller ratio there, same no-distortion rule. */
@@ -4546,18 +4548,31 @@ function openSheet(id, fromEl){
       var rb = runnerBar(p);
       if(rb) sb.insertBefore(rb, sb.firstChild);
     }
-    var frame = $("liveFrame"), load = $("liveLoad");
+    var frame = $("liveFrame"), load = $("liveLoad"), fired = false;
     if(frame && load){
-      frame.addEventListener("load", function(){ load.classList.add("gone"); });
+      frame.addEventListener("load", function(){
+        fired = true;
+        load.classList.add("gone");
+      });
 
-      // Nothing tells us a cross-origin iframe failed, so give it a deadline
-      // and say so plainly rather than spinning forever.
+      // The veil exists to cover a blank frame while it fills, so it has to
+      // leave on a timer too. Waiting only on `load` means one event that
+      // never arrives leaves it sitting on top of a working app.
+      setTimeout(function(){ load.classList.add("gone"); }, 8000);
+
+      // Nothing tells us a cross-origin iframe actually failed. If load still
+      // has not fired well after that, say so beside the frame rather than
+      // over it — the app underneath may be perfectly fine.
       setTimeout(function(){
-        if(!load.classList.contains("gone")){
-          load.innerHTML = esc(d().liveSlow)
-            + ' <a href="' + esc(RM.LIVE[p.id].url) + '" target="_blank" rel="noopener">'
-            + esc(d().liveTab) + ' ↗</a>';
-        }
+        if(fired) return;
+        var wrap = $("liveWrap");
+        if(!wrap || wrap.querySelector(".live-warn")) return;
+        var note = document.createElement("p");
+        note.className = "live-hint live-warn";
+        note.innerHTML = esc(d().liveSlow)
+          + ' <a href="' + esc(RM.LIVE[p.id].url) + '" target="_blank" rel="noopener">'
+          + esc(d().liveTab) + ' ↗</a>';
+        wrap.appendChild(note);
       }, 20000);
 
       // Only now, with the listener in place, is it safe to start loading.
