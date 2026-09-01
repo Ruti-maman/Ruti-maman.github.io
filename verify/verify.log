@@ -2,46 +2,52 @@ INFO  bundle served: current (data-src present)
 PASS  no JS errors on load (clean)
 PASS  projects heading is honest ("הפרויקטים")
 PASS  project list rendered (13 tiles)
-FAIL  helpdesk: preview renders a real screenshot
+PASS  helpdesk: preview renders a real screenshot
+PASS  helpdesk: the screenshot file loaded (naturalWidth=1920)
+PASS  helpdesk: preview holds 16/10 (measured 1.596)
 PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
 PASS  helpdesk: the loading veil lifted
 PASS  helpdesk: the app rendered content (48 chars)
 PASS  helpdesk: shows its own UI (found "התחברות")
-FAIL  taskman: preview renders a real screenshot
+PASS  taskman: preview renders a real screenshot
+PASS  taskman: the screenshot file loaded (naturalWidth=1920)
+PASS  taskman: preview holds 16/10 (measured 1.596)
 PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/teams/1/projects/1/tasks)
 PASS  taskman: the loading veil lifted
 PASS  taskman: the app rendered content (582 chars)
 PASS  taskman: shows its own UI (found "Tasks")
-FAIL  todofull: preview renders a real screenshot
+PASS  todofull: preview renders a real screenshot
+PASS  todofull: the screenshot file loaded (naturalWidth=1920)
+PASS  todofull: preview holds 16/10 (measured 1.596)
 PASS  todofull: iframe points at the published build (https://ruti-maman.github.io/practicode-3-todolists/)
 PASS  todofull: the loading veil lifted
 PASS  todofull: the app rendered content (34 chars)
-FAIL  country: preview renders a real screenshot
+PASS  country: preview renders a real screenshot
+PASS  country: the screenshot file loaded (naturalWidth=1920)
+PASS  country: preview holds 16/10 (measured 1.596)
 PASS  country: iframe points at the published build (https://ruti-maman.github.io/ProjectFluter/)
-FAIL  country: the loading veil lifted
+PASS  country: the loading veil lifted
 PASS  country: the app rendered (Flutter canvas present)
-FAIL  memory: preview renders a real screenshot
+PASS  memory: preview renders a real screenshot
+PASS  memory: the screenshot file loaded (naturalWidth=1920)
+PASS  memory: preview holds 16/10 (measured 1.596)
 PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
 PASS  memory: the loading veil lifted
 PASS  memory: the app rendered content (62 chars)
 PASS  memory: shows its own UI (found "ברוכים")
-FAIL  sqlsales: preview renders a real screenshot
+PASS  sqlsales: preview renders a real screenshot
+PASS  sqlsales: the screenshot file loaded (naturalWidth=1920)
+PASS  sqlsales: preview holds 16/10 (measured 1.596)
 PASS  sqlsales: iframe points at the published build (https://ruti-maman.github.io/sql-final-project/)
 PASS  sqlsales: the loading veil lifted
 PASS  sqlsales: the app rendered content (5612 chars)
 PASS  sqlsales: shows its own UI (found "SQL")
-FAIL  jones: preview renders a real screenshot
+PASS  jones: preview renders a real screenshot
+PASS  jones: the screenshot file loaded (naturalWidth=1920)
+PASS  jones: preview holds 16/10 (measured 1.596)
 PASS  jones: iframe points at the published build (https://ruti-maman.github.io/Project-Jones-Automation-Exercise/)
 PASS  jones: the loading veil lifted
 PASS  jones: the app rendered content (930 chars)
 PASS  jones: shows its own UI (found "אוטומצי")
 
-8 PROBLEM(S)
-  - helpdesk: preview renders a real screenshot
-  - taskman: preview renders a real screenshot
-  - todofull: preview renders a real screenshot
-  - country: preview renders a real screenshot
-  - country: the loading veil lifted
-  - memory: preview renders a real screenshot
-  - sqlsales: preview renders a real screenshot
-  - jones: preview renders a real screenshot
+ALL CHECKS PASSED
