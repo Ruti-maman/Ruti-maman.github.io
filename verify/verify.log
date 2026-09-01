@@ -38,14 +38,16 @@ PASS  sqlsales: preview renders a real screenshot
 PASS  sqlsales: the screenshot file loaded (naturalWidth=2560)
 PASS  sqlsales: preview holds 16/10 (measured 1.596)
 PASS  sqlsales: iframe points at the published build (https://ruti-maman.github.io/sql-final-project/)
-PASS  sqlsales: the loading veil lifted
+FAIL  sqlsales: the loading veil lifted
 PASS  sqlsales: the app rendered content (5612 chars)
 PASS  sqlsales: shows its own UI (found "SQL")
-FAIL  jones: preview renders a real screenshot
+PASS  jones: preview renders a real screenshot
+PASS  jones: the screenshot file loaded (naturalWidth=2560)
+PASS  jones: preview holds 16/10 (measured 1.596)
 PASS  jones: iframe points at the published build (https://ruti-maman.github.io/Project-Jones-Automation-Exercise/)
 PASS  jones: the loading veil lifted
 PASS  jones: the app rendered content (930 chars)
 PASS  jones: shows its own UI (found "אוטומצי")
 
 1 PROBLEM(S)
-  - jones: preview renders a real screenshot
+  - sqlsales: the loading veil lifted
