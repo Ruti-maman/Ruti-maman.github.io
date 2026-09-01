@@ -1,0 +1,43 @@
+name: Refresh project screenshots
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, so a preview never quietly drifts away from the app it shows.
+    - cron: "0 4 * * 1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shots
+  cancel-in-progress: false
+
+jobs:
+  shoot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@latest
+          npx playwright install --with-deps chromium
+
+      - name: Shoot every live build
+        run: node tools/shoot.js
+
+      - name: Commit whatever changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add shots
+          # Nothing changed is the normal weekly outcome, not a failure.
+          git diff --staged --quiet && { echo "screenshots unchanged"; exit 0; }
+          git commit -m "chore(shots): refresh project previews"
+          git push
