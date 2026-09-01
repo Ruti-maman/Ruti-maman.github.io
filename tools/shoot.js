@@ -26,9 +26,14 @@ const VIEWPORT = { width: 1280, height: 800 };
  * tells a visitor nothing about the project behind it.
  */
 const TARGETS = [
-  { id: "memory",   url: `${BASE}/memory-game/` },
+  {
+    id: "memory",
+    url: `${BASE}/memory-game/`,
+    // The entry form is not the project; the board is.
+    settle: async (page) => signIn(page, "רות", "1234"),
+  },
   { id: "taskman",  url: `${BASE}/Task-manager/` },
-  { id: "country",  url: `${BASE}/ProjectFluter/`, wait: 6000 },
+  { id: "country",  url: `${BASE}/ProjectFluter/`, wait: 7000, settle: searchCountry },
   { id: "sqlsales", url: `${BASE}/sql-final-project/` },
   { id: "jones",    url: `${BASE}/Project-Jones-Automation-Exercise/` },
 
@@ -43,6 +48,20 @@ const TARGETS = [
     settle: async (page) => signIn(page, "demo", "demo"),
   },
 ];
+
+/**
+ * Flutter web paints into a canvas, so there is no <input> to fill — the only
+ * handle is the pixel where the search box is drawn. Brittle by nature, which
+ * is why the caller treats a failure here as "shoot it empty" rather than an
+ * error: an empty search screen is a dull preview, not a broken one.
+ */
+async function searchCountry(page) {
+  await page.mouse.click(640, 75);      // the search field, top of a 1280x800 view
+  await page.waitForTimeout(400);
+  await page.keyboard.type("Israel", { delay: 90 });
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(3500);      // the Rest Countries round trip
+}
 
 /**
  * Both login screens are a couple of text inputs and a submit button, and both

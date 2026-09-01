@@ -1,0 +1,45 @@
+name: Verify the live previews
+
+# Drives the published site and photographs the result. Runs on demand, on a
+# runner, because the machine this repo is authored on cannot reach github.io
+# at all - the office network blocks it.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: verify
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@latest
+          npx playwright install --with-deps chromium
+
+      - name: Drive the published site
+        run: node tools/verify-site.js | tee verify.log
+
+      - name: Commit the evidence
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p verify
+          mv verify.log verify/
+          git add verify
+          git diff --staged --quiet && { echo "nothing changed"; exit 0; }
+          git commit -m "test(verify): capture live-preview run"
+          git push
