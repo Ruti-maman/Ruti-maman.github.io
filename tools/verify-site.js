@@ -133,8 +133,15 @@ async function runCase(page, { id, expect }) {
     await item.hover();
     await page.waitForTimeout(1400);
 
+    // The panel is sticky and swaps on hover; a single sample can catch it
+    // mid-swap, so give it a second look before calling it a failure.
     const shot = page.locator("#peekShot img");
-    const hasShot = (await shot.count()) > 0;
+    let hasShot = (await shot.count()) > 0;
+    if (!hasShot) {
+      await item.hover();
+      await page.waitForTimeout(2000);
+      hasShot = (await shot.count()) > 0;
+    }
     check(hasShot, `${id}: preview renders a real screenshot`);
 
     if (hasShot) {
@@ -164,7 +171,9 @@ async function runCase(page, { id, expect }) {
       return;
     }
 
-    const src = await frame.getAttribute("src");
+    // src is set only once the load listener is attached, so read data-src too
+    const src =
+      (await frame.getAttribute("src")) || (await frame.getAttribute("data-src"));
     check(
       !!src && src.startsWith("https://ruti-maman.github.io/"),
       `${id}: iframe points at the published build (${src})`

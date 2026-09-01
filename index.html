@@ -4466,8 +4466,11 @@ function buildSheet(p){
       +   '</div>'
       +   '<div class="live-stage">'
       +     '<div class="live-load" id="liveLoad">' + esc(t.liveLoad) + '</div>'
-      +     '<iframe id="liveFrame" src="' + esc(lv.url) + '" title="' + esc(c.title) + '"'
-      +       ' loading="lazy" referrerpolicy="no-referrer"'
+      // data-src, not src: the load listener is attached later, and a fast
+      // build would finish before it exists — the event would fire into an
+      // empty room and the veil would sit over a working app forever.
+      +     '<iframe id="liveFrame" data-src="' + esc(lv.url) + '" title="' + esc(c.title) + '"'
+      +       ' referrerpolicy="no-referrer"'
       +       ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>'
       +   '</div>'
       +   (lv.hint ? '<p class="live-hint">' + esc(lv.hint[lang]) + '</p>' : '')
@@ -4546,6 +4549,7 @@ function openSheet(id, fromEl){
     var frame = $("liveFrame"), load = $("liveLoad");
     if(frame && load){
       frame.addEventListener("load", function(){ load.classList.add("gone"); });
+
       // Nothing tells us a cross-origin iframe failed, so give it a deadline
       // and say so plainly rather than spinning forever.
       setTimeout(function(){
@@ -4554,7 +4558,10 @@ function openSheet(id, fromEl){
             + ' <a href="' + esc(RM.LIVE[p.id].url) + '" target="_blank" rel="noopener">'
             + esc(d().liveTab) + ' ↗</a>';
         }
-      }, 12000);
+      }, 20000);
+
+      // Only now, with the listener in place, is it safe to start loading.
+      frame.src = frame.getAttribute("data-src");
     }
 
     var body = $("demoBody");
