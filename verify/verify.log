@@ -5,32 +5,51 @@ PASS  helpdesk: preview renders a real screenshot
 PASS  helpdesk: the screenshot file loaded (naturalWidth=2560)
 PASS  helpdesk: preview holds 16/10 (measured 1.596)
 PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
-FAIL  helpdesk: the app fired load inside the page
+FAIL  helpdesk: the loading veil lifted
+PASS  helpdesk: the app rendered content (48 chars)
+PASS  helpdesk: shows its own UI (found "התחברות")
 PASS  taskman: preview renders a real screenshot
 PASS  taskman: the screenshot file loaded (naturalWidth=2560)
 PASS  taskman: preview holds 16/10 (measured 1.596)
 PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/teams/1/projects/1/tasks)
-PASS  taskman: the app fired load inside the page
+PASS  taskman: the loading veil lifted
 PASS  taskman: the app rendered content (582 chars)
 PASS  taskman: shows its own UI (found "Tasks")
 PASS  todofull: preview renders a real screenshot
 PASS  todofull: the screenshot file loaded (naturalWidth=2560)
 PASS  todofull: preview holds 16/10 (measured 1.596)
 PASS  todofull: iframe points at the published build (https://ruti-maman.github.io/practicode-3-todolists/)
-PASS  todofull: the app fired load inside the page
+FAIL  todofull: the loading veil lifted
 PASS  todofull: the app rendered content (34 chars)
 PASS  country: preview renders a real screenshot
 PASS  country: the screenshot file loaded (naturalWidth=2560)
 PASS  country: preview holds 16/10 (measured 1.596)
 PASS  country: iframe points at the published build (https://ruti-maman.github.io/ProjectFluter/)
-PASS  country: the app fired load inside the page
+FAIL  country: the loading veil lifted
 PASS  country: the app rendered (Flutter canvas present)
-FAIL  memory: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
-FAIL  sqlsales: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
-FAIL  jones: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+PASS  memory: preview renders a real screenshot
+PASS  memory: the screenshot file loaded (naturalWidth=2560)
+PASS  memory: preview holds 16/10 (measured 1.596)
+PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
+PASS  memory: the loading veil lifted
+PASS  memory: the app rendered content (62 chars)
+PASS  memory: shows its own UI (found "ברוכים")
+PASS  sqlsales: preview renders a real screenshot
+PASS  sqlsales: the screenshot file loaded (naturalWidth=2560)
+PASS  sqlsales: preview holds 16/10 (measured 1.596)
+PASS  sqlsales: iframe points at the published build (https://ruti-maman.github.io/sql-final-project/)
+FAIL  sqlsales: the loading veil lifted
+PASS  sqlsales: the app rendered content (5612 chars)
+PASS  sqlsales: shows its own UI (found "SQL")
+FAIL  jones: preview renders a real screenshot
+PASS  jones: iframe points at the published build (https://ruti-maman.github.io/Project-Jones-Automation-Exercise/)
+PASS  jones: the loading veil lifted
+PASS  jones: the app rendered content (930 chars)
+PASS  jones: shows its own UI (found "אוטומצי")
 
-4 PROBLEM(S)
-  - helpdesk: the app fired load inside the page
-  - memory: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
-  - sqlsales: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
-  - jones: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+5 PROBLEM(S)
+  - helpdesk: the loading veil lifted
+  - todofull: the loading veil lifted
+  - country: the loading veil lifted
+  - sqlsales: the loading veil lifted
+  - jones: preview renders a real screenshot
