@@ -5,16 +5,14 @@ PASS  helpdesk: preview renders a real screenshot
 PASS  helpdesk: the screenshot file loaded (naturalWidth=2560)
 PASS  helpdesk: preview holds 16/10 (measured 1.596)
 PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
-PASS  helpdesk: the app fired load inside the page
-PASS  helpdesk: the app rendered content (48 chars)
-PASS  helpdesk: shows its own UI (found "התחברות")
+FAIL  helpdesk: the app fired load inside the page
 PASS  taskman: preview renders a real screenshot
 PASS  taskman: the screenshot file loaded (naturalWidth=2560)
 PASS  taskman: preview holds 16/10 (measured 1.596)
-PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/)
+PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/teams/1/projects/1/tasks)
 PASS  taskman: the app fired load inside the page
-PASS  taskman: the app rendered content (101 chars)
-FAIL  taskman: shows its own UI (found "Tasks")
+PASS  taskman: the app rendered content (582 chars)
+PASS  taskman: shows its own UI (found "Tasks")
 PASS  todofull: preview renders a real screenshot
 PASS  todofull: the screenshot file loaded (naturalWidth=2560)
 PASS  todofull: preview holds 16/10 (measured 1.596)
@@ -27,3 +25,12 @@ PASS  country: preview holds 16/10 (measured 1.596)
 PASS  country: iframe points at the published build (https://ruti-maman.github.io/ProjectFluter/)
 PASS  country: the app fired load inside the page
 PASS  country: the app rendered (Flutter canvas present)
+FAIL  memory: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+FAIL  sqlsales: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+FAIL  jones: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+
+4 PROBLEM(S)
+  - helpdesk: the app fired load inside the page
+  - memory: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+  - sqlsales: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
+  - jones: check crashed (TimeoutError: locator.hover: Timeout 30000ms exceeded.)
