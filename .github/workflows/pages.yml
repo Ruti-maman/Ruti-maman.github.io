@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # The screenshot refresh commits with the workflow's own GITHUB_TOKEN, and
+  # GitHub deliberately fires no push event for those (recursion guard) — so
+  # without this, fresh screenshots landed in the repo but never on the site.
+  workflow_run:
+    workflows: ["Refresh project screenshots"]
+    types: [completed]
 
 permissions:
   contents: read
