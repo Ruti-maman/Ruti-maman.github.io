@@ -32,7 +32,28 @@ const TARGETS = [
     // The entry form is not the project; the board is.
     settle: async (page) => signIn(page, "רות", "1234"),
   },
-  { id: "taskman",  url: `${BASE}/Task-manager/` },
+  {
+    id: "taskman",
+    // Straight to the board. The app has no route guards, so this renders
+    // without a login — but it is a deep link, which Pages answers from
+    // 404.html with an actual 404 status even though the page is fine.
+    url: `${BASE}/Task-manager/teams/1/projects/1/tasks`,
+    allowNotOk: true,
+    waitFor: ".task-card",
+    init: () => {
+      try {
+        // Only the header name reads this; without it the title says "User's".
+        localStorage.setItem("auth_token", "demo");
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ id: 1, name: "רותי", email: "demo@taskmanager.dev" })
+        );
+        // Let the interceptor reseed, so a previous run cannot leave the
+        // board in a mutated state and make the screenshot drift.
+        localStorage.removeItem("taskman-demo-db");
+      } catch (e) {}
+    },
+  },
   { id: "country",  url: `${BASE}/ProjectFluter/`, wait: 7000, settle: searchCountry },
   { id: "sqlsales", url: `${BASE}/sql-final-project/` },
   { id: "jones",    url: `${BASE}/Project-Jones-Automation-Exercise/`, settle: seekVideo },
@@ -122,14 +143,23 @@ async function shoot(browser, target) {
     deviceScaleFactor: 2, // retina-sharp on the card, still a small file
   });
 
+  if (target.init) await page.addInitScript(target.init);
+
   const file = path.join(OUT, `${target.id}.png`);
   try {
     const resp = await page.goto(target.url, {
       waitUntil: "networkidle",
       timeout: 45000,
     });
-    if (!resp || !resp.ok()) {
+    if (!resp || (!resp.ok() && !target.allowNotOk)) {
       throw new Error(`HTTP ${resp ? resp.status() : "no response"}`);
+    }
+
+    // An app answering from an in-page stub makes no network request, so
+    // networkidle proves nothing about whether it has rendered. Waiting on
+    // something the app actually draws does.
+    if (target.waitFor) {
+      await page.waitForSelector(target.waitFor, { timeout: 20000 });
     }
 
     await page.waitForTimeout(target.wait || 2500);
