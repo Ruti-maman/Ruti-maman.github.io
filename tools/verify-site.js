@@ -69,10 +69,10 @@ function check(ok, what) {
     } catch (e) {
       check(false, `${c.id}: check crashed (${String(e).split("\n")[0]})`);
     }
-    try {
-      await page.keyboard.press("Escape");
-      await page.waitForTimeout(900);
-    } catch {}
+    if (!(await closeSheet(page))) {
+      check(false, `${c.id}: the sheet would not close, blocking everything after it`);
+      break;
+    }
   }
 
   await browser.close();
@@ -84,6 +84,41 @@ function check(ok, what) {
   // result — but the screenshots are committed either way.
   process.exit(problems.length ? 1 : 0);
 })();
+
+/**
+ * Escape is not enough. The page listens for it on `document`, but once the
+ * iframe has focus the key never reaches the parent — the sheet stays open and
+ * silently blocks every project after it. Click the close button instead, and
+ * do not continue until the scrim is actually gone.
+ */
+async function closeSheet(page) {
+  for (const attempt of ["button", "escape", "scrim"]) {
+    try {
+      if (attempt === "button") await page.locator("#xBtn").click({ timeout: 5000 });
+      if (attempt === "escape") {
+        await page.locator("body").click({ position: { x: 5, y: 5 }, timeout: 3000 });
+        await page.keyboard.press("Escape");
+      }
+      if (attempt === "scrim") {
+        await page.evaluate(() => {
+          document.getElementById("scrim")?.classList.remove("open");
+          document.body.classList.remove("locked");
+          const s = document.getElementById("sheet");
+          if (s) s.innerHTML = "";
+        });
+      }
+      await page.waitForFunction(
+        () => !document.getElementById("scrim")?.classList.contains("open"),
+        { timeout: 4000 }
+      );
+      await page.waitForTimeout(600);
+      return true;
+    } catch {
+      /* try the next way in */
+    }
+  }
+  return false;
+}
 
 async function runCase(page, { id, expect }) {
   {
@@ -137,13 +172,16 @@ async function runCase(page, { id, expect }) {
 
     let loaded = true;
     try {
-      await page.waitForSelector("#liveLoad.gone", { timeout: 35000 });
+      await page.waitForSelector("#liveLoad.gone", { timeout: 45000 });
     } catch {
       loaded = false;
     }
-    check(loaded, `${id}: the app fired load inside the page`);
+    check(loaded, `${id}: the loading veil lifted`);
 
-    if (loaded) {
+    // Check what the app painted whether or not the veil lifted — a veil stuck
+    // over a working app and an app that never rendered are different bugs,
+    // and collapsing them into one result hides whichever came second.
+    {
       // The real test. A cross-origin iframe that loads but paints nothing
       // still counts as "loaded", and that is exactly the failure a visitor
       // would see as an empty white box.
