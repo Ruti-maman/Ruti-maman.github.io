@@ -18,7 +18,7 @@ PASS  todofull: the loading veil lifted
 PASS  todofull: the app rendered content (34 chars)
 FAIL  country: preview renders a real screenshot
 PASS  country: iframe points at the published build (https://ruti-maman.github.io/ProjectFluter/)
-PASS  country: the loading veil lifted
+FAIL  country: the loading veil lifted
 PASS  country: the app rendered (Flutter canvas present)
 FAIL  memory: preview renders a real screenshot
 PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
@@ -36,11 +36,12 @@ PASS  jones: the loading veil lifted
 PASS  jones: the app rendered content (930 chars)
 PASS  jones: shows its own UI (found "אוטומצי")
 
-7 PROBLEM(S)
+8 PROBLEM(S)
   - helpdesk: preview renders a real screenshot
   - taskman: preview renders a real screenshot
   - todofull: preview renders a real screenshot
   - country: preview renders a real screenshot
+  - country: the loading veil lifted
   - memory: preview renders a real screenshot
   - sqlsales: preview renders a real screenshot
   - jones: preview renders a real screenshot
