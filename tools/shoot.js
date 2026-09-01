@@ -140,7 +140,10 @@ async function signIn(page, user, pass) {
 async function shoot(browser, target) {
   const page = await browser.newPage({
     viewport: VIEWPORT,
-    deviceScaleFactor: 2, // retina-sharp on the card, still a small file
+    // 1.5, not 2: these render into a panel a few hundred pixels wide, and a
+    // photographic frame (the Jones recording) came out at 1.1 MB at 2x —
+    // heavy enough that hovering away mid-download became a real race.
+    deviceScaleFactor: 1.5,
   });
 
   if (target.init) await page.addInitScript(target.init);

@@ -4375,11 +4375,17 @@ function setPeek(id){
   el.style.setProperty("--h", p.hue);
   el.innerHTML = peekHTML(p);
   /* No screenshot on disk yet -> fall back to the hand-drawn mockup rather
-     than leaving a broken image in the middle of the page. */
+     than leaving a broken image in the middle of the page.
+
+     Both guards matter. Detaching a still-loading <img> can fire `error`, so
+     without them a slow screenshot that the visitor hovers away from would
+     come back and paint its project's mockup into whichever project they are
+     looking at now. */
   var shot = $("peekShot");
   if(shot){
     var img = shot.querySelector("img");
     img.addEventListener("error", function(){
+      if(activeId !== p.id || !shot.isConnected) return;
       shot.parentNode.innerHTML = '<div class="mk"><div class="mk-in">'+MK[p.mk]+'</div></div>';
     });
   }
