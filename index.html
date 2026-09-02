@@ -2053,7 +2053,15 @@ RM.LIVE = {
   helpdesk: {url:"https://ruti-maman.github.io/project/",         shot:"shots/helpdesk.jpg",
              docs:"https://ruti-maman.github.io/helpdesk-api-main/",
              hint:{he:"התחברות: admin@demo.com · agent@demo.com · customer@demo.com — כל סיסמה תתקבל.",
-                   en:"Sign in: admin@demo.com · agent@demo.com · customer@demo.com — any password works."}},
+                   en:"Sign in: admin@demo.com · agent@demo.com · customer@demo.com — any password works."},
+             // when the real end-to-end system runs on this machine
+             // (gateway/start-helpdesk.bat: the TypeScript API on :4000 and the
+             // untouched client build on :5173), the sheet swaps to it
+             local:"http://localhost:5173/",
+             localBadge:{he:"מחובר למערכת האמיתית — Express‏ + SQLite‏ + JWT רצים על המכונה",
+                         en:"connected to the real system — Express + SQLite + JWT running on this machine"},
+             localHint:{he:"התחברות אמיתית: admin@example.com · agent@example.com · customer1@example.com — סיסמה: password",
+                        en:"Real sign-in: admin@example.com · agent@example.com · customer1@example.com — password: password"}},
 
   // localOnly: the hover preview uses this real screenshot like every other
   // project, but the click stays with the demo mount — the app itself lives
@@ -4583,7 +4591,51 @@ function openSheet(id, fromEl){
       }, 20000);
 
       // Only now, with the listener in place, is it safe to start loading.
-      frame.src = frame.getAttribute("data-src");
+      // If this project declares a local twin (the real end-to-end system on
+      // this machine), probe it first and prefer it: same decide-then-paint
+      // rule as the Outlook card, so nothing flashes and nothing double-loads.
+      var lvv = RM.LIVE[p.id], started = false;
+      function start(src){
+        if(started || !frame.isConnected) return;
+        started = true;
+        frame.src = src;
+      }
+      if(lvv && lvv.local){
+        try{
+          var lctrl = ("AbortController" in window) ? new AbortController() : null;
+          var ltmo = setTimeout(function(){
+            if(lctrl) lctrl.abort();
+            start(lvv.url);
+          }, 1200);
+          fetch(lvv.local + "health", lctrl ? {signal: lctrl.signal} : {})
+            .then(function(r){ return r.ok ? r.json() : null; })
+            .then(function(j){
+              clearTimeout(ltmo);
+              if(j && j.original && frame.isConnected){
+                var wrap = $("liveWrap");
+                // idempotent: a double-open (or an eager double click) must
+                // not stack a second badge on top of the first
+                if(wrap && lvv.localBadge && !wrap.querySelector(".live-real")){
+                  var pill = document.createElement("div");
+                  pill.className = "drow live-real";
+                  pill.innerHTML = '<span class="dpill" style="color:var(--ok)">● '
+                    + esc(lvv.localBadge[lang]) + '</span>';
+                  wrap.insertBefore(pill, wrap.firstChild);
+                }
+                var hint = wrap && wrap.querySelector(".live-hint");
+                if(hint && lvv.localHint) hint.textContent = lvv.localHint[lang];
+                var urlEl = wrap && wrap.querySelector(".live-url");
+                if(urlEl) urlEl.textContent = lvv.local.replace(/^https?:\/\//, "");
+                var tab = wrap && wrap.querySelector(".live-tab");
+                if(tab) tab.href = lvv.local;
+                start(lvv.local);
+              } else start(lvv.url);
+            })
+            .catch(function(){ clearTimeout(ltmo); start(lvv.url); });
+        }catch(e){ start(lvv.url); }
+      } else {
+        start(frame.getAttribute("data-src"));
+      }
     }
 
     var body = $("demoBody");
