@@ -42,14 +42,13 @@ PASS  textcli: "עצור את התהליך שתקוע" is not unknown
 PASS  textcli: "תורידי לי את הקובץ מהאתר" → curl -LO
 PASS  textcli: "תורידי לי את הקובץ מהאתר" is not unknown
 PASS  textcli: an unmatched request says so instead of inventing a command
-PASS  outlook: empty subject rejected with 400
-PASS  outlook: the client actually POSTs
-PASS  outlook: the Win32 hop is shown
-PASS  outlook: creation returns 201
-PASS  outlook: the meeting appears in the calendar
-PASS  outlook: calendar shows the subject
-PASS  outlook: calendar shows the chosen hour
-PASS  outlook: delete hits the endpoint
-PASS  outlook: the calendar is empty again
+PASS  outlook: empty recipients rejected with 400
+PASS  outlook: the error is her API's actual error
+PASS  outlook: the form actually POSTs to /drafts
+PASS  outlook: the win32com hop is shown
+PASS  outlook: the attachment is attached
+PASS  outlook: a draft opened for the first recipient
+PASS  outlook: a draft opened for the second recipient
+PASS  outlook: her API's response shape, count 2
 
 ALL DEMO CHECKS PASSED
