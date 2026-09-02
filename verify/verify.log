@@ -31,6 +31,16 @@ PASS  textcli: sandboxed run finished
 PASS  textcli: destructive request was BLOCKED
 PASS  textcli: destructive request was not validated
 PASS  textcli: destructive request never ran
+PASS  textcli: "צור תיקיה חדשה" → mkdir -p
+PASS  textcli: "צור תיקיה חדשה" is not unknown
+PASS  textcli: "צרי לי קובץ חדש בשם משהו" → touch
+PASS  textcli: "צרי לי קובץ חדש בשם משהו" is not unknown
+PASS  textcli: "העתק את הדוח לגיבוי" → cp
+PASS  textcli: "העתק את הדוח לגיבוי" is not unknown
+PASS  textcli: "עצור את התהליך שתקוע" → kill -TERM
+PASS  textcli: "עצור את התהליך שתקוע" is not unknown
+PASS  textcli: "תורידי לי את הקובץ מהאתר" → curl -LO
+PASS  textcli: "תורידי לי את הקובץ מהאתר" is not unknown
 PASS  textcli: an unmatched request says so instead of inventing a command
 PASS  outlook: empty subject rejected with 400
 PASS  outlook: the client actually POSTs
