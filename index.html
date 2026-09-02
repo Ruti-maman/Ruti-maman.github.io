@@ -1540,7 +1540,7 @@ footer{padding-block:2.4rem; border-block-start:1px solid var(--line-0); color:v
 <div class="boot" id="boot">
   <div class="boot-in">
     <span class="boot-l" id="bootL">initializing portfolio</span>
-    <span class="boot-t" id="bootT">record once · run forever</span>
+    <span class="boot-t" id="bootT">ask · retrieve · answer</span>
     <span class="boot-rail"><i></i></span>
   </div>
 </div>
@@ -1595,24 +1595,24 @@ footer{padding-block:2.4rem; border-block-start:1px solid var(--line-0); color:v
     <div class="console rv">
       <div class="c-head">
         <span class="c-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="c-title ltr">autotika — live run</span>
+        <span class="c-title ltr">rag-agent — live query</span>
         <span class="c-status" id="cStatus" data-s="run"><i></i><span data-t="st.run">RUNNING</span></span>
       </div>
       <div class="rail">
         <div class="rail-line"><b id="railFill"></b></div>
         <div class="stations" id="stations">
-          <div class="stn" data-i="0"><span class="bulb"></span><span class="nm">RECORD</span></div>
-          <div class="stn" data-i="1"><span class="bulb"></span><span class="nm">SPEC</span></div>
-          <div class="stn" data-i="2"><span class="bulb"></span><span class="nm">CODE</span></div>
-          <div class="stn ai" data-i="3"><span class="bulb"></span><span class="nm">HEAL·AI</span></div>
-          <div class="stn" data-i="4"><span class="bulb"></span><span class="nm">RUN ∞</span></div>
+          <div class="stn" data-i="0"><span class="bulb"></span><span class="nm">INGEST</span></div>
+          <div class="stn" data-i="1"><span class="bulb"></span><span class="nm">CHUNK</span></div>
+          <div class="stn" data-i="2"><span class="bulb"></span><span class="nm">EMBED</span></div>
+          <div class="stn" data-i="3"><span class="bulb"></span><span class="nm">SEARCH</span></div>
+          <div class="stn ai" data-i="4"><span class="bulb"></span><span class="nm">ANSWER·AI</span></div>
         </div>
       </div>
       <div class="term" id="term" aria-live="off"></div>
       <div class="c-foot">
-        <span id="f1" data-t="chip.tokens">0 tokens</span>
-        <span id="f2" data-t="chip.offline">offline</span>
-        <span id="f3" data-t="chip.users">28 users</span>
+        <span id="f1" data-t="chip.tokens">embed-multilingual</span>
+        <span id="f2" data-t="chip.offline">top-k 3</span>
+        <span id="f3" data-t="chip.users">command-r-plus</span>
       </div>
     </div>
   </div>
@@ -1690,7 +1690,7 @@ footer{padding-block:2.4rem; border-block-start:1px solid var(--line-0); color:v
 <footer>
   <div class="wrap foot-in">
     <span data-t="foot.a">רות ממן — מהנדסת תוכנה</span>
-    <span class="mono ltr" data-t="foot.b">record once · run forever</span>
+    <span class="mono ltr" data-t="foot.b">ask · retrieve · answer</span>
   </div>
 </footer>
 
@@ -1902,26 +1902,6 @@ function dm(he,en,u){ return {n:{he:he,en:en}, u:u}; }
 
 RM.PROJECTS = [
 
-{id:"autotika", cats:["ai","automation","backend"], hue:"#35D2D8", big:true, mk:"autotika", src:"work",
- repos:[], demos:[dm("ממשק AutoTika","AutoTika interface",UI), dm("מצגת האפיון","The spec deck",DK)],
- demoNote:{he:"הממשק הוא הבילד האמיתי של הכלי. הוא נפתח בדפדפן בלי בקאנד מחובר, כך שרואים את כל המסכים אבל אי אפשר להריץ אוטומציה בפועל.",
-           en:"The interface is the tool's real build. It opens without a connected backend, so every screen is there but a run can't actually be triggered."},
- he:{cat:"פלטפורמה · Full-stack", title:"AutoTika",
-  pitch:"מקליטים תהליך UI פעם אחת, והוא הופך לבדיקה אוטומטית אמינה שרצה מכאן והלאה בלי AI.",
-  desc:"מונו-רפו בשני חלקים: מנוע Python (FastAPI + Playwright) שמריץ את כל השרשרת מהקלטה ועד קוד רץ, וממשק React/Vite שדרכו מתחילים הקלטה, מאשרים את האפיון וצופים בהרצות. הקריאה ל-Claude קורית פעם אחת בזמן היצירה; משם והלאה זה קובץ pytest רגיל.",
-  flow:["RECORD","SPEC","CODE","HEAL · AI","RUN ∞"],
-  bul:["קריאה אחת ל-API מפעילה את כל השרשרת ומשגרת את הסוכן המרפא ברקע — בלי שלב ידני אחד.",
-       "האפיון מוצג בממשק מקובץ לפי עמודים, כדי שאדם יקרא ויאשר לפני שנוצר קוד.",
-       "ה-pipeline גנרי: אפליקציית ה-HR הראשונה הייתה אפליקציית האימון, לא יעד מקודד."]},
- en:{cat:"Platform · Full-stack", title:"AutoTika",
-  pitch:"Record a UI flow once and it becomes a reliable automated test that runs from then on with no AI.",
-  desc:"A monorepo in two halves: a Python engine (FastAPI + Playwright) driving the whole record-to-runnable-code chain, and a React/Vite UI to start a recording, approve the spec and watch runs. Claude is called once, at creation time; after that it is an ordinary pytest file.",
-  flow:["RECORD","SPEC","CODE","HEAL · AI","RUN ∞"],
-  bul:["One API call fires the whole chain and auto-triggers the healing agent in the background — no manual step.",
-       "The spec renders page-by-page in the UI so a human reads and approves it before any code exists.",
-       "The pipeline is generic: the first HR app was the training app, never a hardcoded target."]},
- stack:["Python","FastAPI","Playwright","LangGraph","Claude API","React","Vite","pytest"]},
-
 {id:"rag", cats:["ai","backend"], hue:"#8B7DF0", mk:"rag", src:"gh",
  repos:[{n:"ProjectRAG",u:GH+"ProjectRAG"},{n:"AI",u:GH+"AI"}], demos:[],
  he:{cat:"AI · RAG", title:"סוכן RAG רב-לשוני",
@@ -1962,24 +1942,6 @@ RM.PROJECTS = [
        "Comment threads on a ticket, enriched with author details."]},
  stack:["TypeScript","Node.js","Express","SQLite","JWT","Swagger","React","Vite"]},
 
-{id:"jones", cats:["automation"], hue:"#4FD68F", mk:"jones", src:"gh",
- repos:[{n:"Project-Jones-Automation-Exercise",u:GH+"Project-Jones-Automation-Exercise"}], demos:[],
- he:{cat:"אוטומציה · Playwright", title:"אוטומציית טופס מקצה לקצה",
-  pitch:"תרגיל אוטומציה נקי ב-Playwright: מילוי טופס, שינוי dropdown, שליחה ואימות שהגענו לעמוד התודה.",
-  desc:"סקריפט Node.js שמנווט לאתר, ממלא שם, מייל, טלפון, חברה ואתר, מחליף את מספר העובדים מ-10-1 ל-500-51, מצלם מסך לפני השליחה, שולח, מאמת את הניווט לעמוד התודה ושומר צילום אישור. בכשל נשמר צילום מסך של הכשל ומוחזר exit code מתאים ל-CI.",
-  flow:["navigate","fill","screenshot","submit","assert"],
-  bul:["איתור אלמנטים לפי הטקסט שהמשתמש רואה, עם נפילה חזרה ל-name attribute — כדי שהבדיקה לא תישבר משינוי עיצוב.",
-       "slowMo של חצי שנייה כדי שאפשר יהיה לראות את ההרצה בעיניים ולא רק בלוג.",
-       "צילומי מסך כתיעוד, ו-exit codes שמאפשרים להריץ את זה ב-pipeline."]},
- en:{cat:"Automation · Playwright", title:"End-to-End Form Automation",
-  pitch:"A clean Playwright exercise: fill a form, change a dropdown, submit, and assert we landed on the thank-you page.",
-  desc:"A Node.js script that navigates to the site, fills name, email, phone, company and website, switches the employee count from 1-10 to 51-500, screenshots before submitting, submits, verifies navigation to the thank-you page and saves a confirmation shot. On failure it captures a screenshot and returns a CI-appropriate exit code.",
-  flow:["navigate","fill","screenshot","submit","assert"],
-  bul:["Locators keyed to the text a user actually sees, falling back to the name attribute — so a restyle doesn't break the test.",
-       "A half-second slowMo so a run can be watched with the eyes, not only read in a log.",
-       "Screenshots as evidence, and exit codes that let this run inside a pipeline."]},
- stack:["Playwright","Node.js","JavaScript"]},
-
 {id:"taskman", cats:["frontend"], hue:"#F2718F", mk:"taskman", src:"gh",
  repos:[{n:"Task-manager",u:GH+"Task-manager"}], demos:[],
  he:{cat:"פרונטאנד · Angular", title:"מנהל משימות ב-Angular",
@@ -1997,77 +1959,6 @@ RM.PROJECTS = [
        "proxy.conf.json keeps frontend and backend separate even in development, with no CORS and no hardcoded URLs.",
        "A structure built to grow: components, services and configuration kept apart."]},
  stack:["Angular 21","TypeScript","Vitest","Angular CLI"]},
-
-{id:"country", cats:["frontend"], hue:"#A97BEF", mk:"country", src:"gh",
- repos:[{n:"ProjectFluter",u:GH+"ProjectFluter"},{n:"Flutter-Project-main",u:GH+"Flutter-Project-main"}], demos:[],
- he:{cat:"מובייל · Flutter", title:"מדריך המדינות",
-  pitch:"אפליקציית Flutter שמחפשת מדינה ומחזירה עליה כרטיס מידע מלא בזמן אמת — עם ממשק דו-כיווני.",
-  desc:"חיפוש דינמי לפי שם מדינה באנגלית מול Rest Countries API, ותוצאה שמציגה עיר בירה, יבשת, שפות רשמיות, מטבע, גודל אוכלוסייה וגישה לים. הכרטיסים בעברית מימין לשמאל ושדה החיפוש באנגלית משמאל לימין — באותו מסך. הדגלים נטענים מהרשת.",
-  flow:["search","REST API","parse","card"],
-  bul:["טיפול ב-RTL ו-LTR יחד באותו מסך — בדיוק הסוג של פרט שנשבר אם לא חושבים עליו מראש.",
-       "ניהול state ב-StatefulWidget ו-setState, בלי ספריות חוץ — כדי להבין את המודל הבסיסי של Flutter.",
-       "בנוי לכל הפלטפורמות שהפרויקט תומך בהן: אנדרואיד, iOS, ווב ודסקטופ."]},
- en:{cat:"Mobile · Flutter", title:"Country Finder",
-  pitch:"A Flutter app that searches a country and returns a full information card in real time — with a bi-directional interface.",
-  desc:"Dynamic search by English country name against the Rest Countries API, returning capital, continent, official languages, currency, population and coastal access. Hebrew cards run right-to-left while the search field runs left-to-right, on the same screen. Flags load from the network.",
-  flow:["search","REST API","parse","card"],
-  bul:["Handling RTL and LTR together on one screen — exactly the kind of detail that breaks if you don't plan for it.",
-       "State handled with StatefulWidget and setState, no external libraries — to understand Flutter's base model.",
-       "Built for every platform the project targets: Android, iOS, web and desktop."]},
- stack:["Flutter","Dart","Rest Countries API"]},
-
-{id:"sqlsales", cats:["data"], hue:"#E8C55C", mk:"sqlsales", src:"gh",
- repos:[{n:"sql-final-project",u:GH+"sql-final-project"}], demos:[],
- he:{cat:"דאטה · SQL", title:"אנליטיקת מכירות ב-SQL",
-  pitch:"חמישה חלקים של שאילתות מעל מערכת מכירות: הכנסות נטו, ביצועי סוכנים וניתוח פארטו.",
-  desc:"עבודה מעל סכימה של חשבוניות מכירה — כותרת מסמך, שורות מסמך, סוכנים וקטלוג פריטים. השאילתות מחשבות כמויות והכנסה נטו אחרי הנחות ברמת המסמך והשורה, מספר חשבוניות וגיוון פריטים לכל סוכן, ומגיעות עד ניתוח פארטו שמזהה את הסוכנים שמייצרים את רוב המכירות.",
-  flow:["joins","net revenue","per agent","Pareto"],
-  bul:["חישוב הכנסה נטו דורש לשלב הנחה ברמת המסמך עם סכומי השורות — טעות קלאסית שמייצרת מספרים שגויים.",
-       "ניתוח פארטו: לא רק מי הסוכן הטוב, אלא מה אחוז המכירות שמרוכז במעטים.",
-       "השאילתות מחולקות לחמישה חלקים שנבנים אחד על השני, מהבסיסי למורכב."]},
- en:{cat:"Data · SQL", title:"Sales Analytics in SQL",
-  pitch:"Five parts of queries over a sales system: net revenue, agent performance and Pareto analysis.",
-  desc:"Work over an invoice schema — document headers, document lines, salespeople and an item catalog. The queries compute quantities and net revenue after both document- and line-level discounts, invoice counts and item variety per agent, up to a Pareto analysis identifying the agents producing most of the sales.",
-  flow:["joins","net revenue","per agent","Pareto"],
-  bul:["Net revenue means combining a document-level discount with line sums — the classic mistake that yields wrong numbers.",
-       "Pareto analysis: not just who the best agent is, but what share of sales concentrates in the few.",
-       "The queries are split into five parts that build on each other, from basic to complex."]},
- stack:["T-SQL","Joins","Aggregation","Window functions"]},
-
-{id:"hcm", cats:["data","backend"], hue:"#35D2D8", mk:"hcm", src:"work", repos:[], demos:[],
- he:{cat:"דאטה · Oracle", title:"דוחות Oracle HCM",
-  pitch:"שאילתות שמחזירות תמונת עובד מדויקת לתאריך נתון — מתוך סכימה שבה לכל טבלה יש טווח תוקף.",
-  desc:"Join על טבלאות אנשים, שמות, סוגי עובד, שיוכים ושכר, עם חיתוך של התאריך המבוקש מול כל טווח תוקף בנפרד. השכר נשלף דרך תת-שאילתה שמאתרת את הרשומה התקפה האחרונה, וקודי פעולה וסוגי עובד מתורגמים לתיאורים קריאים. הפלט מיוצא לדוחות Excel.",
-  flow:["effective date","joins","latest salary","Excel"],
-  bul:["Outer joins מדויקים כדי שעובד בלי שכר או בלי מייל לא ייעלם מהדוח.",
-       "תאריך התוקף הוא פרמטר, כך שאותה שאילתה מייצרת גם תמונת עבר וגם תמונת הווה.",
-       "תרגום קודים לתיאורים בתוך השאילתה — כדי שהדוח יהיה קריא למי שמקבל אותו, לא רק למי שכתב אותו."]},
- en:{cat:"Data · Oracle", title:"Oracle HCM Reporting",
-  pitch:"Queries that return an exact as-of-date picture of an employee — from a schema where every table carries a validity range.",
-  desc:"Joins across people, names, worker types, assignments and salary tables, intersecting the requested date against each validity range separately. Salary resolves through a sub-select that finds the latest valid record, and action codes and worker types map to readable descriptions. Output exports to Excel reports.",
-  flow:["effective date","joins","latest salary","Excel"],
-  bul:["Careful outer joins so an employee with no salary or no email never drops out of the report.",
-       "The effective date is a parameter, so one query serves both a historical and a current snapshot.",
-       "Codes translate to descriptions inside the query — so the report reads for whoever receives it, not only its author."]},
- stack:["Oracle SQL","Effective dating","Sub-selects","Excel export"]},
-
-{id:"todofull", cats:["frontend","backend"], hue:"#46B4D8", mk:"todofull", src:"gh",
- repos:[{n:"practicode-3-todolists",u:GH+"practicode-3-todolists"}], demos:[],
- he:{cat:"Full-stack", title:"רשימת מטלות מקצה לקצה",
-  pitch:"אפליקציית מטלות בשלושה רכיבים: קליינט React, API נפרד, ושכבת פריסה עם Docker.",
-  desc:"הפרויקט מפריד בבירור בין הקליינט, ה-API ושכבת ההגשה לפריסה, עם קונפיגורציית Docker כדי שהכול יעלה באותה צורה בכל מקום. זה היה הפרויקט שבו הבנתי בפועל למה מפרידים בין השכבות.",
-  flow:["React","API","Docker","deploy"],
-  bul:["הפרדה מלאה בין הפרונט לבקאנד, כולל תיקייה נפרדת לפריסה.",
-       "Docker כדי שהסביבה לא תהיה 'עובד אצלי במחשב'.",
-       "פרויקט למידה שנשמר בכוונה — הוא מראה את הדרך, לא רק את התוצאה."]},
- en:{cat:"Full-stack", title:"End-to-End Todo App",
-  pitch:"A todo app in three parts: a React client, a separate API, and a deployment layer with Docker.",
-  desc:"The project cleanly separates the client, the API and the deployment layer, with Docker configuration so everything comes up the same way anywhere. This was the project where separating layers stopped being theory.",
-  flow:["React","API","Docker","deploy"],
-  bul:["Full separation of frontend and backend, including a dedicated deployment folder.",
-       "Docker so the environment isn't 'works on my machine'.",
-       "A learning project kept on purpose — it shows the path, not only the result."]},
- stack:["React","C# / .NET API","Docker","Node.js"]},
 
 {id:"algos", cats:["backend"], hue:"#8B7DF0", mk:"algos", src:"gh",
  repos:[{n:"Algorithm",u:GH+"Algorithm"}], demos:[],
@@ -2155,18 +2046,10 @@ RM.LIVE = {
              shot:"shots/taskman.jpg",
              hint:{he:"התחברות (אם יוצאים): כל כתובת מייל תקינה וסיסמה בת 6 תווים לפחות.",
                    en:"Sign in (if you log out): any valid email and a password of 6+ characters."}},
-  country:  {url:"https://ruti-maman.github.io/ProjectFluter/",   shot:"shots/country.jpg"},
-  sqlsales: {url:"https://ruti-maman.github.io/sql-final-project/", shot:"shots/sqlsales.jpg"},
-  jones:    {url:"https://ruti-maman.github.io/Project-Jones-Automation-Exercise/", shot:"shots/jones.jpg"},
-
   helpdesk: {url:"https://ruti-maman.github.io/project/",         shot:"shots/helpdesk.jpg",
              docs:"https://ruti-maman.github.io/helpdesk-api-main/",
              hint:{he:"התחברות: admin@demo.com · agent@demo.com · customer@demo.com — כל סיסמה תתקבל.",
-                   en:"Sign in: admin@demo.com · agent@demo.com · customer@demo.com — any password works."}},
-
-  todofull: {url:"https://ruti-maman.github.io/practicode-3-todolists/", shot:"shots/todofull.jpg",
-             hint:{he:"התחברות: כל שם משתמש וסיסמה יתקבלו.",
-                   en:"Sign in: any username and password will do."}}
+                   en:"Sign in: admin@demo.com · agent@demo.com · customer@demo.com — any password works."}}
 };
 })();
 </script>
@@ -2203,15 +2086,15 @@ RM.TIMELINE = {
 };
 
 RM.RUN = [
- {s:0, st:"run",   t:'<span class="d">$</span> playwright codegen --channel=chrome'},
- {s:0, st:"run",   t:'<span class="c">▸ record</span>  14 steps captured'},
- {s:1, st:"run",   t:'<span class="c">▸ spec</span>    plan.md ready for approval'},
- {s:2, st:"run",   t:'<span class="c">▸ code</span>    test_emergency_contact.py'},
- {s:2, st:"fail",  t:'<span class="r">✗ run #1</span>  FAILED  locator timeout'},
- {s:3, st:"heal",  t:'<span class="a">◆ heal</span>    claude → patched selector'},
- {s:4, st:"green", t:'<span class="g">✓ run #2</span>  PASSED'},
- {s:4, st:"green", t:'<span class="g">✓ run #3</span>  PASSED  ← 2 consecutive green'},
- {s:4, st:"green", t:'<span class="d">● done</span>    0 tokens · offline · 28 users'}
+ {s:0, st:"run",   t:'<span class="d">$</span> python app_local.py'},
+ {s:0, st:"run",   t:'<span class="c">▸ ingest</span>  rag_intro.md · loaded'},
+ {s:1, st:"run",   t:'<span class="c">▸ chunk</span>   28 chunks × 512 tokens · overlap 50'},
+ {s:2, st:"run",   t:'<span class="c">▸ embed</span>   cohere embed-multilingual · 1024d'},
+ {s:3, st:"run",   t:'<span class="a">? query</span>   "מה זה RAG ולמה זה עובד?"'},
+ {s:3, st:"run",   t:'<span class="c">▸ search</span>  cosine top-3 · 0.87 · 0.84 · 0.79'},
+ {s:4, st:"green", t:'<span class="g">✓ answer</span>  command-r-plus · מנוסח מ-3 מקורות'},
+ {s:4, st:"green", t:'<span class="g">✓ cited</span>   כל טענה עם המקור שלה'},
+ {s:4, st:"green", t:'<span class="d">● done</span>    1.4s · top-k 3 · 1024 dims'}
 ];
 
 RM.T = {
@@ -2220,10 +2103,10 @@ RM.T = {
   "nav.projects":"פרויקטים","nav.stack":"סטאק","nav.path":"מסלול","nav.contact":"קשר",
   "hero.role":"<b>◆</b> מהנדסת תוכנה · אוטומציה · AI · בקאנד",
   "hero.title":"בונה מערכות ש<em>מריצות את עצמן</em>",
-  "hero.lede":"סוכני AI שכותבים ומרפאים בדיקות, מערכות בקאנד מקצה לקצה ותשתיות דאטה. <b>רוב הפרויקטים כאן רצים בתוך הדף</b> — נכנסים, מפעילים, ומשחקים איתם.",
+  "hero.lede":"סוכני AI מעל מסמכים ודאטה, מערכות בקאנד מקצה לקצה ואוטומציית בדיקות. <b>רוב הפרויקטים כאן רצים בתוך הדף</b> — נכנסים, מפעילים, ומשחקים איתם.",
   "hero.cta1":"לאינדקס הפרויקטים","hero.cta2":"חיפוש מהיר ⌘K",
   "st.run":"RUNNING","st.fail":"FAILED","st.heal":"HEALING","st.green":"GREEN",
-  "chip.tokens":"0 טוקנים","chip.offline":"אופליין","chip.users":"28 משתמשים",
+  "chip.tokens":"embed-multilingual","chip.offline":"top-k 3","chip.users":"command-r-plus",
   "proj.eyebrow":"אינדקס","proj.title":"הפרויקטים",
   "proj.sub":"עומדים על שם — והממשק של הפרויקט נפתח בפאנל שלצד, חי ועובד. אפשר להשתמש בו ישר משם: ללחוץ, להקליד, להריץ. הכפתור להגדיל פותח אותו רחב יותר, עם התיאור, הסטאק והקוד בגיטהאב.",
   "stack.eyebrow":"הסטאק","stack.title":"מה יש לי בארגז הכלים",
@@ -2231,7 +2114,7 @@ RM.T = {
   "contact.eyebrow":"קשר","contact.title":"נשמח להמשיך את השיחה",
   "contact.sub":"פתוחה להזדמנויות בהנדסת בקאנד, AI ואוטומציה. שולחים מייל ואני חוזרת.",
   "contact.mail":"מייל","contact.phone":"טלפון","contact.copy":"העתקה","contact.cta":"שליחת מייל",
-  "foot.a":"רות ממן — מהנדסת תוכנה","foot.b":"record once · run forever",
+  "foot.a":"רות ממן — מהנדסת תוכנה","foot.b":"ask · retrieve · answer",
   "pal.nav":"ניווט","pal.open":"פתיחה","pal.close":"סגירה",
   filters:{all:"הכול",run:"רץ כאן",ai:"AI וסוכנים",automation:"אוטומציה",backend:"בקאנד",frontend:"פרונטאנד",data:"דאטה",demo:"דמו חי",gh:"קוד בגיטהאב"},
   liveDemo:"דמו חי", runnable:"רץ כאן", runIt:"להפעיל את הפרויקט", open:"פתיחה",
@@ -2259,10 +2142,10 @@ RM.T = {
   "nav.projects":"Projects","nav.stack":"Stack","nav.path":"Path","nav.contact":"Contact",
   "hero.role":"<b>◆</b> Software Engineer · Automation · AI · Backend",
   "hero.title":"I build systems that <em>run themselves</em>",
-  "hero.lede":"AI agents that write and heal tests, end-to-end backend systems and data infrastructure. <b>Most projects here run inside the page</b> — open one, press run, play with it.",
+  "hero.lede":"AI agents over documents and data, end-to-end backend systems and test automation. <b>Most projects here run inside the page</b> — open one, press run, play with it.",
   "hero.cta1":"See the index","hero.cta2":"Quick search ⌘K",
   "st.run":"RUNNING","st.fail":"FAILED","st.heal":"HEALING","st.green":"GREEN",
-  "chip.tokens":"0 tokens","chip.offline":"offline","chip.users":"28 users",
+  "chip.tokens":"embed-multilingual","chip.offline":"top-k 3","chip.users":"command-r-plus",
   "proj.eyebrow":"Index","proj.title":"The projects",
   "proj.sub":"Hover a name and that project's interface opens in the panel beside it, live and working. Use it right there — click, type, run. Expand opens it wider, with the write-up, the stack and the code on GitHub.",
   "stack.eyebrow":"Stack","stack.title":"What's in the toolbox",
@@ -2270,7 +2153,7 @@ RM.T = {
   "contact.eyebrow":"Contact","contact.title":"Let's keep the conversation going",
   "contact.sub":"Open to roles in backend engineering, AI and automation. Send an email and I'll reply.",
   "contact.mail":"Email","contact.phone":"Phone","contact.copy":"Copy","contact.cta":"Send an email",
-  "foot.a":"Ruth Maman — Software Engineer","foot.b":"record once · run forever",
+  "foot.a":"Ruth Maman — Software Engineer","foot.b":"ask · retrieve · answer",
   "pal.nav":"navigate","pal.open":"open","pal.close":"close",
   filters:{all:"All",run:"Runs here",ai:"AI & agents",automation:"Automation",backend:"Backend",frontend:"Frontend",data:"Data",demo:"Live demo",gh:"On GitHub"},
   liveDemo:"live demo", runnable:"runs here", runIt:"Run the project", open:"Open",
@@ -4139,7 +4022,18 @@ function renderMarquee(){
 
 /* ── filters ── */
 function renderFilters(){
-  var t = d(), keys = ["all","run","ai","automation","backend","frontend","data","demo","gh"];
+  var t = d();
+  // Only offer a category filter if something actually carries it — a button
+  // that filters down to nothing reads as a broken page, not an empty set.
+  var present = {};
+  P.forEach(function(p){ p.cats.forEach(function(c){ present[c] = 1; }); });
+  var keys = ["all","run","ai","automation","backend","frontend","data","demo","gh"]
+    .filter(function(k){
+      if(k==="all" || k==="gh") return true;
+      if(k==="run")  return P.some(function(p){ return RM.DEMOS[p.id]; });
+      if(k==="demo") return P.some(function(p){ return p.demos.length; });
+      return present[k];
+    });
   $("filters").innerHTML = keys.map(function(k){
     return '<button type="button" data-f="'+k+'" aria-pressed="'+(k===filter)+'">'+esc(t.filters[k])+"</button>";
   }).join("");
@@ -4181,8 +4075,7 @@ function fitDemo(host, designW){
    repo, runs its own install and start commands, streams the terminal here,
    and the running app itself is embedded once its port answers. */
 var RUNNER_MAP = {
-  memory:"memory", helpdesk:"helpdesk", taskman:"taskman", todofull:"todofull",
-  rag:"rag", jones:"jones", autotika:"autotika"
+  memory:"memory", helpdesk:"helpdesk", taskman:"taskman", rag:"rag"
 };
 var runner = { on:false, projects:{} };
 

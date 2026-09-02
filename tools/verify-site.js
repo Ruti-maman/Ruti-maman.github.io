@@ -25,11 +25,7 @@ const OUT = path.join(__dirname, "..", "verify");
 const CASES = [
   { id: "helpdesk", expect: "התחברות" },
   { id: "taskman",  expect: "Tasks" },
-  { id: "todofull", expect: null },      // login screen text varies; frame check only
-  { id: "country",  expect: "מדינות" },
   { id: "memory",   expect: "ברוכים" },
-  { id: "sqlsales", expect: "SQL" },
-  { id: "jones",    expect: "אוטומצי" },
 ];
 
 const problems = [];

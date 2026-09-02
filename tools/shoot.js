@@ -25,6 +25,8 @@ const VIEWPORT = { width: 1280, height: 800 };
  * opens on a login screen gets walked past it - a preview of a login form
  * tells a visitor nothing about the project behind it.
  */
+// Only the projects the portfolio still lists — Ruth removed the rest of the
+// live builds from the site on 2026-09-02.
 const TARGETS = [
   {
     id: "memory",
@@ -54,27 +56,20 @@ const TARGETS = [
       } catch (e) {}
     },
   },
-  { id: "country",  url: `${BASE}/ProjectFluter/`, wait: 7000, settle: searchCountry },
-  { id: "sqlsales", url: `${BASE}/sql-final-project/` },
-  { id: "jones",    url: `${BASE}/Project-Jones-Automation-Exercise/`, settle: seekVideo },
-
   {
     id: "helpdesk",
     url: `${BASE}/project/`,
     settle: async (page) => signIn(page, "admin@demo.com", "demo1234"),
   },
-  {
-    id: "todofull",
-    url: `${BASE}/practicode-3-todolists/`,
-    settle: async (page) => signIn(page, "demo", "demo"),
-  },
 ];
 
 /**
+ * (kept for when a video-bearing project returns to the list)
  * Headless Chromium will not autoplay, so the <video> element sits on a blank
  * first frame and the preview looks like a broken player. Seeking a few
  * seconds in forces a real frame to decode and paint.
  */
+// eslint-disable-next-line no-unused-vars
 async function seekVideo(page) {
   const video = page.locator("video");
   if (!(await video.count())) return;
