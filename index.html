@@ -2053,7 +2053,13 @@ RM.LIVE = {
   helpdesk: {url:"https://ruti-maman.github.io/project/",         shot:"shots/helpdesk.jpg",
              docs:"https://ruti-maman.github.io/helpdesk-api-main/",
              hint:{he:"התחברות: admin@demo.com · agent@demo.com · customer@demo.com — כל סיסמה תתקבל.",
-                   en:"Sign in: admin@demo.com · agent@demo.com · customer@demo.com — any password works."}}
+                   en:"Sign in: admin@demo.com · agent@demo.com · customer@demo.com — any password works."}},
+
+  // localOnly: the hover preview uses this real screenshot like every other
+  // project, but the click stays with the demo mount — the app itself lives
+  // on the viewer's machine (localhost:5000), not on Pages, so the LIVE
+  // iframe path would hand visitors a blank frame.
+  outlook:  {localOnly:true, url:"http://localhost:5000/", shot:"shots/outlook.jpg"}
 };
 })();
 </script>
@@ -3918,19 +3924,27 @@ RM.DEMOS.outlook = {
     if("ResizeObserver" in window) new ResizeObserver(fit).observe(stage);
   }
 
-  replica();
-
+  /* Decide BEFORE painting. Rendering the replica and swapping to the real
+     app a beat later reads as a glitch; a probe against localhost resolves in
+     milliseconds either way (refused connections fail instantly), so waiting
+     for it costs nothing and the full visual arrives in one piece. */
+  var decided = false;
+  function decide(isReal){
+    if(decided || !box.isConnected) return;
+    decided = true;
+    if(isReal) original(); else replica();
+  }
   try{
     var ctrl = ("AbortController" in window) ? new AbortController() : null;
-    var tmo = ctrl ? setTimeout(function(){ ctrl.abort(); }, 1200) : null;
+    var tmo = setTimeout(function(){
+      if(ctrl) ctrl.abort();
+      decide(false);
+    }, 1200);
     fetch(APP + "/health", ctrl ? {signal: ctrl.signal} : {})
       .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(j){
-        if(tmo) clearTimeout(tmo);
-        if(j && j.original && box.isConnected) original();
-      })
-      .catch(function(){ if(tmo) clearTimeout(tmo); });
-  }catch(err){}
+      .then(function(j){ clearTimeout(tmo); decide(!!(j && j.original)); })
+      .catch(function(){ clearTimeout(tmo); decide(false); });
+  }catch(err){ decide(false); }
  }
 };
 
@@ -4335,7 +4349,7 @@ function peekHTML(p){
     : '<div class="peek-stage peek-swap"><div class="mk"><div class="mk-in">'+MK[p.mk]+'</div></div></div>';
 
   var flag = lv
-    ? '<span class="peek-live"><i></i>'+esc(t.liveOn)+'</span>'
+    ? '<span class="peek-live"><i></i>'+esc(lv.localOnly ? t.usable : t.liveOn)+'</span>'
     : dem
     ? '<span class="peek-live"><i></i>'+esc(t.usable)+'</span>'
     : (p.demos.length ? '<span class="peek-live"><i></i>'+esc(t.liveDemo)+'</span>' : '');
@@ -4444,6 +4458,10 @@ function buildSheet(p){
   var t = d(), c = p[lang];
   var dem = RM.DEMOS[p.id];
   var lv  = RM.LIVE[p.id];
+  // a localOnly entry drives the hover preview but not this sheet: its app
+  // runs on the viewer's machine, so the demo mount (which probes for it and
+  // falls back honestly) is the right thing to open, not a public iframe
+  if(lv && lv.localOnly) lv = null;
 
   /* This is the click the preview was advertising: the deployed build itself,
      running in the page. Not a recreation of it. */
