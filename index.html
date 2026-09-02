@@ -3882,13 +3882,40 @@ RM.DEMOS.outlook = {
   }
 
   function original(){
+    /* Her page lays out for a real browser window (a 520px card centered on a
+       gradient, ~820px tall with the textarea and log). Squeezed into the card
+       at natural size only a blown-up corner shows. So: render it at a real
+       viewport - 860x840 - and scale that whole window down to the stage,
+       like a monitor showing another monitor. Transforms remap pointer
+       events, so the shrunken app stays fully clickable. */
+    var VW = 860, VH = 840;
     box.innerHTML =
         '<div class="drow"><span class="dpill" style="color:var(--ok)">● '
       +   (he?"האפליקציה המקורית רצה — זה ה-UI האמיתי, והטיוטות אמיתיות":"the original app is running — this is the real UI, and the drafts are real")
       + '</span></div>'
-      + '<div class="live-stage" style="aspect-ratio:4/3">'
-      +   '<iframe src="' + APP + '/" title="Outlook drafts" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff"></iframe>'
+      + '<div class="live-stage" id="olv" style="aspect-ratio:' + VW + '/' + VH + '">'
+      /* right/bottom:auto matters: the site's .live-stage iframe rule sets
+         inset:0, and in an RTL document an over-constrained absolute box
+         resolves from the RIGHT edge - shoving this one 160px off-canvas. */
+      +   '<iframe id="olf" src="' + APP + '/" title="Outlook drafts"'
+      +     ' style="position:absolute;top:0;left:0;right:auto;bottom:auto;'
+      +     'width:' + VW + 'px;height:' + VH + 'px;'
+      +     'border:0;background:#fff;transform-origin:top left"></iframe>'
       + '</div>';
+
+    var stage = box.querySelector("#olv"), frame = box.querySelector("#olf");
+    function fit(){
+      if(!stage.isConnected) return;
+      frame.style.transform = "scale(" + (stage.clientWidth / VW) + ")";
+    }
+    /* One early measurement can land mid-open-animation and freeze the wrong
+       scale (clipped left, dead strip right). Re-measure as things settle:
+       every frame burst is cheap, a wrong scale is not. */
+    fit();
+    requestAnimationFrame(fit);
+    frame.addEventListener("load", fit);
+    [200, 500, 900, 1500].forEach(function(ms){ setTimeout(fit, ms); });
+    if("ResizeObserver" in window) new ResizeObserver(fit).observe(stage);
   }
 
   replica();
