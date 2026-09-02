@@ -3037,23 +3037,35 @@ RM.DEMOS.textcli = {
  w:640,
  mount:function(box, lang){
   var he = HE(lang);
-  /* the deny rules are evaluated FIRST — a destructive phrasing must never
-     fall through to a harmless-looking match like "disk" */
+  /* Order is the safety model, twice over. The deny rule is evaluated FIRST —
+     a destructive phrasing must never fall through to a harmless-looking match
+     like "disk". And "עצור" sits before "צור" because plain substring matching
+     would otherwise read "stop the process" as "create". */
   var RULES = [
-    {k:["מחק","הסר","delete","format","wipe","destroy","rm -rf"], c:"rm -rf /", ok:false, d:{he:"פעולה הרסנית",en:"destructive action"}},
-    {k:["גדול","1gb","large","big","size"], c:"find / -type f -size +1G", ok:true,  d:{he:"חיפוש קבצים לפי גודל",en:"find files by size"}},
+    {k:["מחק","הסר","השמד","delete","remove","format","wipe","destroy","rm -rf"], c:"rm -rf /", ok:false, d:{he:"פעולה הרסנית",en:"destructive action"}},
+    {k:["עצור","תעצרי","kill","stop"],       c:"kill -TERM 4242",          ok:true,  d:{he:"עצירת תהליך בעדינות",en:"stop a process gracefully"}},
+    {k:["גדול","1gb","large","big","size"],  c:"find / -type f -size +1G", ok:true,  d:{he:"חיפוש קבצים לפי גודל",en:"find files by size"}},
     {k:["דיסק","disk","space","מקום"],       c:"df -h",                    ok:true,  d:{he:"שימוש בדיסק",en:"disk usage"}},
     {k:["תהליך","process","cpu","זיכרון","memory"], c:"ps aux --sort=-%cpu | head -10", ok:true, d:{he:"עשרת התהליכים הכבדים",en:"top ten processes"}},
     {k:["לוג","log","שגיאה","error"],        c:"grep -rn \"ERROR\" /var/log --include=*.log", ok:true, d:{he:"חיפוש שגיאות בלוגים",en:"grep errors in logs"}},
-    {k:["פורט","port","listen","רשת"],       c:"ss -tulpn",                ok:true,  d:{he:"פורטים פתוחים",en:"open ports"}},
-    {k:["git","קומיט","commit"],             c:"git log --oneline -10",    ok:true,  d:{he:"עשרת הקומיטים האחרונים",en:"last ten commits"}}
+    {k:["פורט","port","listen"],             c:"ss -tulpn",                ok:true,  d:{he:"פורטים פתוחים",en:"open ports"}},
+    {k:["git","קומיט","commit"],             c:"git log --oneline -10",    ok:true,  d:{he:"עשרת הקומיטים האחרונים",en:"last ten commits"}},
+    {k:["תיקיה","תיקייה","folder","directory","mkdir"], c:"mkdir -p projects/new-folder", ok:true, d:{he:"יצירת תיקיה",en:"create a folder"}},
+    {k:["קובץ חדש","צור קובץ","צרי קובץ","new file","create file","touch"], c:"touch notes.txt", ok:true, d:{he:"יצירת קובץ",en:"create a file"}},
+    {k:["העתק","העתיקי","copy"],             c:"cp report.pdf backup/",    ok:true,  d:{he:"העתקת קובץ",en:"copy a file"}},
+    {k:["העבר","הזז","שנה שם","move","rename"], c:"mv old-name.txt new-name.txt", ok:true, d:{he:"העברה או שינוי שם",en:"move or rename"}},
+    {k:["הצג קבצים","רשימת קבצים","אילו קבצים","list files","show files"], c:"ls -lah", ok:true, d:{he:"רשימת הקבצים",en:"list the files"}},
+    {k:["דחוס","דחיסה","zip","compress"],    c:"tar -czf archive.tar.gz ./folder", ok:true, d:{he:"דחיסה לארכיון",en:"compress to an archive"}},
+    {k:["חלץ","unzip","extract"],            c:"tar -xzf archive.tar.gz",  ok:true,  d:{he:"חילוץ ארכיון",en:"extract an archive"}},
+    {k:["הורד","הורידי","תוריד","להוריד","download","wget"], c:"curl -LO https://example.com/data.csv", ok:true, d:{he:"הורדת קובץ",en:"download a file"}},
+    {k:["חיבור","אינטרנט","ping"],           c:"ping -c 4 8.8.8.8",        ok:true,  d:{he:"בדיקת חיבור",en:"connectivity check"}}
   ];
   box.innerHTML = '<div class="drow"><input class="dinp" id="q" placeholder="'
     + (he?"למשל: מצא קבצים גדולים מ-1GB":"e.g. find files larger than 1GB") + '"></div>'
     + '<div class="dsug">'
     + (he
-       ? ['מצא קבצים גדולים מ-1GB','כמה מקום נשאר בדיסק','אילו תהליכים אוכלים CPU','חפש שגיאות בלוגים','מחק את כל הדיסק']
-       : ['find files larger than 1GB','how much disk space is left','which processes eat CPU','search errors in logs','delete the whole disk']
+       ? ['צור תיקיה חדשה','מצא קבצים גדולים מ-1GB','כמה מקום נשאר בדיסק','אילו תהליכים אוכלים CPU','חפש שגיאות בלוגים','מחק את כל הדיסק']
+       : ['create a new folder','find files larger than 1GB','how much disk space is left','which processes eat CPU','search errors in logs','delete the whole disk']
       ).map(function(x){ return "<button>"+esc(x)+"</button>"; }).join("")
     + "</div><div class='dlog' id='lg'></div>";
   var lg = box.querySelector("#lg"), q = box.querySelector("#q");

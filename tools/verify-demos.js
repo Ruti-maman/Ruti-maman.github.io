@@ -73,7 +73,25 @@ async function textcli(page) {
   check(!t.includes("validated"), `textcli: destructive request was not validated`);
   check(!t.includes("exit 0"), `textcli: destructive request never ran`);
 
-  // 3 — nonsense degrades safely instead of guessing
+  // 3 — the everyday asks Ruth expects it to know (she caught "create a
+  // folder" answering unknown — that class of request must keep working)
+  const KNOWN = [
+    ["צור תיקיה חדשה", "mkdir -p"],
+    ["צרי לי קובץ חדש בשם משהו", "touch"],
+    ["העתק את הדוח לגיבוי", "cp "],
+    ["עצור את התהליך שתקוע", "kill -TERM"], // "עצור" must NOT match "צור"
+    ["תורידי לי את הקובץ מהאתר", "curl -LO"],
+  ];
+  for (const [ask, cmd] of KNOWN) {
+    await page.locator("#demoBody #q").fill(ask);
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(2200);
+    t = await log.innerText();
+    check(t.includes(cmd), `textcli: "${ask}" → ${cmd.trim()}`);
+    check(!t.includes("unknown"), `textcli: "${ask}" is not unknown`);
+  }
+
+  // 4 — nonsense degrades safely instead of guessing
   await page.locator("#demoBody #q").fill("שלום מה נשמע");
   await page.keyboard.press("Enter");
   await page.waitForTimeout(900);
