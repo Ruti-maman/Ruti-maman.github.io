@@ -59,7 +59,8 @@ const TARGETS = [
   {
     id: "helpdesk",
     url: `${BASE}/project/`,
-    settle: async (page) => signIn(page, "admin@demo.com", "demo1234"),
+    // No sign-in on purpose: Ruth wants the preview to show the app's actual
+    // front door - the login screen - not a dashboard from mid-session.
   },
 ];
 
