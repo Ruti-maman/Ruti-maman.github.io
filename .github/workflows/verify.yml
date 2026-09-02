@@ -37,9 +37,11 @@ jobs:
         id: drive
         run: |
           set -o pipefail
-          node tools/verify-site.js 2>&1 | tee verify.log && code=0 || code=$?
+          node tools/verify-site.js  2>&1 | tee    verify.log && c1=0 || c1=$?
+          node tools/verify-demos.js 2>&1 | tee -a verify.log && c2=0 || c2=$?
+          code=0; [ "${c1:-1}" -ne 0 ] && code=1; [ "${c2:-1}" -ne 0 ] && code=1
           echo "code=$code" >> "$GITHUB_OUTPUT"
-          echo "verify-site.js exited $code"
+          echo "site=$c1 demos=$c2 -> $code"
 
       - name: Commit the evidence
         if: always()
