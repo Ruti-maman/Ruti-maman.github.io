@@ -25,3 +25,21 @@ PASS  memory: the app rendered content (62 chars)
 PASS  memory: shows its own UI (found "ברוכים")
 
 ALL CHECKS PASSED
+PASS  textcli: request became the right command
+PASS  textcli: command was checked against the allowlist
+PASS  textcli: sandboxed run finished
+PASS  textcli: destructive request was BLOCKED
+PASS  textcli: destructive request was not validated
+PASS  textcli: destructive request never ran
+PASS  textcli: an unmatched request says so instead of inventing a command
+PASS  outlook: empty subject rejected with 400
+PASS  outlook: the client actually POSTs
+PASS  outlook: the Win32 hop is shown
+PASS  outlook: creation returns 201
+PASS  outlook: the meeting appears in the calendar
+PASS  outlook: calendar shows the subject
+PASS  outlook: calendar shows the chosen hour
+PASS  outlook: delete hits the endpoint
+PASS  outlook: the calendar is empty again
+
+ALL DEMO CHECKS PASSED
