@@ -105,45 +105,35 @@ async function textcli(page) {
 }
 
 async function outlook(page) {
+  // The demo now mirrors Ruth's real parktikode-3 app: recipients + subject +
+  // body + attachment → one Outlook mail draft per recipient. In CI there is
+  // no local app on :5000, so this always exercises the replica path.
   await openDemo(page, "outlook");
   const log = page.locator("#demoBody .dlog");
   const boxSel = "#demoBody";
 
-  // 1 — an empty subject is rejected like the real service would
+  // 1 — no recipients is rejected exactly like her Flask endpoint rejects it
   await page.locator(`${boxSel} #go`).click();
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(700);
   let t = await log.innerText();
-  check(t.includes("400"), `outlook: empty subject rejected with 400`);
+  check(t.includes("400"), `outlook: empty recipients rejected with 400`);
+  check(t.includes("No recipients"), `outlook: the error is her API's actual error`);
 
-  // 2 — a real meeting flows through the chain and lands in the calendar
-  await page.locator(`${boxSel} #sub`).fill("פגישת צוות שבועית");
-  await page.locator(`${boxSel} #hr`).selectOption("13:00");
+  // 2 — two recipients, subject, attachment → a draft per recipient
+  await page.locator(`${boxSel} #rcp`).fill("dana@example.com; noa@example.com");
+  await page.locator(`${boxSel} #sub`).fill("קורות חיים — רות ממן");
+  await page.locator(`${boxSel} #att`).click();
   await page.locator(`${boxSel} #go`).click();
-  await page.waitForTimeout(1600); // the React→:8765→Win32→Outlook animation
+  await page.waitForTimeout(1800);
   t = await log.innerText();
-  check(t.includes("POST"), `outlook: the client actually POSTs`);
-  check(t.includes("win32com"), `outlook: the Win32 hop is shown`);
-  check(t.includes("201"), `outlook: creation returns 201`);
+  check(t.includes("POST"), `outlook: the form actually POSTs to /drafts`);
+  check(t.includes("win32com"), `outlook: the win32com hop is shown`);
+  check(t.includes("Attachments.Add"), `outlook: the attachment is attached`);
+  check(t.includes("dana@example.com"), `outlook: a draft opened for the first recipient`);
+  check(t.includes("noa@example.com"), `outlook: a draft opened for the second recipient`);
+  check(t.includes('"recipients_count": 2'), `outlook: her API's response shape, count 2`);
 
-  const card = page.locator(`${boxSel} .dcard`);
-  check((await card.count()) === 1, `outlook: the meeting appears in the calendar`);
-  const cardText = await card.innerText();
-  check(cardText.includes("פגישת צוות שבועית"), `outlook: calendar shows the subject`);
-  check(cardText.includes("13:00"), `outlook: calendar shows the chosen hour`);
-
-  await page.screenshot({ path: path.join(OUT, "31-outlook-created.png") });
-
-  // 3 — deleting removes it and logs the DELETE
-  await page.locator(`${boxSel} .dcard button[data-del]`).click();
-  await page.waitForTimeout(400);
-  t = await log.innerText();
-  check(t.includes("DELETE /appointment"), `outlook: delete hits the endpoint`);
-  check(
-    (await page.locator(`${boxSel} .dcard`).count()) === 0,
-    `outlook: the calendar is empty again`
-  );
-
-  await page.screenshot({ path: path.join(OUT, "32-outlook-deleted.png") });
+  await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 }
 
 (async () => {

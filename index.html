@@ -1998,22 +1998,23 @@ RM.PROJECTS = [
        "Designed for real-time response, not only for a correct answer."]},
  stack:["Python","Docker","LLM inference","CLI design"]},
 
-{id:"outlook", cats:["backend"], hue:"#46B4D8", mk:"outlook", src:"cv", repos:[], demos:[],
- he:{cat:"בקאנד · מערכות", title:"שער Outlook מקומי",
-  pitch:"מיקרו-סרוויס שמחבר קליינט React ל-Outlook שמותקן על המכונה, דרך Win32 API.",
-  desc:"שירות Python שרץ מקומית וחושף API לדפדפן, ומתחתיו שכבת תקשורת ברמת המערכת מול Outlook. כך אפליקציית ווב יכולה ליצור ולעדכן פריטים ב-Outlook בזמן אמת, בלי תוסף לדפדפן ובלי שרת ארגוני באמצע.",
-  flow:["React","local API","Win32","Outlook"],
-  bul:["עבודה מול Win32 מ-Python, כולל התנהגות בסשנים ארוכים.",
-       "גבול ברור בין הדפדפן לשירות המקומי, כדי לשמור על יציבות תחת קריאות תכופות.",
-       "אין תלות בהרשאות ענן — הכול קורה על המכונה של המשתמש."]},
- en:{cat:"Backend · Systems", title:"Outlook Local Gateway",
-  pitch:"A micro-service connecting a React client to the Outlook installed on the machine, through the Win32 API.",
-  desc:"A Python service running locally and exposing an API to the browser, with a system-level communication layer to Outlook underneath. A web app can create and update Outlook items in real time — no browser extension, no enterprise server in the middle.",
-  flow:["React","local API","Win32","Outlook"],
-  bul:["Working against Win32 from Python, including behavior across long-lived sessions.",
-       "A clear boundary between browser and local service, to stay stable under frequent calls.",
-       "No cloud permissions required — everything happens on the user's own machine."]},
- stack:["Python","Win32 API","REST","React client"]},
+{id:"outlook", cats:["backend"], hue:"#46B4D8", mk:"outlook", src:"gh",
+ repos:[{n:"parktikode-3",u:GH+"parktikode-3"}], demos:[],
+ he:{cat:"בקאנד · מערכות", title:"טיוטות Outlook מהדפדפן",
+  pitch:"אפליקציית ווב שיוצרת טיוטות מייל אמיתיות ב-Outlook — לכמה נמענים בבת אחת, כולל קובץ מצורף.",
+  desc:"שרת Flask שרץ מקומית וחושף API לדפדפן, ומתחתיו win32com שמדבר ישירות עם ה-Outlook שמותקן על המכונה. ממלאים בטופס נמענים, נושא, גוף הודעה וקובץ (למשל קורות חיים) — ולכל נמען נפתחת טיוטה מוכנה ב-Outlook, לבדיקה אחרונה לפני שליחה. בלי תוסף לדפדפן ובלי שרת ארגוני באמצע.",
+  flow:["טופס","POST /drafts","win32com","Outlook"],
+  bul:["קובץ מצורף עובר כ-base64, נשמר זמנית ומוצמד לכל טיוטה — ונמחק מיד אחרי.",
+       "טיוטות ולא שליחה: הכלי מכין, הבן-אדם מאשר. גבול בטיחות מכוון.",
+       "אין תלות בהרשאות ענן — הכול קורה על המכונה של המשתמש, דרך COM."]},
+ en:{cat:"Backend · Systems", title:"Outlook Drafts from the Browser",
+  pitch:"A web app that creates real mail drafts in Outlook — for several recipients at once, attachment included.",
+  desc:"A Flask server running locally exposes an API to the browser, with win32com underneath talking directly to the Outlook installed on the machine. Fill in recipients, subject, body and a file (a CV, say) — and every recipient gets a ready draft opened in Outlook for a final look before sending. No browser extension, no enterprise server in the middle.",
+  flow:["form","POST /drafts","win32com","Outlook"],
+  bul:["The attachment travels as base64, is written to a temp file, attached to every draft — then deleted.",
+       "Drafts, not sending: the tool prepares, the human approves. A deliberate safety boundary.",
+       "No cloud permissions required — everything happens on the user's own machine, over COM."]},
+ stack:["Python","Flask","win32com","JavaScript","HTML/CSS"]},
 
 {id:"memory", cats:["frontend"], hue:"#F2718F", mk:"memory", src:"gh",
  repos:[{n:"memory-game",u:GH+"memory-game"}], demos:[],
@@ -3797,133 +3798,112 @@ RM.DEMOS.hcm = {
  }
 };
 
-/* ─────────── 16. OUTLOOK GATEWAY — click the client, watch Win32 ─────────── */
+/* ─────────── 16. OUTLOOK DRAFTS — parktikode-3: her app, or a faithful replica ─────────── */
 RM.DEMOS.outlook = {
- label:{he:"השער — צרו פגישה מהקליינט",en:"The gateway — create a meeting from the client"},
+ label:{he:"האפליקציה שלי — טיוטות ל-Outlook",en:"My app — drafts into Outlook"},
  w:700,
  mount:function(box, lang){
   var he = HE(lang);
-  var items = [];
 
-  /* When the local gateway (gateway/outlook_gateway.py) answers on :8765,
-     this demo stops simulating: create writes a real draft into the local
-     Outlook, delete removes it. Visitors without the service see the
-     simulation — a public page cannot reach into anyone's Outlook, and the
-     probe failing silently is the correct behaviour, not an error. */
-  var GW = "http://127.0.0.1:8765", real = false;
+  /* The real thing is a local Flask app (parktikode-3, port 5000) driving the
+     machine's Outlook over win32com. When it answers, the card swaps to an
+     iframe of the ORIGINAL UI — real drafts, attachments and all. Visitors
+     without it get this replica of the same form, simulated; a public page
+     cannot reach into anyone's Outlook, so silence on the probe is the
+     correct visitor experience, not an error. */
+  var APP = "http://localhost:5000";
 
-  box.innerHTML = '<div class="drow"><input class="dinp" id="sub" placeholder="'+(he?"נושא הפגישה…":"meeting subject…")+'">'
-    + '<select class="dsel" id="hr">'+["09:00","10:30","13:00","15:30"].map(function(h){ return "<option>"+h+"</option>"; }).join("")+"</select>"
-    + '<button class="dbtn go" id="go">'+(he?"יצירה":"Create")+"</button></div>"
-    + '<div class="dg" style="display:flex; gap:.4rem; align-items:center">'
-    +   '<span class="bx h" id="n1">React</span><span class="ar">›</span>'
-    +   '<span class="bx" id="n2">:8765</span><span class="ar">›</span>'
-    +   '<span class="bx" id="n3">Win32</span><span class="ar">›</span>'
-    +   '<span class="bx" id="n4">Outlook</span>'
-    + "</div>"
-    + '<div class="drow" id="gwrow" style="display:none">'
-    +   '<span class="dpill" style="color:var(--ok)">● '
-    +   (he?"מחובר ל-Outlook אמיתי — כל יצירה שומרת טיוטה אמיתית":"connected to the real Outlook — every create saves a real draft")
-    +   "</span></div>"
-    + '<div id="cal" style="display:grid; gap:.35rem"></div>'
-    + '<div class="dlog" id="lg"></div>';
-  var lg = box.querySelector("#lg");
-  function paint(){
-    box.querySelector("#cal").innerHTML = items.length
-      ? items.map(function(x){ return '<div class="dcard"><span class="dpill">'+x.h+'</span><span class="tx">'+esc(x.s)+"</span>"
-          + '<button data-del="'+x.id+'">×</button></div>'; }).join("")
-      : '<p class="dempty">'+(he?"אין פריטים ביומן המקומי":"no items in the local calendar")+"</p>";
-  }
-  function flash(id, ms){
-    var n = box.querySelector(id); if(!n) return;
-    n.classList.add("h");
-    setTimeout(function(){ if(box.isConnected && id !== "#n1") n.classList.remove("h"); }, ms);
-  }
-  var nid = 1;
-  box.addEventListener("click", function(e){
-    var b = e.target.closest("button"); if(!b) return;
+  function replica(){
+    box.innerHTML =
+        '<div class="dg" style="display:flex; gap:.4rem; align-items:center">'
+      +   '<span class="bx h">' + (he?"טופס":"form") + '</span><span class="ar">›</span>'
+      +   '<span class="bx">POST /drafts</span><span class="ar">›</span>'
+      +   '<span class="bx">win32com</span><span class="ar">›</span>'
+      +   '<span class="bx">Outlook</span>'
+      + '</div>'
+      + '<div class="drow"><input class="dinp" id="rcp" placeholder="'
+      +   (he?"נמענים, מופרדים בפסיק או נקודה-פסיק":"recipients, comma or semicolon separated") + '"></div>'
+      + '<div class="drow"><input class="dinp" id="sub" placeholder="' + (he?"נושא":"subject") + '">'
+      +   '<input class="dinp" id="bod" placeholder="' + (he?"גוף ההודעה":"message body") + '"></div>'
+      + '<div class="drow">'
+      +   '<span class="dpill mu">' + (he?"קובץ מצורף (קורות חיים)":"attachment (a CV)") + '</span>'
+      +   '<button class="dbtn" id="att" type="button">' + (he?"בחירת קובץ":"choose file") + '</button>'
+      +   '<span class="dpill mu" id="attname" style="display:none"></span>'
+      +   '<button class="dbtn go" id="go" type="button">' + (he?"שלח ל-Outlook":"Send to Outlook") + '</button>'
+      + '</div>'
+      + '<div class="dlog" id="lg"></div>';
 
-    if(b.dataset.del){
-      if(real){
-        log(lg,"","DELETE /item/&hellip;");
-        fetch(GW+"/item/"+b.dataset.del, {method:"DELETE"}).then(function(r){
-          if(!box.isConnected) return;
-          if(r.ok){
-            items = items.filter(function(x){ return x.id != b.dataset.del; });
-            log(lg,"g","200 OK &mdash; "+(he?"הטיוטה נמחקה מה-Outlook":"the draft was removed from Outlook"));
-            paint();
-          } else log(lg,"r", r.status+" &mdash; gateway refused");
-        }).catch(function(){ log(lg,"r","gateway unreachable"); });
+    var lg = box.querySelector("#lg"), attached = null;
+
+    box.querySelector("#att").addEventListener("click", function(){
+      attached = "CV-Ruth-Maman.pdf";
+      var n = box.querySelector("#attname");
+      n.textContent = "📎 " + attached;
+      n.style.display = "";
+    });
+
+    box.querySelector("#go").addEventListener("click", function(){
+      lg.innerHTML = "";
+      var rcps = (box.querySelector("#rcp").value || "")
+        .split(/[;,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
+      var sub = box.querySelector("#sub").value.trim();
+
+      log(lg, "d", "POST " + APP + "/drafts");
+      if(!rcps.length){
+        setTimeout(function(){
+          log(lg, "r", '400 &mdash; {"error": "No recipients provided"}');
+        }, 300);
         return;
       }
-      items = items.filter(function(x){ return x.id != b.dataset.del; });
-      log(lg,"g","200 OK &mdash; DELETE /appointment/"+b.dataset.del); paint(); return;
-    }
-
-    if(b.id !== "go") return;
-    var s = box.querySelector("#sub").value.trim(), h = box.querySelector("#hr").value;
-    if(!s){ log(lg,"a","400 &mdash; subject is required"); return; }
-
-    if(real){
-      log(lg,"","POST http://127.0.0.1:8765/item");
-      flash("#n2", 700);
-      fetch(GW+"/item", {method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({subject:s, hour:h})
-      }).then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
-      .then(function(it){
-        if(!box.isConnected) return;
-        flash("#n3", 700);
-        log(lg,"d","  win32com: Outlook.Application &rarr; CreateItem(olMailItem).Save()");
-        flash("#n4", 900);
-        items.push({id:it.id, s:it.subject, h:it.hour});
-        box.querySelector("#sub").value = "";
-        log(lg,"g","201 Created &mdash; "+(he?"טיוטה אמיתית נשמרה ב-Outlook (תיקיית טיוטות)":"a real draft is now in Outlook (Drafts)"));
-        paint();
-      }).catch(function(code){ log(lg,"r",(code||"error")+" &mdash; gateway failed"); });
-      return;
-    }
-
-    log(lg,"","POST http://127.0.0.1:8765/appointment");
-    flash("#n2", 700);
-    setTimeout(function(){
-      if(!box.isConnected) return;
-      flash("#n3", 700);
-      log(lg,"d","  win32com: Outlook.Application &rarr; CreateItem(olAppointmentItem)");
       setTimeout(function(){
-        if(!box.isConnected) return;
-        flash("#n4", 900);
-        items.push({id:nid++, s:s, h:h});
-        box.querySelector("#sub").value = "";
-        log(lg,"g","201 Created &mdash; item saved in the local Outlook");
-        paint();
-      }, 420);
-    }, 380);
-  });
-  paint();
+        log(lg, "", "  win32com: Outlook.Application &rarr; CreateItem(olMailItem)");
+        if(attached) log(lg, "", "  Attachments.Add(" + esc(attached) + ")");
+        var i = 0;
+        (function next(){
+          if(!box.isConnected) return;
+          if(i >= rcps.length){
+            log(lg, "g", '200 &mdash; {"status": "ok", "recipients_count": ' + rcps.length + "}");
+            log(lg, "d", he
+              ? "בהרצה אמיתית: " + rcps.length + " חלונות טיוטה נפתחים עכשיו ב-Outlook."
+              : "In a real run: " + rcps.length + " draft windows open in Outlook right now.");
+            return;
+          }
+          log(lg, "g", "  &#10003; Display() &mdash; "
+            + (he?"טיוטה נפתחה עבור ":"draft opened for ") + esc(rcps[i])
+            + (sub ? ' &mdash; "' + esc(sub) + '"' : ""));
+          i++; setTimeout(next, 260);
+        })();
+      }, 340);
+    });
 
-  /* probe the gateway; silence on failure is the visitor experience */
+    log(lg, "d", he
+      ? "שחזור של הטופס המקורי. ההרצה האמיתית — כשהאפליקציה המקומית רצה על המכונה (python gateway/run_original.py)."
+      : "A replica of the original form. The real run happens when the local app is up (python gateway/run_original.py).");
+  }
+
+  function original(){
+    box.innerHTML =
+        '<div class="drow"><span class="dpill" style="color:var(--ok)">● '
+      +   (he?"האפליקציה המקורית רצה — זה ה-UI האמיתי, והטיוטות אמיתיות":"the original app is running — this is the real UI, and the drafts are real")
+      + '</span></div>'
+      + '<div class="live-stage" style="aspect-ratio:4/3">'
+      +   '<iframe src="' + APP + '/" title="Outlook drafts" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff"></iframe>'
+      + '</div>';
+  }
+
+  replica();
+
   try{
     var ctrl = ("AbortController" in window) ? new AbortController() : null;
     var tmo = ctrl ? setTimeout(function(){ ctrl.abort(); }, 1200) : null;
-    fetch(GW+"/health", ctrl ? {signal:ctrl.signal} : {})
+    fetch(APP + "/health", ctrl ? {signal: ctrl.signal} : {})
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
         if(tmo) clearTimeout(tmo);
-        if(!j || !j.gateway || !box.isConnected) return;
-        real = true;
-        box.querySelector("#gwrow").style.display = "";
-        log(lg,"g", he?"השער המקומי מחובר — עובדים מול Outlook אמיתי":"local gateway detected — working against the real Outlook");
-        return fetch(GW+"/items").then(function(r){ return r.json(); }).then(function(list){
-          if(!box.isConnected || !list) return;
-          items = list.map(function(x){ return {id:x.id, s:x.subject, h:x.hour||""}; });
-          paint();
-        });
+        if(j && j.original && box.isConnected) original();
       })
       .catch(function(){ if(tmo) clearTimeout(tmo); });
   }catch(err){}
-  log(lg,"d", he ? "הקליינט בדפדפן, השירות מקומי, ו-Outlook על המכונה. בלי ענן באמצע."
-                 : "The client is in the browser, the service is local, Outlook is on the machine. No cloud in between.");
  }
 };
 
