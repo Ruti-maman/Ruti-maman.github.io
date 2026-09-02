@@ -4552,12 +4552,24 @@ function openSheet(id, fromEl){
       catch(err){ body.innerHTML = '<p class="dempty">' + esc(d().demoFail) + '</p>'; }
     }
   };
-  setTimeout(function(){
+  /* The sheet's content is written inside the view transition, and 420ms was
+     a guess about when that finishes. Guess wrong - a busy main thread, a slow
+     device - and $("demoBody") does not exist yet, so the demo silently never
+     mounts and the card opens empty. Wait for the content itself instead,
+     bounded so an immediately-closed sheet cannot leave a zombie poller. */
+  var tries = 0, armAt = Date.now() + (reduce ? 0 : 420);
+  (function armSheet(){
     var sh = $("sheet");
+    // both gates: the content exists, and the open animation had its 420ms -
+    // stripping the view-transition style mid-flight cuts the animation short
+    if(!sh.innerHTML || Date.now() < armAt){
+      if(++tries < 40) setTimeout(armSheet, 120);
+      return;
+    }
     sh.setAttribute("style","--h:"+p.hue);
     var x = $("xBtn"); if(x){ x.addEventListener("click", closeSheet); x.focus(); }
     mountNow();
-  }, reduce ? 0 : 420);
+  })();
 }
 
 function closeSheet(){
