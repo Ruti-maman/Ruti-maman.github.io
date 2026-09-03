@@ -3855,7 +3855,7 @@ RM.DEMOS.outlook = {
       + '</div>'
       + '<script>'
       + 'var form=document.getElementById("mailForm"),log=document.getElementById("log");'
-      + 'function logMsg(m){log.textContent+=m+"\n";}'
+      + 'function logMsg(m){log.textContent+=m+String.fromCharCode(10);}'
       + 'form.addEventListener("submit",function(e){'
       +   'e.preventDefault();'
       +   'var raw=document.getElementById("recipients").value.trim();'
