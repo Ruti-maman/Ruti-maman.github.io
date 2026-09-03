@@ -13,20 +13,22 @@ PASS  taskman: preview renders a real screenshot
 PASS  taskman: the screenshot file loaded (naturalWidth=1920)
 PASS  taskman: preview holds 16/10 (measured 1.596)
 PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/)
-PASS  taskman: the loading veil lifted
+FAIL  taskman: the loading veil lifted
 PASS  taskman: the app rendered content (101 chars)
 PASS  taskman: shows its own UI (found "Welcome")
 PASS  memory: preview renders a real screenshot
 PASS  memory: the screenshot file loaded (naturalWidth=1920)
 PASS  memory: preview holds 16/10 (measured 1.596)
 PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
-PASS  memory: the loading veil lifted
+FAIL  memory: the loading veil lifted
 PASS  memory: the app rendered content (62 chars)
 PASS  memory: shows its own UI (found "ברוכים")
 
-ALL CHECKS PASSED
+2 PROBLEM(S)
+  - taskman: the loading veil lifted
+  - memory: the loading veil lifted
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 272995"
+PASS  isolation: client A created "בידוד 222354"
 PASS  auth: a wrong password is rejected
 PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
@@ -49,16 +51,15 @@ PASS  textcli: "עצור את התהליך שתקוע" is not unknown
 PASS  textcli: "תורידי לי את הקובץ מהאתר" → curl -LO
 PASS  textcli: "תורידי לי את הקובץ מהאתר" is not unknown
 PASS  textcli: an unmatched request says so instead of inventing a command
-PASS  outlook: empty recipients rejected with 400
-PASS  outlook: the error is her API's actual error
-PASS  outlook: the form actually POSTs to /drafts
-PASS  outlook: the win32com hop is shown
-PASS  outlook: the attachment is attached
-PASS  outlook: a draft opened for the first recipient
-PASS  outlook: a draft opened for the second recipient
-PASS  outlook: her API's response shape, count 2
-PASS  outlook: a real mailto draft was triggered
-PASS  outlook: the draft carries both recipients
-PASS  outlook: the draft carries the subject
+PASS  outlook: HER page renders - the real heading
+PASS  outlook: her turquoise gradient is painted
+FAIL  outlook: empty recipients rejected with the API error
+FAIL  outlook: the log confirms a real draft opened
+FAIL  outlook: the full-version pipeline is narrated
+FAIL  outlook: crashed (TimeoutError: locator.getAttribute: Timeout 30000ms exceeded.)
 
-ALL DEMO CHECKS PASSED
+4 PROBLEM(S)
+  - outlook: empty recipients rejected with the API error
+  - outlook: the log confirms a real draft opened
+  - outlook: the full-version pipeline is narrated
+  - outlook: crashed (TimeoutError: locator.getAttribute: Timeout 30000ms exceeded.)
