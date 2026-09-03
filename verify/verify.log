@@ -26,7 +26,7 @@ PASS  memory: shows its own UI (found "ברוכים")
 
 ALL CHECKS PASSED
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 571845"
+PASS  isolation: client A created "בידוד 272995"
 PASS  auth: a wrong password is rejected
 PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
@@ -57,5 +57,8 @@ PASS  outlook: the attachment is attached
 PASS  outlook: a draft opened for the first recipient
 PASS  outlook: a draft opened for the second recipient
 PASS  outlook: her API's response shape, count 2
+PASS  outlook: a real mailto draft was triggered
+PASS  outlook: the draft carries both recipients
+PASS  outlook: the draft carries the subject
 
 ALL DEMO CHECKS PASSED
