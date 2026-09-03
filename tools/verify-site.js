@@ -24,7 +24,7 @@ const OUT = path.join(__dirname, "..", "verify");
 // and "the app works".
 const CASES = [
   { id: "helpdesk", expect: "התחברות" },
-  { id: "taskman",  expect: "Tasks" },
+  { id: "taskman",  expect: "Welcome" },
   { id: "memory",   expect: "ברוכים" },
 ];
 

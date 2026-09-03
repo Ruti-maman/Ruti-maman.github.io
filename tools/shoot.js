@@ -36,25 +36,9 @@ const TARGETS = [
   },
   {
     id: "taskman",
-    // Straight to the board. The app has no route guards, so this renders
-    // without a login — but it is a deep link, which Pages answers from
-    // 404.html with an actual 404 status even though the page is fine.
-    url: `${BASE}/Task-manager/teams/1/projects/1/tasks`,
-    allowNotOk: true,
-    waitFor: ".task-card",
-    init: () => {
-      try {
-        // Only the header name reads this; without it the title says "User's".
-        localStorage.setItem("auth_token", "demo");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ id: 1, name: "רותי", email: "demo@taskmanager.dev" })
-        );
-        // Let the interceptor reseed, so a previous run cannot leave the
-        // board in a mutated state and make the screenshot drift.
-        localStorage.removeItem("taskman-demo-db");
-      } catch (e) {}
-    },
+    url: `${BASE}/Task-manager/`,
+    // No deep link and no sign-in: Ruth wants the preview to show the app's
+    // front door - the login screen - like the other projects.
   },
   {
     id: "helpdesk",
