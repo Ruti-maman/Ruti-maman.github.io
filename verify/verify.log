@@ -12,10 +12,10 @@ PASS  helpdesk: shows its own UI (found "התחברות")
 PASS  taskman: preview renders a real screenshot
 PASS  taskman: the screenshot file loaded (naturalWidth=1920)
 PASS  taskman: preview holds 16/10 (measured 1.596)
-PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/teams/1/projects/1/tasks)
+PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/)
 PASS  taskman: the loading veil lifted
-PASS  taskman: the app rendered content (582 chars)
-PASS  taskman: shows its own UI (found "Tasks")
+PASS  taskman: the app rendered content (101 chars)
+PASS  taskman: shows its own UI (found "Welcome")
 PASS  memory: preview renders a real screenshot
 PASS  memory: the screenshot file loaded (naturalWidth=1920)
 PASS  memory: preview holds 16/10 (measured 1.596)
