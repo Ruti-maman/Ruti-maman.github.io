@@ -105,47 +105,46 @@ async function textcli(page) {
 }
 
 async function outlook(page) {
-  // The demo now mirrors Ruth's real parktikode-3 app: recipients + subject +
-  // body + attachment → one Outlook mail draft per recipient. In CI there is
-  // no local app on :5000, so this always exercises the replica path.
-  await openDemo(page, "outlook");
-  const log = page.locator("#demoBody .dlog");
-  const boxSel = "#demoBody";
+  // The card embeds Ruth's ORIGINAL page (parktikode-3) in a srcdoc iframe -
+  // same HTML, same turquoise design - and submit opens a REAL draft via
+  // mailto in the visitor's own mail client. Drive the form inside the frame.
+  await page.locator('.itm[data-id="outlook"]').click();
+  await page.waitForSelector("#demoBody iframe", { timeout: 15000 });
+  await page.waitForTimeout(1200);
 
-  // 1 — no recipients is rejected exactly like her Flask endpoint rejects it
-  await page.locator(`${boxSel} #go`).click();
-  await page.waitForTimeout(700);
-  let t = await log.innerText();
-  check(t.includes("400"), `outlook: empty recipients rejected with 400`);
-  check(t.includes("No recipients"), `outlook: the error is her API's actual error`);
+  const app = page.frameLocator("#demoBody iframe");
+  check(
+    (await app.locator("h2").innerText()).includes("שליחת טיוטות"),
+    `outlook: HER page renders - the real heading`
+  );
+  const bg = await app.locator("body").evaluate((b) => getComputedStyle(b).backgroundImage);
+  check(bg.includes("gradient"), `outlook: her turquoise gradient is painted`);
 
-  // 2 — two recipients, subject, attachment → a draft per recipient
-  await page.locator(`${boxSel} #rcp`).fill("dana@example.com; noa@example.com");
-  await page.locator(`${boxSel} #sub`).fill("קורות חיים — רות ממן");
-  await page.locator(`${boxSel} #att`).click();
-  await page.locator(`${boxSel} #go`).click();
-  await page.waitForTimeout(1800);
-  t = await log.innerText();
-  check(t.includes("POST"), `outlook: the form actually POSTs to /drafts`);
-  check(t.includes("win32com"), `outlook: the win32com hop is shown`);
-  check(t.includes("Attachments.Add"), `outlook: the attachment is attached`);
-  check(t.includes("dana@example.com"), `outlook: a draft opened for the first recipient`);
-  check(t.includes("noa@example.com"), `outlook: a draft opened for the second recipient`);
-  check(t.includes('"recipients_count": 2'), `outlook: her API's response shape, count 2`);
+  // 1 - no recipients is rejected with her API's error
+  await app.locator("button[type=submit]").click();
+  await page.waitForTimeout(600);
+  let t = await app.locator("#log").innerText();
+  check(t.includes("400") && t.includes("No recipients"), `outlook: empty recipients rejected with the API error`);
 
-  // the REAL part: a mailto draft assembled for the visitor's own mail client
-  const mlt = page.locator(`${boxSel} #mlt`);
-  check((await mlt.count()) > 0, `outlook: a real mailto draft was triggered`);
-  if (await mlt.count()) {
-    const href = (await mlt.first().getAttribute("href")) || "";
-    check(
-      href.startsWith("mailto:") &&
-        href.includes("dana%40example.com") &&
-        href.includes("noa%40example.com"),
-      `outlook: the draft carries both recipients`
-    );
-    check(href.includes("subject="), `outlook: the draft carries the subject`);
-  }
+  // 2 - two recipients + subject: a REAL mailto draft for the visitor
+  await app.locator("#recipients").fill("dana@example.com; noa@example.com");
+  await app.locator("#subject").fill("קורות חיים — רות ממן");
+  await app.locator("#body").fill("שלום, מצרפת קורות חיים.");
+  await app.locator("button[type=submit]").click();
+  await page.waitForTimeout(800);
+
+  t = await app.locator("#log").innerText();
+  check(t.includes("טיוטה אמיתית נפתחה"), `outlook: the log confirms a real draft opened`);
+  check(t.includes("win32com"), `outlook: the full-version pipeline is narrated`);
+
+  const href = (await app.locator("#mlt").getAttribute("href")) || "";
+  check(
+    href.startsWith("mailto:") &&
+      href.includes("dana%40example.com") &&
+      href.includes("noa%40example.com"),
+    `outlook: the draft carries both recipients`
+  );
+  check(href.includes("subject="), `outlook: the draft carries the subject`);
 
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 }

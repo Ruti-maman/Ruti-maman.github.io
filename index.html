@@ -3820,141 +3820,77 @@ RM.DEMOS.hcm = {
  }
 };
 
-/* ─────────── 16. OUTLOOK DRAFTS — parktikode-3: her app, or a faithful replica ─────────── */
+/* ─────────── 16. OUTLOOK DRAFTS — parktikode-3: her UI everywhere, real drafts ─────────── */
 RM.DEMOS.outlook = {
  label:{he:"האפליקציה שלי — טיוטות ל-Outlook",en:"My app — drafts into Outlook"},
  w:700,
  mount:function(box, lang){
   var he = HE(lang);
-
-  /* The real thing is a local Flask app (parktikode-3, port 5000) driving the
-     machine's Outlook over win32com. When it answers, the card swaps to an
-     iframe of the ORIGINAL UI — real drafts, attachments and all. Visitors
-     without it get this replica of the same form, simulated; a public page
-     cannot reach into anyone's Outlook, so silence on the probe is the
-     correct visitor experience, not an error. */
   var APP = "http://localhost:5000";
 
-  function replica(){
-    box.innerHTML =
-        '<div class="dg" style="display:flex; gap:.4rem; align-items:center">'
-      +   '<span class="bx h">' + (he?"טופס":"form") + '</span><span class="ar">›</span>'
-      +   '<span class="bx">POST /drafts</span><span class="ar">›</span>'
-      +   '<span class="bx">win32com</span><span class="ar">›</span>'
-      +   '<span class="bx">Outlook</span>'
+  /* Ruth's own page, verbatim - the same HTML and CSS the repo serves. In the
+     browser-only version the submit opens a REAL draft in the visitor's own
+     mail client (mailto:); with the local Flask app running, the card embeds
+     the app itself instead and drafts land in the machine's Outlook. Either
+     way the visitor is looking at HER design, not a re-skin. */
+  var ORIGINAL_CSS = "body {\n    font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\n    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    min-height: 100vh;\n    margin: 0;\n}\n\n/* --- מסגרת הטופס --- */\n.container {\n    background: white;\n    padding: 35px 40px;\n    border-radius: 15px;\n    box-shadow: 0 12px 25px rgba(0,0,0,0.2);\n    max-width: 520px;\n    width: 100%;\n}\n\n/* --- כותרת --- */\nh2 {\n    text-align: center;\n    color: #333;\n    margin-bottom: 30px;\n    font-size: 24px;\n    font-weight: 700;\n}\n\n/* --- תוויות ושדות --- */\nlabel {\n    font-weight: 600;\n    display: block;\n    margin-bottom: 6px;\n    color: #555;\n}\n\ninput[type=\"text\"],\ntextarea,\ninput[type=\"file\"] {\n    width: 100%;\n    padding: 12px 14px;\n    margin-bottom: 18px;\n    border: 1px solid #ccc;\n    border-radius: 8px;\n    font-size: 15px;\n    box-sizing: border-box;\n    transition: border-color 0.3s;\n}\n\ninput[type=\"text\"]:focus,\ntextarea:focus {\n    border-color: #4a90e2;\n    outline: none;\n}\n\ntextarea {\n    resize: vertical;\n    min-height: 120px;\n}\n\n/* --- כפתור --- */\nbutton {\n    width: 100%;\n    padding: 14px;\n    background: #77e9d6;\n    color: white;\n    font-size: 16px;\n    font-weight: bold;\n    border: none;\n    border-radius: 10px;\n    cursor: pointer;\n    transition: background 0.3s ease, transform 0.2s ease;\n}\n\nbutton:hover {\n    background: #16a085; /* טורקיז כהה יותר למצב hover */\n    transform: scale(1.02);\n}\n\n/* --- תיבת לוג --- */\n#log {\n    margin-top: 18px;\n    padding: 12px;\n    background: #f0f0f0;\n    border-radius: 8px;\n    font-size: 14px;\n    color: #333;\n    max-height: 140px;\n    overflow-y: auto;\n    white-space: pre-wrap;\n}\n\n/* --- הכותרת המרכזית בצד מרשים --- */\n.container h2 span {\n    display: block;\n    font-size: 18px;\n    font-weight: 500;\n    color: #4a90e2;\n}\n\n";
+
+  function pageHtml(){
+    return '<!doctype html><html lang="he"><head><meta charset="utf-8">'
+      + '<style>' + ORIGINAL_CSS + '</style></head><body>'
+      + '<div class="container">'
+      +   '<h2>שליחת טיוטות ל-Outlook<span>(מבחן)</span></h2>'
+      +   '<form id="mailForm">'
+      +     '<label>נמענים (מופרדים בפסיק או נקודה־פסיק):</label>'
+      +     '<input type="text" id="recipients" placeholder="user1@example.com; user2@example.com"/>'
+      +     '<label>נושא:</label>'
+      +     '<input type="text" id="subject"/>'
+      +     '<label>גוף ההודעה:</label>'
+      +     '<textarea id="body"></textarea>'
+      +     '<label>קובץ מצורף (קורות חיים):</label>'
+      +     '<input type="file" id="fileInput"/>'
+      +     '<button type="submit">שלח ל-Outlook</button>'
+      +   '</form>'
+      +   '<pre id="log"></pre>'
       + '</div>'
-      + '<div class="drow"><input class="dinp" id="rcp" placeholder="'
-      +   (he?"נמענים, מופרדים בפסיק או נקודה-פסיק":"recipients, comma or semicolon separated") + '"></div>'
-      + '<div class="drow"><input class="dinp" id="sub" placeholder="' + (he?"נושא":"subject") + '">'
-      +   '<input class="dinp" id="bod" placeholder="' + (he?"גוף ההודעה":"message body") + '"></div>'
-      + '<div class="drow">'
-      +   '<span class="dpill mu">' + (he?"קובץ מצורף (קורות חיים)":"attachment (a CV)") + '</span>'
-      +   '<button class="dbtn" id="att" type="button">' + (he?"בחירת קובץ":"choose file") + '</button>'
-      +   '<span class="dpill mu" id="attname" style="display:none"></span>'
-      +   '<button class="dbtn go" id="go" type="button">' + (he?"שלח ל-Outlook":"Send to Outlook") + '</button>'
-      + '</div>'
-      + '<div class="dlog" id="lg"></div>';
-
-    var lg = box.querySelector("#lg"), attached = null;
-
-    box.querySelector("#att").addEventListener("click", function(){
-      attached = "CV-Ruth-Maman.pdf";
-      var n = box.querySelector("#attname");
-      n.textContent = "📎 " + attached;
-      n.style.display = "";
-    });
-
-    box.querySelector("#go").addEventListener("click", function(){
-      lg.innerHTML = "";
-      var rcps = (box.querySelector("#rcp").value || "")
-        .split(/[;,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
-      var sub = box.querySelector("#sub").value.trim();
-      var bod = box.querySelector("#bod").value;
-
-      log(lg, "d", "POST " + APP + "/drafts");
-      if(!rcps.length){
-        setTimeout(function(){
-          log(lg, "r", '400 &mdash; {"error": "No recipients provided"}');
-        }, 300);
-        return;
-      }
-
-      /* The real part, and it must happen synchronously inside the click:
-         mailto: opens an actual draft in the visitor's own mail client -
-         Outlook, Gmail, whatever answers on their machine. A timer between
-         the click and this line loses the user-gesture and gets blocked. */
-      var mailto = "mailto:" + rcps.map(encodeURIComponent).join(",")
-        + "?subject=" + encodeURIComponent(sub)
-        + "&body=" + encodeURIComponent(bod);
-      var a = document.createElement("a");
-      a.id = "mlt";
-      a.href = mailto;
-      a.style.display = "none";
-      box.appendChild(a);
-      a.click();
-
-      setTimeout(function(){
-        log(lg, "g", he
-          ? "&#10003; טיוטה אמיתית נפתחה בתוכנת המייל שלך — עם הנמענים, הנושא והגוף"
-          : "&#10003; a real draft just opened in your own mail client - recipients, subject and body");
-        if(attached) log(lg, "d", he
-          ? "  (הקובץ המצורף עובר רק בגרסה המלאה מול Outlook מקומי — דפדפן לא רשאי לצרף קבצים לטיוטה)"
-          : "  (the attachment travels only in the full local-Outlook version - a browser may not attach files)");
-        log(lg, "d", he
-          ? "וכך אותה בקשה רצה בגרסה המלאה מול ה-Outlook שמותקן על המכונה:"
-          : "and this is the same request in the full version, against the machine's own Outlook:");
-        log(lg, "", "  win32com: Outlook.Application &rarr; CreateItem(olMailItem)");
-        if(attached) log(lg, "", "  Attachments.Add(" + esc(attached) + ")");
-        var i = 0;
-        (function next(){
-          if(!box.isConnected) return;
-          if(i >= rcps.length){
-            log(lg, "g", '200 &mdash; {"status": "ok", "recipients_count": ' + rcps.length + "}");
-            return;
-          }
-          log(lg, "g", "  &#10003; Display() &mdash; "
-            + (he?"טיוטה נפתחה עבור ":"draft opened for ") + esc(rcps[i])
-            + (sub ? ' &mdash; "' + esc(sub) + '"' : ""));
-          i++; setTimeout(next, 260);
-        })();
-      }, 340);
-    });
-
-    log(lg, "d", he
-      ? "שחזור של הטופס המקורי. ההרצה האמיתית — כשהאפליקציה המקומית רצה על המכונה (python gateway/run_original.py)."
-      : "A replica of the original form. The real run happens when the local app is up (python gateway/run_original.py).");
+      + '<script>'
+      + 'var form=document.getElementById("mailForm"),log=document.getElementById("log");'
+      + 'function logMsg(m){log.textContent+=m+"\n";}'
+      + 'form.addEventListener("submit",function(e){'
+      +   'e.preventDefault();'
+      +   'var raw=document.getElementById("recipients").value.trim();'
+      +   'var recipients=raw.split(/[;,]+/).map(function(s){return s.trim();}).filter(Boolean);'
+      +   'var subject=document.getElementById("subject").value;'
+      +   'var body=document.getElementById("body").value;'
+      +   'if(recipients.length===0){logMsg("400 — No recipients provided");return;}'
+      +   'var mailto="mailto:"+recipients.map(encodeURIComponent).join(",")'
+      +     '+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);'
+      +   'var a=document.createElement("a");a.id="mlt";a.href=mailto;a.style.display="none";'
+      +   'document.body.appendChild(a);a.click();'
+      +   'logMsg("\u2713 טיוטה אמיתית נפתחה בתוכנת המייל שלך ("+recipients.length+" נמענים)");'
+      +   'if(document.getElementById("fileInput").files.length)'
+      +     'logMsg("הקובץ המצורף עובר רק בגרסה המלאה מול Outlook מקומי — דפדפן לא מצרף קבצים לטיוטה.");'
+      +   'logMsg("בגרסה המלאה: POST /drafts \u2192 win32com \u2192 CreateItem(olMailItem) \u2192 Display() לכל נמען");'
+      + '});'
+      + '</scr' + 'ipt></body></html>';
   }
 
-  function original(){
-    /* Her page lays out for a real browser window (a 520px card centered on a
-       gradient, ~820px tall with the textarea and log). Squeezed into the card
-       at natural size only a blown-up corner shows. So: render it at a real
-       viewport - 860x840 - and scale that whole window down to the stage,
-       like a monitor showing another monitor. Transforms remap pointer
-       events, so the shrunken app stays fully clickable. */
-    var VW = 860, VH = 840;
-    box.innerHTML =
-        '<div class="drow"><span class="dpill" style="color:var(--ok)">● '
-      +   (he?"האפליקציה המקורית רצה — זה ה-UI האמיתי, והטיוטות אמיתיות":"the original app is running — this is the real UI, and the drafts are real")
-      + '</span></div>'
+  var VW = 860, VH = 840;
+
+  function stageWith(frameSetup, badgeHtml){
+    box.innerHTML = badgeHtml
       + '<div class="live-stage" id="olv" style="aspect-ratio:' + VW + '/' + VH + '">'
-      /* right/bottom:auto matters: the site's .live-stage iframe rule sets
-         inset:0, and in an RTL document an over-constrained absolute box
-         resolves from the RIGHT edge - shoving this one 160px off-canvas. */
-      +   '<iframe id="olf" src="' + APP + '/" title="Outlook drafts"'
+      +   '<iframe id="olf" title="Outlook drafts"'
       +     ' style="position:absolute;top:0;left:0;right:auto;bottom:auto;'
       +     'width:' + VW + 'px;height:' + VH + 'px;'
       +     'border:0;background:#fff;transform-origin:top left"></iframe>'
       + '</div>';
-
     var stage = box.querySelector("#olv"), frame = box.querySelector("#olf");
+    frameSetup(frame);
     function fit(){
       if(!stage.isConnected) return;
       frame.style.transform = "scale(" + (stage.clientWidth / VW) + ")";
     }
-    /* One early measurement can land mid-open-animation and freeze the wrong
-       scale (clipped left, dead strip right). Re-measure as things settle:
-       every frame burst is cheap, a wrong scale is not. */
     fit();
     requestAnimationFrame(fit);
     frame.addEventListener("load", fit);
@@ -3962,10 +3898,24 @@ RM.DEMOS.outlook = {
     if("ResizeObserver" in window) new ResizeObserver(fit).observe(stage);
   }
 
-  /* Decide BEFORE painting. Rendering the replica and swapping to the real
-     app a beat later reads as a glitch; a probe against localhost resolves in
-     milliseconds either way (refused connections fail instantly), so waiting
-     for it costs nothing and the full visual arrives in one piece. */
+  function replica(){
+    stageWith(function(frame){ frame.srcdoc = pageHtml(); },
+        '<div class="drow"><span class="dpill" style="color:var(--ok)">● '
+      + (he?"ה-UI המקורי — והשליחה פותחת טיוטה אמיתית בתוכנת המייל שלך"
+           :"the original UI — and submit opens a real draft in your own mail client")
+      + '</span></div>');
+  }
+
+  function original(){
+    stageWith(function(frame){ frame.src = APP + "/"; },
+        '<div class="drow"><span class="dpill" style="color:var(--ok)">● '
+      + (he?"האפליקציה המקורית רצה — זה ה-UI האמיתי, והטיוטות אמיתיות ב-Outlook"
+           :"the original app is running — this is the real UI, and the drafts are real")
+      + '</span></div>');
+  }
+
+  /* Decide BEFORE painting; a probe against localhost resolves in
+     milliseconds either way, so nothing flashes. */
   var decided = false;
   function decide(isReal){
     if(decided || !box.isConnected) return;
