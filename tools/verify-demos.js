@@ -146,6 +146,18 @@ async function outlook(page) {
   );
   check(href.includes("subject="), `outlook: the draft carries the subject`);
 
+  // the guaranteed path: visible web-compose buttons that always open
+  const owa = (await app.locator("#owaLink").getAttribute("href")) || "";
+  check(
+    owa.startsWith("https://outlook.live.com/") && owa.includes("dana%40example.com"),
+    `outlook: a visible Outlook-web compose button with the recipients`
+  );
+  const gm = (await app.locator("#gmailLink").getAttribute("href")) || "";
+  check(
+    gm.startsWith("https://mail.google.com/") && gm.includes("noa%40example.com"),
+    `outlook: a visible Gmail compose button with the recipients`
+  );
+
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 }
 
