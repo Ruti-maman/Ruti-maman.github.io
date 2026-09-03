@@ -133,6 +133,20 @@ async function outlook(page) {
   check(t.includes("noa@example.com"), `outlook: a draft opened for the second recipient`);
   check(t.includes('"recipients_count": 2'), `outlook: her API's response shape, count 2`);
 
+  // the REAL part: a mailto draft assembled for the visitor's own mail client
+  const mlt = page.locator(`${boxSel} #mlt`);
+  check((await mlt.count()) > 0, `outlook: a real mailto draft was triggered`);
+  if (await mlt.count()) {
+    const href = (await mlt.first().getAttribute("href")) || "";
+    check(
+      href.startsWith("mailto:") &&
+        href.includes("dana%40example.com") &&
+        href.includes("noa%40example.com"),
+      `outlook: the draft carries both recipients`
+    );
+    check(href.includes("subject="), `outlook: the draft carries the subject`);
+  }
+
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 }
 

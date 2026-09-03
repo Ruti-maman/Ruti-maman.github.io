@@ -3869,6 +3869,7 @@ RM.DEMOS.outlook = {
       var rcps = (box.querySelector("#rcp").value || "")
         .split(/[;,]+/).map(function(s){ return s.trim(); }).filter(Boolean);
       var sub = box.querySelector("#sub").value.trim();
+      var bod = box.querySelector("#bod").value;
 
       log(lg, "d", "POST " + APP + "/drafts");
       if(!rcps.length){
@@ -3877,7 +3878,31 @@ RM.DEMOS.outlook = {
         }, 300);
         return;
       }
+
+      /* The real part, and it must happen synchronously inside the click:
+         mailto: opens an actual draft in the visitor's own mail client -
+         Outlook, Gmail, whatever answers on their machine. A timer between
+         the click and this line loses the user-gesture and gets blocked. */
+      var mailto = "mailto:" + rcps.map(encodeURIComponent).join(",")
+        + "?subject=" + encodeURIComponent(sub)
+        + "&body=" + encodeURIComponent(bod);
+      var a = document.createElement("a");
+      a.id = "mlt";
+      a.href = mailto;
+      a.style.display = "none";
+      box.appendChild(a);
+      a.click();
+
       setTimeout(function(){
+        log(lg, "g", he
+          ? "&#10003; טיוטה אמיתית נפתחה בתוכנת המייל שלך — עם הנמענים, הנושא והגוף"
+          : "&#10003; a real draft just opened in your own mail client - recipients, subject and body");
+        if(attached) log(lg, "d", he
+          ? "  (הקובץ המצורף עובר רק בגרסה המלאה מול Outlook מקומי — דפדפן לא רשאי לצרף קבצים לטיוטה)"
+          : "  (the attachment travels only in the full local-Outlook version - a browser may not attach files)");
+        log(lg, "d", he
+          ? "וכך אותה בקשה רצה בגרסה המלאה מול ה-Outlook שמותקן על המכונה:"
+          : "and this is the same request in the full version, against the machine's own Outlook:");
         log(lg, "", "  win32com: Outlook.Application &rarr; CreateItem(olMailItem)");
         if(attached) log(lg, "", "  Attachments.Add(" + esc(attached) + ")");
         var i = 0;
@@ -3885,9 +3910,6 @@ RM.DEMOS.outlook = {
           if(!box.isConnected) return;
           if(i >= rcps.length){
             log(lg, "g", '200 &mdash; {"status": "ok", "recipients_count": ' + rcps.length + "}");
-            log(lg, "d", he
-              ? "בהרצה אמיתית: " + rcps.length + " חלונות טיוטה נפתחים עכשיו ב-Outlook."
-              : "In a real run: " + rcps.length + " draft windows open in Outlook right now.");
             return;
           }
           log(lg, "g", "  &#10003; Display() &mdash; "
