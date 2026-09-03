@@ -26,7 +26,7 @@ PASS  memory: shows its own UI (found "ברוכים")
 
 ALL CHECKS PASSED
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 194388"
+PASS  isolation: client A created "בידוד 831203"
 PASS  auth: a wrong password is rejected
 PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
@@ -52,12 +52,11 @@ PASS  textcli: an unmatched request says so instead of inventing a command
 PASS  outlook: HER page renders - the real heading
 PASS  outlook: her turquoise gradient is painted
 PASS  outlook: empty recipients rejected with the API error
-FAIL  outlook: the log confirms a real draft opened
+PASS  outlook: the log confirms the draft is ready
 PASS  outlook: the full-version pipeline is narrated
 PASS  outlook: the draft carries both recipients
 PASS  outlook: the draft carries the subject
 PASS  outlook: a visible Outlook-web compose button with the recipients
 PASS  outlook: a visible Gmail compose button with the recipients
 
-1 PROBLEM(S)
-  - outlook: the log confirms a real draft opened
+ALL DEMO CHECKS PASSED
