@@ -2049,7 +2049,15 @@ RM.LIVE = {
   taskman:  {url:"https://ruti-maman.github.io/Task-manager/teams/1/projects/1/tasks",
              shot:"shots/taskman.jpg",
              hint:{he:"התחברות (אם יוצאים): כל כתובת מייל תקינה וסיסמה בת 6 תווים לפחות.",
-                   en:"Sign in (if you log out): any valid email and a password of 6+ characters."}},
+                   en:"Sign in (if you log out): any valid email and a password of 6+ characters."},
+             // the real end-to-end system on this machine
+             // (gateway/start-taskman.bat: team-tasks-api on :3000, the
+             // untouched Angular build on :4200 with /api proxied across)
+             local:"http://localhost:4200/",
+             localBadge:{he:"מחובר למערכת האמיתית — team-tasks-api‏ (Express + SQLite + JWT) רץ על המכונה",
+                         en:"connected to the real system — team-tasks-api (Express + SQLite + JWT) on this machine"},
+             localHint:{he:"התחברות אמיתית: alice@example.com או bob@example.com — סיסמה: Password1! (או הרשמה חופשית).",
+                        en:"Real sign-in: alice@example.com or bob@example.com — password: Password1! (or just register)."}},
   helpdesk: {url:"https://ruti-maman.github.io/project/",         shot:"shots/helpdesk.jpg",
              docs:"https://ruti-maman.github.io/helpdesk-api-main/",
              hint:{he:"התחברות: admin@demo.com · agent@demo.com · customer@demo.com — כל סיסמה תתקבל.",
