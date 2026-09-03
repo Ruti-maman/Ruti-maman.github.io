@@ -6,7 +6,7 @@ PASS  helpdesk: preview renders a real screenshot
 PASS  helpdesk: the screenshot file loaded (naturalWidth=1920)
 PASS  helpdesk: preview holds 16/10 (measured 1.596)
 PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
-FAIL  helpdesk: the loading veil lifted
+PASS  helpdesk: the loading veil lifted
 PASS  helpdesk: the app rendered content (48 chars)
 PASS  helpdesk: shows its own UI (found "התחברות")
 PASS  taskman: preview renders a real screenshot
@@ -24,13 +24,14 @@ PASS  memory: the loading veil lifted
 PASS  memory: the app rendered content (62 chars)
 PASS  memory: shows its own UI (found "ברוכים")
 
-1 PROBLEM(S)
-  - helpdesk: the loading veil lifted
+ALL CHECKS PASSED
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 455095"
+PASS  isolation: client A created "בידוד 571845"
+PASS  auth: a wrong password is rejected
+PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
 PASS  isolation: client B also starts empty
-PASS  isolation: client A returns and the private history is still there
+PASS  isolation: client A returns with the RIGHT password and the private history is there
 PASS  textcli: request became the right command
 PASS  textcli: command was checked against the allowlist
 PASS  textcli: sandboxed run finished
