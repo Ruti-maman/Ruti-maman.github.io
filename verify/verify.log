@@ -13,22 +13,20 @@ PASS  taskman: preview renders a real screenshot
 PASS  taskman: the screenshot file loaded (naturalWidth=1920)
 PASS  taskman: preview holds 16/10 (measured 1.596)
 PASS  taskman: iframe points at the published build (https://ruti-maman.github.io/Task-manager/)
-FAIL  taskman: the loading veil lifted
+PASS  taskman: the loading veil lifted
 PASS  taskman: the app rendered content (101 chars)
 PASS  taskman: shows its own UI (found "Welcome")
 PASS  memory: preview renders a real screenshot
 PASS  memory: the screenshot file loaded (naturalWidth=1920)
 PASS  memory: preview holds 16/10 (measured 1.596)
 PASS  memory: iframe points at the published build (https://ruti-maman.github.io/memory-game/)
-FAIL  memory: the loading veil lifted
+PASS  memory: the loading veil lifted
 PASS  memory: the app rendered content (62 chars)
 PASS  memory: shows its own UI (found "ברוכים")
 
-2 PROBLEM(S)
-  - taskman: the loading veil lifted
-  - memory: the loading veil lifted
+ALL CHECKS PASSED
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 222354"
+PASS  isolation: client A created "בידוד 414738"
 PASS  auth: a wrong password is rejected
 PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
@@ -53,13 +51,10 @@ PASS  textcli: "תורידי לי את הקובץ מהאתר" is not unknown
 PASS  textcli: an unmatched request says so instead of inventing a command
 PASS  outlook: HER page renders - the real heading
 PASS  outlook: her turquoise gradient is painted
-FAIL  outlook: empty recipients rejected with the API error
-FAIL  outlook: the log confirms a real draft opened
-FAIL  outlook: the full-version pipeline is narrated
-FAIL  outlook: crashed (TimeoutError: locator.getAttribute: Timeout 30000ms exceeded.)
+PASS  outlook: empty recipients rejected with the API error
+PASS  outlook: the log confirms a real draft opened
+PASS  outlook: the full-version pipeline is narrated
+PASS  outlook: the draft carries both recipients
+PASS  outlook: the draft carries the subject
 
-4 PROBLEM(S)
-  - outlook: empty recipients rejected with the API error
-  - outlook: the log confirms a real draft opened
-  - outlook: the full-version pipeline is narrated
-  - outlook: crashed (TimeoutError: locator.getAttribute: Timeout 30000ms exceeded.)
+ALL DEMO CHECKS PASSED
