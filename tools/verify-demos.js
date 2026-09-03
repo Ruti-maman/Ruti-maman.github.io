@@ -136,6 +136,70 @@ async function outlook(page) {
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 }
 
+/**
+ * The complaint this guards against, verbatim: "it shows every client the
+ * same tasks - it doesn't really create a fresh one for a new client and
+ * doesn't remember a returning client's private history."
+ *
+ * So: sign in as A (fresh+empty), create a team, sign out; sign in as B
+ * (fresh+empty, must NOT see A's team); sign back in as A (the team must
+ * still be there). Runs inside the live Task-manager build on Pages.
+ */
+async function taskmanIsolation(page) {
+  const APP = "https://ruti-maman.github.io/Task-manager/";
+  const stamp = Date.now().toString().slice(-6);
+  const A = `check-a-${stamp}@verify.dev`;
+  const B = `check-b-${stamp}@verify.dev`;
+  const TEAM = `בידוד ${stamp}`;
+
+  async function signIn(email) {
+    await page.goto(APP + "?u=" + email, { waitUntil: "networkidle", timeout: 60000 });
+    await page.waitForSelector("input", { timeout: 15000 });
+    const inputs = page.locator("input");
+    await inputs.nth((await inputs.count()) - 2).fill(email);
+    await inputs.nth((await inputs.count()) - 1).fill("Password1!");
+    await page.locator("button.submit-btn").click();
+    await page.waitForURL("**/dashboard", { timeout: 15000 });
+    await page.locator('a.teams-btn, [routerlink="/teams"]').first().click();
+    await page.waitForURL("**/teams", { timeout: 15000 });
+    await page.waitForTimeout(1200);
+  }
+  async function teamsText() {
+    return (await page.locator(".teams-container").innerText()).replace(/\s+/g, " ");
+  }
+  async function signOut() {
+    await page.locator("button.logout-btn").first().click();
+    await page.waitForURL("**/login", { timeout: 15000 });
+  }
+
+  await signIn(A);
+  let t = await teamsText();
+  check(!t.includes("צוות פיתוח"), `isolation: a NEW client starts without the sample board`);
+
+  await page.locator("button.create-btn").click();
+  await page.waitForSelector("mat-dialog-container input", { timeout: 10000 });
+  await page.locator("mat-dialog-container input").first().fill(TEAM);
+  await page
+    .locator("mat-dialog-container button", { hasNotText: /cancel/i })
+    .last()
+    .click();
+  await page.waitForTimeout(1500);
+  t = await teamsText();
+  check(t.includes(TEAM), `isolation: client A created "${TEAM}"`);
+  await signOut();
+
+  await signIn(B);
+  t = await teamsText();
+  check(!t.includes(TEAM), `isolation: client B does NOT see A's team`);
+  check(!t.includes("צוות פיתוח"), `isolation: client B also starts empty`);
+  await signOut();
+
+  await signIn(A);
+  t = await teamsText();
+  check(t.includes(TEAM), `isolation: client A returns and the private history is still there`);
+  await page.screenshot({ path: path.join(OUT, "33-taskman-isolation.png") });
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
@@ -148,6 +212,16 @@ async function outlook(page) {
     waitUntil: "networkidle",
     timeout: 60000,
   });
+  await page.waitForTimeout(2000);
+
+  // The isolation test navigates away from the portfolio, so it runs first
+  // on its own page-load, before the sheet-driven demo cases.
+  try {
+    await taskmanIsolation(page);
+  } catch (e) {
+    check(false, `isolation: crashed (${String(e).split("\n")[0]})`);
+  }
+  await page.goto(SITE + "?demos2=" + Date.now(), { waitUntil: "networkidle", timeout: 60000 });
   await page.waitForTimeout(2000);
 
   for (const [name, fn] of [
