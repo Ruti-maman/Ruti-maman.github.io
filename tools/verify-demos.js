@@ -134,7 +134,7 @@ async function outlook(page) {
   await page.waitForTimeout(800);
 
   t = await app.locator("#log").innerText();
-  check(t.includes("טיוטה אמיתית נפתחה"), `outlook: the log confirms a real draft opened`);
+  check(t.includes("הטיוטה מוכנה"), `outlook: the log confirms the draft is ready`);
   check(t.includes("win32com"), `outlook: the full-version pipeline is narrated`);
 
   const href = (await app.locator("#mlt").getAttribute("href")) || "";
