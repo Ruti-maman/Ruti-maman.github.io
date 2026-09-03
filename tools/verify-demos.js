@@ -152,17 +152,35 @@ async function taskmanIsolation(page) {
   const B = `check-b-${stamp}@verify.dev`;
   const TEAM = `בידוד ${stamp}`;
 
-  async function signIn(email) {
+  async function open(email) {
     await page.goto(APP + "?u=" + email, { waitUntil: "networkidle", timeout: 60000 });
     await page.waitForSelector("input", { timeout: 15000 });
+  }
+  async function fillAuth(email, password) {
     const inputs = page.locator("input");
-    await inputs.nth((await inputs.count()) - 2).fill(email);
-    await inputs.nth((await inputs.count()) - 1).fill("Password1!");
+    const n = await inputs.count();
+    await inputs.nth(n - 2).fill(email);
+    await inputs.nth(n - 1).fill(password);
     await page.locator("button.submit-btn").click();
+  }
+  async function landOnTeams() {
     await page.waitForURL("**/dashboard", { timeout: 15000 });
     await page.locator('a.teams-btn, [routerlink="/teams"]').first().click();
     await page.waitForURL("**/teams", { timeout: 15000 });
     await page.waitForTimeout(1200);
+  }
+  async function registerUser(email) {
+    await open(email);
+    await page.locator("button.toggle-btn").click(); // Sign up mode
+    await page.waitForTimeout(400);
+    await page.locator("input").first().fill("בודק " + stamp); // the name field
+    await fillAuth(email, "Password1!");
+    await landOnTeams();
+  }
+  async function signIn(email, password) {
+    await open(email);
+    await fillAuth(email, password);
+    await landOnTeams();
   }
   async function teamsText() {
     return (await page.locator(".teams-container").innerText()).replace(/\s+/g, " ");
@@ -172,7 +190,7 @@ async function taskmanIsolation(page) {
     await page.waitForURL("**/login", { timeout: 15000 });
   }
 
-  await signIn(A);
+  await registerUser(A);
   let t = await teamsText();
   check(!t.includes("צוות פיתוח"), `isolation: a NEW client starts without the sample board`);
 
@@ -188,15 +206,31 @@ async function taskmanIsolation(page) {
   check(t.includes(TEAM), `isolation: client A created "${TEAM}"`);
   await signOut();
 
-  await signIn(B);
+  // wrong password must NOT get in
+  await open(A);
+  await fillAuth(A, "TotallyWrong9!");
+  await page.waitForTimeout(1800);
+  let stayedOut = page.url().includes("/login") || (await page.locator(".error-msg").count()) > 0;
+  check(stayedOut, `auth: a wrong password is rejected`);
+
+  // a taken email must not register again
+  await page.locator("button.toggle-btn").click();
+  await page.waitForTimeout(400);
+  await page.locator("input").first().fill("מתחזה");
+  await fillAuth(A, "Password1!");
+  await page.waitForTimeout(1800);
+  stayedOut = page.url().includes("/login") || (await page.locator(".error-msg").count()) > 0;
+  check(stayedOut, `auth: registering an already-taken email is rejected`);
+
+  await registerUser(B);
   t = await teamsText();
   check(!t.includes(TEAM), `isolation: client B does NOT see A's team`);
   check(!t.includes("צוות פיתוח"), `isolation: client B also starts empty`);
   await signOut();
 
-  await signIn(A);
+  await signIn(A, "Password1!");
   t = await teamsText();
-  check(t.includes(TEAM), `isolation: client A returns and the private history is still there`);
+  check(t.includes(TEAM), `isolation: client A returns with the RIGHT password and the private history is there`);
   await page.screenshot({ path: path.join(OUT, "33-taskman-isolation.png") });
 }
 
