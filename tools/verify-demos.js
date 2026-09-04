@@ -130,8 +130,11 @@ async function outlook(page) {
   await app.locator("#recipients").fill("dana@example.com; noa@example.com");
   await app.locator("#subject").fill("קורות חיים — רות ממן");
   await app.locator("#body").fill("שלום, מצרפת קורות חיים.");
+  // shot BEFORE submit: 1.6s after it the tab auto-pops into Outlook, and a
+  // screenshot racing that navigation dies with a 30s timeout
+  await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
   await app.locator("button[type=submit]").click();
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(700);
 
   t = await app.locator("#log").innerText();
   // the log line is main.py's success line, verbatim shape
@@ -150,8 +153,6 @@ async function outlook(page) {
     `outlook: the popped draft carries both recipients`
   );
   check(href.includes("subject="), `outlook: the draft carries the subject`);
-
-  await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 
   // Ruth's call: no fallback UI, the pop IS the behaviour. Headless has no
   // mail handler, so the page itself must take the tab straight into the
