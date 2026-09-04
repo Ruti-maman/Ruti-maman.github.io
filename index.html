@@ -3865,29 +3865,21 @@ RM.DEMOS.outlook = {
       +   'if(recipients.length===0){logMsg("400 — No recipients provided");return;}'
       + 'var q=recipients.map(encodeURIComponent).join(",");'
       + 'var qs="subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);'
-      + 'var mailto="mailto:"+q+"?"+qs;'
+      /* one behaviour, like the original: submit goes STRAIGHT to Outlook
+         with the draft ready - no menu, no choices. window.open must happen
+         synchronously inside the click or popup blocking eats it. */
       + 'var owa="https://outlook.live.com/mail/0/deeplink/compose?to="+q+"&"+qs;'
-      + 'var gm="https://mail.google.com/mail/?view=cm&fs=1&to="+q+"&su="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);'
-      /* try the local mail handler - free when one exists, silent when not */
+      + 'var w=window.open(owa,"_blank","noopener");'
       + 'var a=document.getElementById("mlt")||document.createElement("a");'
-      + 'a.id="mlt";a.href=mailto;a.style.display="none";document.body.appendChild(a);a.click();'
-      /* and ALWAYS show buttons that cannot fail - web compose opens in a tab */
-      + 'var acts=document.getElementById("acts");'
-      + 'if(!acts){acts=document.createElement("div");acts.id="acts";'
-      +   'acts.style.cssText="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px";'
-      +   'form.parentNode.insertBefore(acts,document.getElementById("log"));}'
-      + 'function btn(id,txt,href){var b=document.getElementById(id)||document.createElement("a");'
-      +   'b.id=id;b.href=href;b.target="_blank";b.rel="noopener";b.textContent=txt;'
-      +   'b.style.cssText="flex:1;text-align:center;padding:11px 8px;border-radius:10px;'
-      +     'background:#77e9d6;color:#fff;font-weight:bold;text-decoration:none;font-size:14px";'
-      +   'acts.appendChild(b);}'
-      + 'btn("owaLink","פתיחת הטיוטה ב-Outlook",owa);'
-      + 'btn("gmailLink","או ב-Gmail",gm);'
-      + 'logMsg(String.fromCharCode(10)+"✓ הטיוטה מוכנה ("+recipients.length+" נמענים) — פתחו אותה באחד הכפתורים למעלה,");'
-      + 'logMsg("או שתוכנת המייל במחשב כבר נפתחה לבד אם מוגדרת כזו.");'
+      + 'a.id="mlt";a.href=owa;a.style.display="none";document.body.appendChild(a);'
+      + 'if(!w){a.style.display="block";a.style.cssText+="margin-top:10px;text-align:center;'
+      +   'padding:12px;border-radius:10px;background:#77e9d6;color:#fff;font-weight:bold;'
+      +   'text-decoration:none";a.target="_blank";a.textContent="פתיחת הטיוטה ב-Outlook";'
+      +   'logMsg("הדפדפן חסם פתיחה אוטומטית — לחצו על הכפתור.");}'
+      + 'logMsg("✓ טיוטה נשלחה ל-Outlook ("+recipients.length+" נמענים) — נפתחה בטאב חדש");'
       + 'if(document.getElementById("fileInput").files.length)'
       +   'logMsg("הקובץ המצורף עובר רק בגרסה המלאה מול Outlook מקומי — דפדפן לא מצרף קבצים לטיוטה.");'
-      + 'logMsg("בגרסה המלאה: POST /drafts → win32com → CreateItem(olMailItem) → Display() לכל נמען");'
+      + 'logMsg("בגרסה המלאה על המכונה: POST /drafts → win32com → טיוטה נפרדת נפתחת לכל נמען");'
       
       + '});'
       + '</scr' + 'ipt></body></html>';

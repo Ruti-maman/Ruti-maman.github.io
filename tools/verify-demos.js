@@ -134,29 +134,19 @@ async function outlook(page) {
   await page.waitForTimeout(800);
 
   t = await app.locator("#log").innerText();
-  check(t.includes("הטיוטה מוכנה"), `outlook: the log confirms the draft is ready`);
+  check(t.includes("טיוטה נשלחה ל-Outlook"), `outlook: submit went straight to Outlook`);
   check(t.includes("win32com"), `outlook: the full-version pipeline is narrated`);
 
+  // one behaviour, one destination: the compose link is Outlook, recipients aboard
   const href = (await app.locator("#mlt").getAttribute("href")) || "";
   check(
-    href.startsWith("mailto:") &&
+    href.startsWith("https://outlook.live.com/") &&
       href.includes("dana%40example.com") &&
       href.includes("noa%40example.com"),
-    `outlook: the draft carries both recipients`
+    `outlook: the Outlook draft carries both recipients`
   );
   check(href.includes("subject="), `outlook: the draft carries the subject`);
-
-  // the guaranteed path: visible web-compose buttons that always open
-  const owa = (await app.locator("#owaLink").getAttribute("href")) || "";
-  check(
-    owa.startsWith("https://outlook.live.com/") && owa.includes("dana%40example.com"),
-    `outlook: a visible Outlook-web compose button with the recipients`
-  );
-  const gm = (await app.locator("#gmailLink").getAttribute("href")) || "";
-  check(
-    gm.startsWith("https://mail.google.com/") && gm.includes("noa%40example.com"),
-    `outlook: a visible Gmail compose button with the recipients`
-  );
+  check((await app.locator("#gmailLink").count()) === 0, `outlook: no gmail option - Outlook only, like the original`);
 
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
 }
