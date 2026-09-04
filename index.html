@@ -3879,6 +3879,19 @@ RM.DEMOS.outlook = {
          mailto navigation hands off to the mail app and keeps the page. */
       + 'try{window.top.location.href=a.href;}catch(err){a.click();}'
       + 'logMsg("הבקשה נשלחה בהצלחה: "+JSON.stringify({status:"ok",recipients_count:recipients.length}));'
+      /* No mail handler on the machine means the mailto was a silent no-op.
+         Detect it (a handler steals focus within the moment; silence does
+         not) and then POP anyway: navigate this tab straight into Outlook
+         with the draft. Same-tab navigation needs no popup permission and
+         no button - it just happens, which is the behaviour Ruth asked for. */
+      + 'var popped=false;'
+      + 'window.addEventListener("blur",function(){popped=true;},{once:true});'
+      + 'try{if(window.top!==window)window.top.addEventListener("blur",function(){popped=true;},{once:true});}catch(e2){}'
+      + 'setTimeout(function(){'
+      +   'if(popped)return;'
+      +   'try{window.top.location.href="https://outlook.live.com/mail/0/deeplink/compose?to="+q+"&"+qs;}'
+      +   'catch(e3){window.location.href="https://outlook.live.com/mail/0/deeplink/compose?to="+q+"&"+qs;}'
+      + '},1600);'
       
       + '});'
       + '</scr' + 'ipt></body></html>';

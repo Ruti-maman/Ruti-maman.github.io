@@ -151,12 +151,20 @@ async function outlook(page) {
   );
   check(href.includes("subject="), `outlook: the draft carries the subject`);
 
-  // Ruth's call: no fallback UI at all - the pop is the whole behaviour
-  await page.waitForTimeout(2500);
+  await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
+
+  // Ruth's call: no fallback UI, the pop IS the behaviour. Headless has no
+  // mail handler, so the page itself must take the tab straight into the
+  // Outlook compose with the draft - prove that navigation actually fires.
   check((await app.locator("#owaBtn").count()) === 0, `outlook: no fallback button - direct pop only`);
   check((await app.locator("#gmailLink").count()) === 0, `outlook: no gmail option - Outlook only, like the original`);
-
-  await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
+  let popped = true;
+  try {
+    await page.waitForURL(/outlook\.live\.com/, { timeout: 8000 });
+  } catch {
+    popped = false;
+  }
+  check(popped, `outlook: with no mail app, the tab itself pops into Outlook compose`);
 }
 
 /**
