@@ -3872,7 +3872,12 @@ RM.DEMOS.outlook = {
          extra button that the original never had. */
       + 'var a=document.getElementById("mlt")||document.createElement("a");'
       + 'a.id="mlt";a.href="mailto:"+q+"?"+qs;a.style.display="none";'
-      + 'document.body.appendChild(a);a.click();'
+      + 'document.body.appendChild(a);'
+      /* fire from the TOP window: external-protocol launches from inside an
+         iframe are silently dropped on many browsers (all mobile ones),
+         which read as "success logged, no draft anywhere". A top-level
+         mailto navigation hands off to the mail app and keeps the page. */
+      + 'try{window.top.location.href=a.href;}catch(err){a.click();}'
       + 'logMsg("הבקשה נשלחה בהצלחה: "+JSON.stringify({status:"ok",recipients_count:recipients.length}));'
       
       + '});'
