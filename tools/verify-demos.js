@@ -134,18 +134,31 @@ async function outlook(page) {
   await page.waitForTimeout(800);
 
   t = await app.locator("#log").innerText();
-  check(t.includes("טיוטה נשלחה ל-Outlook"), `outlook: submit went straight to Outlook`);
-  check(t.includes("win32com"), `outlook: the full-version pipeline is narrated`);
+  // the log line is main.py's success line, verbatim shape
+  check(
+    t.includes('הבקשה נשלחה בהצלחה: {"status":"ok","recipients_count":2}'),
+    `outlook: the log message reads exactly like the original`
+  );
 
-  // one behaviour, one destination: the compose link is Outlook, recipients aboard
+  // the popped draft: mailto with both recipients (this is what opens the
+  // DESKTOP Outlook, taskbar icon and all, wherever it is the mail handler)
   const href = (await app.locator("#mlt").getAttribute("href")) || "";
   check(
-    href.startsWith("https://outlook.live.com/") &&
+    href.startsWith("mailto:") &&
       href.includes("dana%40example.com") &&
       href.includes("noa%40example.com"),
-    `outlook: the Outlook draft carries both recipients`
+    `outlook: the popped draft carries both recipients`
   );
   check(href.includes("subject="), `outlook: the draft carries the subject`);
+
+  // headless has no mail handler, so the single fallback must appear - and
+  // point at Outlook only, no gmail, no menu
+  await page.waitForTimeout(2500);
+  const owa = (await app.locator("#owaBtn").getAttribute("href")) || "";
+  check(
+    owa.startsWith("https://outlook.live.com/") && owa.includes("dana%40example.com"),
+    `outlook: handler-less devices get one Outlook fallback button`
+  );
   check((await app.locator("#gmailLink").count()) === 0, `outlook: no gmail option - Outlook only, like the original`);
 
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });

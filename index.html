@@ -3865,21 +3865,30 @@ RM.DEMOS.outlook = {
       +   'if(recipients.length===0){logMsg("400 — No recipients provided");return;}'
       + 'var q=recipients.map(encodeURIComponent).join(",");'
       + 'var qs="subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);'
-      /* one behaviour, like the original: submit goes STRAIGHT to Outlook
-         with the draft ready - no menu, no choices. window.open must happen
-         synchronously inside the click or popup blocking eats it. */
-      + 'var owa="https://outlook.live.com/mail/0/deeplink/compose?to="+q+"&"+qs;'
-      + 'var w=window.open(owa,"_blank","noopener");'
+      /* Her original experience, replicated: submit pops a draft window in the
+         DESKTOP Outlook (taskbar icon and all) wherever Outlook is the mail
+         handler - which is exactly what mailto: does there. No button, no
+         Microsoft site. The log line below is copied verbatim from main.py's
+         response shape, so the message reads identically to the original. */
       + 'var a=document.getElementById("mlt")||document.createElement("a");'
-      + 'a.id="mlt";a.href=owa;a.style.display="none";document.body.appendChild(a);'
-      + 'if(!w){a.style.display="block";a.style.cssText+="margin-top:10px;text-align:center;'
-      +   'padding:12px;border-radius:10px;background:#77e9d6;color:#fff;font-weight:bold;'
-      +   'text-decoration:none";a.target="_blank";a.textContent="פתיחת הטיוטה ב-Outlook";'
-      +   'logMsg("הדפדפן חסם פתיחה אוטומטית — לחצו על הכפתור.");}'
-      + 'logMsg("✓ טיוטה נשלחה ל-Outlook ("+recipients.length+" נמענים) — נפתחה בטאב חדש");'
-      + 'if(document.getElementById("fileInput").files.length)'
-      +   'logMsg("הקובץ המצורף עובר רק בגרסה המלאה מול Outlook מקומי — דפדפן לא מצרף קבצים לטיוטה.");'
-      + 'logMsg("בגרסה המלאה על המכונה: POST /drafts → win32com → טיוטה נפרדת נפתחת לכל נמען");'
+      + 'a.id="mlt";a.href="mailto:"+q+"?"+qs;a.style.display="none";'
+      + 'document.body.appendChild(a);a.click();'
+      + 'logMsg("הבקשה נשלחה בהצלחה: "+JSON.stringify({status:"ok",recipients_count:recipients.length}));'
+      /* only when no mail app answered (the browser never lost focus) does a
+         single fallback appear - phones and handler-less machines otherwise
+         stare at a click that did nothing */
+      + 'var blurred=false;'
+      + 'window.addEventListener("blur",function(){blurred=true;},{once:true});'
+      + 'setTimeout(function(){'
+      +   'if(blurred||document.getElementById("owaBtn"))return;'
+      +   'var b=document.createElement("a");b.id="owaBtn";b.target="_blank";b.rel="noopener";'
+      +   'b.href="https://outlook.live.com/mail/0/deeplink/compose?to="+q+"&"+qs;'
+      +   'b.textContent="פתיחת הטיוטה ב-Outlook";'
+      +   'b.style.cssText="display:block;margin-top:10px;text-align:center;padding:12px;'
+      +     'border-radius:10px;background:#77e9d6;color:#fff;font-weight:bold;text-decoration:none";'
+      +   'form.parentNode.insertBefore(b,document.getElementById("log"));'
+      +   'logMsg("לא זוהתה תוכנת מייל במכשיר — הכפתור למעלה יפתח את הטיוטה ב-Outlook.");'
+      + '},1800);'
       
       + '});'
       + '</scr' + 'ipt></body></html>';
