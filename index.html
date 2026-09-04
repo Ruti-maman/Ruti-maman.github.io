@@ -3865,30 +3865,15 @@ RM.DEMOS.outlook = {
       +   'if(recipients.length===0){logMsg("400 — No recipients provided");return;}'
       + 'var q=recipients.map(encodeURIComponent).join(",");'
       + 'var qs="subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);'
-      /* Her original experience, replicated: submit pops a draft window in the
-         DESKTOP Outlook (taskbar icon and all) wherever Outlook is the mail
-         handler - which is exactly what mailto: does there. No button, no
-         Microsoft site. The log line below is copied verbatim from main.py's
-         response shape, so the message reads identically to the original. */
+      /* One-to-one with the original, per Ruth's explicit call: the submit pops
+         the draft in the device's own Outlook/mail app - and that is all.
+         No fallback button, no web compose, no menu. On a device with no mail
+         handler nothing visible happens; she prefers that honesty over an
+         extra button that the original never had. */
       + 'var a=document.getElementById("mlt")||document.createElement("a");'
       + 'a.id="mlt";a.href="mailto:"+q+"?"+qs;a.style.display="none";'
       + 'document.body.appendChild(a);a.click();'
       + 'logMsg("הבקשה נשלחה בהצלחה: "+JSON.stringify({status:"ok",recipients_count:recipients.length}));'
-      /* only when no mail app answered (the browser never lost focus) does a
-         single fallback appear - phones and handler-less machines otherwise
-         stare at a click that did nothing */
-      + 'var blurred=false;'
-      + 'window.addEventListener("blur",function(){blurred=true;},{once:true});'
-      + 'setTimeout(function(){'
-      +   'if(blurred||document.getElementById("owaBtn"))return;'
-      +   'var b=document.createElement("a");b.id="owaBtn";b.target="_blank";b.rel="noopener";'
-      +   'b.href="https://outlook.live.com/mail/0/deeplink/compose?to="+q+"&"+qs;'
-      +   'b.textContent="פתיחת הטיוטה ב-Outlook";'
-      +   'b.style.cssText="display:block;margin-top:10px;text-align:center;padding:12px;'
-      +     'border-radius:10px;background:#77e9d6;color:#fff;font-weight:bold;text-decoration:none";'
-      +   'form.parentNode.insertBefore(b,document.getElementById("log"));'
-      +   'logMsg("לא זוהתה תוכנת מייל במכשיר — הכפתור למעלה יפתח את הטיוטה ב-Outlook.");'
-      + '},1800);'
       
       + '});'
       + '</scr' + 'ipt></body></html>';

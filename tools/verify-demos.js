@@ -151,14 +151,9 @@ async function outlook(page) {
   );
   check(href.includes("subject="), `outlook: the draft carries the subject`);
 
-  // headless has no mail handler, so the single fallback must appear - and
-  // point at Outlook only, no gmail, no menu
+  // Ruth's call: no fallback UI at all - the pop is the whole behaviour
   await page.waitForTimeout(2500);
-  const owa = (await app.locator("#owaBtn").getAttribute("href")) || "";
-  check(
-    owa.startsWith("https://outlook.live.com/") && owa.includes("dana%40example.com"),
-    `outlook: handler-less devices get one Outlook fallback button`
-  );
+  check((await app.locator("#owaBtn").count()) === 0, `outlook: no fallback button - direct pop only`);
   check((await app.locator("#gmailLink").count()) === 0, `outlook: no gmail option - Outlook only, like the original`);
 
   await page.screenshot({ path: path.join(OUT, "31-outlook-drafts.png") });
