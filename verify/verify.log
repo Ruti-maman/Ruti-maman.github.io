@@ -26,7 +26,7 @@ PASS  memory: shows its own UI (found "ברוכים")
 
 ALL CHECKS PASSED
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 248465"
+PASS  isolation: client A created "בידוד 038671"
 PASS  auth: a wrong password is rejected
 PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
