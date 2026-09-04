@@ -6,7 +6,7 @@ PASS  helpdesk: preview renders a real screenshot
 PASS  helpdesk: the screenshot file loaded (naturalWidth=1920)
 PASS  helpdesk: preview holds 16/10 (measured 1.596)
 PASS  helpdesk: iframe points at the published build (https://ruti-maman.github.io/project/)
-PASS  helpdesk: the loading veil lifted
+FAIL  helpdesk: the loading veil lifted
 PASS  helpdesk: the app rendered content (48 chars)
 PASS  helpdesk: shows its own UI (found "התחברות")
 PASS  taskman: preview renders a real screenshot
@@ -24,9 +24,10 @@ PASS  memory: the loading veil lifted
 PASS  memory: the app rendered content (62 chars)
 PASS  memory: shows its own UI (found "ברוכים")
 
-ALL CHECKS PASSED
+1 PROBLEM(S)
+  - helpdesk: the loading veil lifted
 PASS  isolation: a NEW client starts without the sample board
-PASS  isolation: client A created "בידוד 831203"
+PASS  isolation: client A created "בידוד 422703"
 PASS  auth: a wrong password is rejected
 PASS  auth: registering an already-taken email is rejected
 PASS  isolation: client B does NOT see A's team
@@ -52,11 +53,10 @@ PASS  textcli: an unmatched request says so instead of inventing a command
 PASS  outlook: HER page renders - the real heading
 PASS  outlook: her turquoise gradient is painted
 PASS  outlook: empty recipients rejected with the API error
-PASS  outlook: the log confirms the draft is ready
+PASS  outlook: submit went straight to Outlook
 PASS  outlook: the full-version pipeline is narrated
-PASS  outlook: the draft carries both recipients
+PASS  outlook: the Outlook draft carries both recipients
 PASS  outlook: the draft carries the subject
-PASS  outlook: a visible Outlook-web compose button with the recipients
-PASS  outlook: a visible Gmail compose button with the recipients
+PASS  outlook: no gmail option - Outlook only, like the original
 
 ALL DEMO CHECKS PASSED
