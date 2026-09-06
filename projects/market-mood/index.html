@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -460,421 +460,35 @@
       font-weight: 500;
     }
 
-    /* Responsive portfolio refresh — designed to fit the 16:10 live preview
-       as well as a full browser window without cropping the useful content. */
-    :root {
-      color-scheme: light;
-      --navy: #17233d;
-      --ink: #243149;
-      --muted: #68758d;
-      --mint: #25bda8;
-      --mint-soft: #dff9f3;
-      --lavender: #8174df;
-      --line: rgba(36, 49, 73, .1);
-    }
-
-    html,
-    body {
-      min-height: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
+    /* Keep the original 380x760 design, and only scale it to the available viewport. */
     body {
       align-items: center;
-      padding: clamp(14px, 3vw, 34px);
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 10% 5%, rgba(129, 116, 223, .18), transparent 34%),
-        radial-gradient(circle at 92% 84%, rgba(37, 189, 168, .2), transparent 35%),
-        linear-gradient(145deg, #f7f7ff 0%, #ecfbf8 48%, #f9fbff 100%);
+      padding-bottom: 44px;
     }
 
     .stage {
-      width: min(1120px, 100%);
-      height: min(690px, 100%);
-      align-items: stretch;
+      width: 100%;
+      height: 100%;
+      align-items: center;
     }
 
     .phone {
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      border-radius: clamp(22px, 3vw, 34px);
-      background: rgba(255, 255, 255, .92);
-      border: 1px solid rgba(255, 255, 255, .86);
-      box-shadow: 0 30px 90px rgba(53, 74, 105, .2), 0 8px 28px rgba(53, 74, 105, .1);
-      transform: none;
-      backdrop-filter: blur(18px);
-    }
-
-    .topbar {
-      position: relative;
-      height: 54px;
-      padding: 0 clamp(18px, 3vw, 32px);
-      background: var(--navy);
-    }
-
-    .topbar .status {
-      justify-content: space-between;
-    }
-
-    .topbar .status .left-icons,
-    .topbar .status .right-icons,
-    .topbar .status .time {
-      position: static;
-      transform: none;
-    }
-
-    .topbar .status .left-icons {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .04em;
-    }
-
-    .topbar .status .left-icons::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #55ddc8;
-      box-shadow: 0 0 0 5px rgba(85, 221, 200, .13);
-    }
-
-    .topbar .status .time {
-      margin-inline-start: auto;
-      margin-inline-end: 18px;
-      font-size: 13px;
-      opacity: .78;
-    }
-
-    .screen {
-      position: absolute;
-      top: 54px;
-      background: transparent;
-      scrollbar-width: thin;
-    }
-
-    .card {
-      min-height: 100%;
-      height: auto;
-      align-items: stretch;
-      padding: clamp(22px, 3.4vw, 40px);
-      background:
-        linear-gradient(120deg, rgba(223, 249, 243, .72), transparent 40%),
-        rgba(255, 255, 255, .84);
-    }
-
-    .close,
-    .spacer,
-    .fold-spacer,
-    .divider {
-      display: none;
-    }
-
-    .hero-copy {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: 8px 20px;
-    }
-
-    .hero-kicker {
-      grid-column: 1 / -1;
-      color: var(--mint);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      color: var(--navy);
-      font-size: clamp(25px, 3.2vw, 40px);
-      font-weight: 700;
-      letter-spacing: -.035em;
-      opacity: 1;
-      animation: none;
-    }
-
-    .date {
-      margin: 0 0 4px;
-      color: var(--muted);
-      opacity: 1;
-      animation: none;
-      white-space: nowrap;
-    }
-
-    .hero-note {
-      grid-column: 1 / -1;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .moods {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(78px, 1fr));
-      gap: clamp(8px, 1.5vw, 16px);
-      margin: clamp(18px, 3vh, 28px) 0 0;
-      opacity: 1;
-      animation: none;
-    }
-
-    .mood {
-      min-width: 0;
-      gap: 8px;
-      padding: clamp(10px, 1.5vw, 16px) 8px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, .76);
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-
-    .mood:hover,
-    .mood:focus-visible {
-      transform: translateY(-3px);
-      border-color: color-mix(in srgb, currentColor 30%, transparent);
-      box-shadow: 0 12px 28px rgba(53, 74, 105, .1);
-      outline: none;
-    }
-
-    .mood .icon {
-      width: clamp(48px, 5vw, 60px);
-      height: clamp(48px, 5vw, 60px);
-      padding: 5px;
-      background: transparent;
-    }
-
-    .mood:hover .icon {
-      transform: none;
-    }
-
-    .label {
-      margin: 0;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .insights-grid {
-      display: grid;
-      grid-template-columns: .9fr 1.15fr .95fr;
-      gap: clamp(10px, 1.6vw, 18px);
-      margin-top: clamp(18px, 3vh, 28px);
-    }
-
-    .insight {
-      min-width: 0;
-      padding: clamp(14px, 2vw, 20px);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, .72);
-    }
-
-    .section-title {
-      width: auto;
-      margin: 0 0 12px;
-      color: var(--muted);
-      text-align: start;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .13em;
-    }
-
-    .panel {
-      width: auto;
-      max-width: none;
-      margin: 0;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      box-shadow: none;
-    }
-
-    .chips {
-      gap: 7px;
-    }
-
-    .chip {
-      padding: 7px 10px;
-      color: #4e5b72;
-      border-color: var(--line);
-      background: #fff;
-      font-size: 11px;
-    }
-
-    .list {
-      gap: 7px;
-    }
-
-    .item {
-      gap: 8px;
-      padding: 7px 8px;
-      border-color: rgba(36, 49, 73, .07);
-      background: rgba(255, 255, 255, .8);
-      font-size: 12px;
-    }
-
-    .item .dot {
       flex: 0 0 auto;
+      transform: scale(var(--phone-scale, 1));
+      transform-origin: center center;
     }
 
-    .muted {
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    .site-footer {
-      left: auto;
-      right: 16px;
-      bottom: 10px;
-      padding: 5px 10px;
-      border: 1px solid rgba(37, 189, 168, .12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .72);
-      box-shadow: none;
-      backdrop-filter: blur(10px);
-    }
-
-    .site-footer p {
-      font-size: 10px;
-      font-weight: 500;
-    }
-
-    .bubble {
-      opacity: .62;
-      max-width: 190px;
-      padding: 9px 12px;
-      font-size: 10px;
-    }
-
-    @media (max-width: 1180px) {
+    @media (max-width: 620px) {
       .bubbles {
         display: none;
       }
-    }
-
-    @media (max-width: 760px) {
-      body {
-        padding: 0;
-      }
-
-      .stage,
-      .phone {
-        width: 100%;
-        height: 100%;
-        border-radius: 0;
-      }
-
-      .screen {
-        overflow-y: auto;
-      }
-
-      .card {
-        padding: 22px 16px 64px;
-      }
-
-      .hero-copy {
-        grid-template-columns: 1fr;
-      }
-
-      .date,
-      .hero-note {
-        white-space: normal;
-      }
-
-      .moods {
-        grid-template-columns: repeat(5, minmax(54px, 1fr));
-        gap: 6px;
-      }
-
-      .mood {
-        padding: 10px 3px;
-        border-radius: 14px;
-      }
-
-      .mood .icon {
-        width: 44px;
-        height: 44px;
-      }
-
-      .label {
-        font-size: 10px;
-      }
-
-      .insights-grid {
-        grid-template-columns: 1fr;
-      }
 
       .site-footer {
-        display: none;
-      }
-    }
-
-    @media (max-height: 700px) and (min-width: 761px) {
-      body {
-        padding: 18px 30px;
+        padding: 8px 12px;
       }
 
-      .topbar {
-        height: 48px;
-      }
-
-      .screen {
-        top: 48px;
-      }
-
-      .card {
-        padding: 16px 28px 18px;
-      }
-
-      .hero-copy {
-        gap-block: 4px;
-      }
-
-      h1 {
-        font-size: 30px;
-      }
-
-      .hero-note {
-        font-size: 12px;
-      }
-
-      .moods,
-      .insights-grid {
-        margin-top: 12px;
-      }
-
-      .mood {
-        gap: 5px;
-        padding-block: 7px;
-        border-radius: 15px;
-      }
-
-      .mood .icon {
-        width: 42px;
-        height: 42px;
-      }
-
-      .insight {
-        padding: 12px;
-        border-radius: 16px;
-      }
-
-      .section-title {
-        margin-bottom: 8px;
-      }
-
-      .item {
-        padding-block: 5px;
-      }
-
-      .site-footer {
-        display: none;
+      .site-footer p {
+        font-size: 11px;
       }
     }
   </style>
@@ -908,23 +522,26 @@
     </div>
     <div class="phone" role="img" aria-label="phone mock">
       <div class="topbar" role="banner">
-        <div class="status"><span class="left-icons">MarketMood</span><span class="time" id="real-time">11:33</span><span
+        <div class="status"><span class="left-icons"></span><span class="time" id="real-time">11:33</span><span
             class="right-icons">🔋</span></div>
       </div>
       <div class="screen">
         <div class="card" role="main">
-          <div class="hero-copy">
-            <div class="hero-kicker">Mood-powered shopping</div>
-            <h1>איך מרגישים היום?</h1>
-            <div class="date" id="real-date">
-              <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="5" width="18" height="16" rx="2" stroke="#5ec4bd" stroke-width="1.2" />
-                <path d="M16 3v4M8 3v4" stroke="#5ec4bd" stroke-width="1.2" stroke-linecap="round" />
-              </svg>
-              היום
-            </div>
-            <p class="hero-note">בוחרים מצב רוח ומקבלים חוויית קנייה, תוכן ומוזיקה שמתאימים בדיוק לרגע.</p>
+          <button class="close" aria-label="close">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 6L18 18M6 18L18 6" stroke="#333" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          
+          <h1>HOW ARE YOU?</h1>
+          <div class="date" id="real-date">
+            <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="5" width="18" height="16" rx="2" stroke="#5ec4bd" stroke-width="1.2" />
+              <path d="M16 3v4M8 3v4" stroke="#5ec4bd" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            Today, Dec 17, 11:21 AM
           </div>
 
           <div class="moods" role="list" aria-label="mood options">
@@ -940,7 +557,7 @@
                   </g>
                 </svg>
               </div>
-              <div class="label">שמחה</div>
+              <div class="label">rad</div>
             </div>
 
             <div class="mood good" role="listitem" tabindex="0">
@@ -955,7 +572,7 @@
                   </g>
                 </svg>
               </div>
-              <div class="label">אהבה</div>
+              <div class="label">good</div>
             </div>
 
             <div class="mood meh" role="listitem" tabindex="0">
@@ -970,7 +587,7 @@
                   </g>
                 </svg>
               </div>
-              <div class="label">רגוע</div>
+              <div class="label">meh</div>
             </div>
 
             <div class="mood bad" role="listitem" tabindex="0">
@@ -985,7 +602,7 @@
                   </g>
                 </svg>
               </div>
-              <div class="label">עצוב</div>
+              <div class="label">bad</div>
             </div>
 
             <div class="mood awful" role="listitem" tabindex="0">
@@ -1000,56 +617,56 @@
                   </g>
                 </svg>
               </div>
-              <div class="label awful-label">כועס</div>
+              <div class="label awful-label">awful</div>
             </div>
 
           </div>
 
-          <div class="insights-grid">
-            <section class="insight">
-              <div class="section-title">פעילויות מהירות</div>
-              <div class="panel">
-                <div class="chips">
-                  <span class="chip">🏃‍♀️ אימון</span>
-                  <span class="chip">📚 לימודים</span>
-                  <span class="chip">🛒 קניות</span>
-                  <span class="chip">🧘 רוגע</span>
-                  <span class="chip">👨‍👩‍👧 משפחה</span>
-                  <span class="chip">☕ קפה</span>
-                </div>
-              </div>
-            </section>
+          <div class="spacer"></div>
+          <div class="fold-spacer" aria-hidden="true" style="height: clamp(520px, 80vh, 900px);"></div>
 
-            <section class="insight">
-              <div class="section-title">רגעים אחרונים</div>
-              <div class="panel list">
-                <div class="item"><span class="dot" style="border-color:#20c997">😊</span>
-                  <div>
-                    <div>הליכה נהדרת בחוץ</div>
-                    <div class="muted">היום · טבע</div>
-                  </div>
-                </div>
-                <div class="item"><span class="dot" style="border-color:#6eb4e8">😐</span>
-                  <div>
-                    <div>קצת עייפות אחרי הלימודים</div>
-                    <div class="muted">אתמול · לימודים</div>
-                  </div>
-                </div>
-                <div class="item"><span class="dot" style="border-color:#ff7b7b">😣</span>
-                  <div>
-                    <div>לוקחים רגע למנוחה</div>
-                    <div class="muted">יום רביעי · בריאות</div>
-                  </div>
-                </div>
-              </div>
-            </section>
+          <!-- Real scrolling content (not duplicated screen) -->
+          <hr class="divider" aria-hidden="true" />
 
-            <section class="insight">
-              <div class="section-title">תזכורת נעימה</div>
-              <div class="panel">
-                <div class="muted">לשתות מים, לקחת הפסקות קצרות ולתכנן הליכה קטנה בערב. גם צעד קטן משנה את התחושה.</div>
+          <div class="section-title">QUICK ACTIVITIES</div>
+          <div class="panel">
+            <div class="chips">
+              <span class="chip">🏃‍♀️ workout</span>
+              <span class="chip">📚 study</span>
+              <span class="chip">🛒 shopping</span>
+              <span class="chip">🧘 relax</span>
+              <span class="chip">👨‍👩‍👧 family</span>
+              <span class="chip">☕ coffee</span>
+              <span class="chip">🎮 play</span>
+            </div>
+          </div>
+
+          <div class="section-title">RECENT ENTRIES</div>
+          <div class="panel list">
+            <div class="item"><span class="dot" style="border-color:#20c997">😊</span>
+              <div>
+                <div>Great walk outside!</div>
+                <div class="muted">Today · outdoors</div>
               </div>
-            </section>
+            </div>
+            <div class="item"><span class="dot" style="border-color:#6eb4e8">😐</span>
+              <div>
+                <div>Bit tired after class</div>
+                <div class="muted">Yesterday · study</div>
+              </div>
+            </div>
+            <div class="item"><span class="dot" style="border-color:#ff7b7b">😣</span>
+              <div>
+                <div>Headache, taking a rest</div>
+                <div class="muted">Wed · health</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">NOTES</div>
+          <div class="panel">
+            <div class="muted">Remember to drink more water and take short breaks while working. Plan a short walk this
+              evening.</div>
           </div>
 
         </div>
@@ -1078,9 +695,18 @@
     function updateDate() {
       const now = new Date();
 
-      const dateString = new Intl.DateTimeFormat('he-IL', {
-        weekday: 'long', day: 'numeric', month: 'long'
-      }).format(now);
+      // שמות חודשים באנגלית
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      const month = monthNames[now.getMonth()];
+      const day = now.getDate();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hour12 = hours % 12 || 12;
+
+      const dateString = `Today, ${month} ${day}, ${hour12}:${minutes} ${ampm}`;
 
       const dateElement = document.getElementById('real-date');
       if (dateElement) {
@@ -1166,7 +792,7 @@
 
     // Attach click handlers to mood tiles
     document.querySelectorAll('.mood').forEach(el => {
-      const chooseMood = () => {
+      el.addEventListener('click', () => {
         for (const cls of el.classList) {
           if (moodMap[cls]) {
             localStorage.setItem('selectedMood', moodMap[cls]);
@@ -1175,16 +801,25 @@
             return;
           }
         }
-      };
-
-      el.addEventListener('click', chooseMood);
-      el.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          chooseMood();
-        }
       });
     });
+
+    // Preserve the original phone layout and scale the complete frame into view.
+    function fitOriginalPhone() {
+      const phone = document.querySelector('.phone');
+      const footer = document.querySelector('.site-footer');
+      if (!phone) return;
+
+      const footerHeight = footer ? footer.offsetHeight : 44;
+      const availableWidth = Math.max(160, window.innerWidth - 32);
+      const availableHeight = Math.max(280, window.innerHeight - footerHeight - 28);
+      const scale = Math.min(1, availableWidth / 380, availableHeight / 760);
+
+      phone.style.setProperty('--phone-scale', scale.toFixed(3));
+    }
+
+    window.addEventListener('resize', fitOriginalPhone);
+    window.addEventListener('DOMContentLoaded', fitOriginalPhone);
   </script>
 
   <!-- טעינת המוצרים מקובץ JavaScript -->
