@@ -1,0 +1,112 @@
+# 🎵 איך להוסיף מוזיקה למערכת
+
+## ⚡ דרך מהירה (5 דקות):
+
+### 1. היכנסי ל-YouTube Studio:
+🔗 https://studio.youtube.com/channel/UC/audio
+
+### 2. לחצי על "Audio Library" בצד שמאל
+
+### 3. הורידי 5 שירים:
+
+#### 😊 Happy (שמח):
+- סנני: Mood → Happy / Bright
+- בחרי שיר קצר (2-3 דקות)
+- הורידי ושמי בשם: **happy.mp3**
+
+#### 😢 Sad (עצוב):
+- סנני: Mood → Sad / Emotional  
+- בחרי פסנתר או מיתרים
+- הורידי ושמי בשם: **sad.mp3**
+
+#### 😐 Neutral (רגוע):
+- סנני: Mood → Calm / Peaceful
+- בחרי אמביינט או לו-פיי
+- הורידי ושמי בשם: **neutral.mp3**
+
+#### 😠 Angry (אנרגטי):
+- סנני: Mood → Epic / Dramatic
+- בחרי משהו דינמי
+- הורידי ושמי בשם: **angry.mp3**
+
+#### ❤️ Love (אהבה):
+- סנני: Mood → Romantic / Tender
+- בחרי משהו רך ומתוק
+- הורידי ושמי בשם: **love.mp3**
+
+### 4. העתיקי את 5 הקבצים לתיקייה:
+```
+g:\שנה ב\ts_project\TS\assets\audio\moods\
+```
+
+### 5. רענני את הדף - וזהו! 🎉
+
+---
+
+## 🌐 אתרים נוספים (אם YouTube לא עובד):
+
+### Pixabay Music (חינמי לגמרי):
+🔗 https://pixabay.com/music/
+- בחרי קטגוריה
+- הורידי MP3
+- שמי בשמות הנכונים
+
+### Free Music Archive:
+🔗 https://freemusicarchive.org/
+- חפשי לפי מצב רוח
+- הורידי ושמי בשמות הנכונים
+
+### Incompetech (Kevin MacLeod):
+🔗 https://incompetech.com/music/royalty-free/music.html
+- מוזיקה פופולרית מאוד
+- בחרי לפי Mood/Genre
+
+---
+
+## ⚠️ חשוב מאוד!
+
+✅ **השמות חייבים להיות בדיוק:**
+- happy.mp3
+- sad.mp3
+- neutral.mp3
+- angry.mp3
+- love.mp3
+
+✅ **הקבצים חייבים להיות MP3** (לא WAV או FLAC)
+
+✅ **המיקום:** `assets/audio/moods/`
+
+---
+
+## 🆘 אם אין לך גישה לאינטרנט:
+
+המערכת תעבוד **גם בלי קבצים** - היא תשתמש במוזיקה מסונתזת פשוטה.
+אבל זה לא יהיה נעים כמו מוזיקה אמיתית.
+
+---
+
+## 📝 המלצות ספציפיות:
+
+### Happy:
+- "Bensound - Happy Rock"
+- כל שיר עם אוקלילי או גיטרה אקוסטית
+
+### Sad:
+- "Kevin MacLeod - Meditation"
+- פסנתר סולו עצוב
+
+### Neutral:
+- "Bensound - Relaxing"
+- לו-פיי או אמביינט
+
+### Angry:
+- "Bensound - Epic"
+- תזמורת או רוק
+
+### Love:
+- "Bensound - Romantic"
+- פסנתר או ג'אז רך
+
+---
+
+🎼 **אחרי שתוסיפי את הקבצים, המוזיקה תנגן אוטומטית!**

@@ -1,0 +1,1033 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarketMood - ניהול מערכת</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Rubik', sans-serif; 
+      background: linear-gradient(135deg, #7ae7c7 0%, #5ec4bd 100%);
+      min-height: 100vh; 
+      padding: 20px;
+    }
+    
+    .admin-container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+    }
+    
+    .admin-header { 
+      background: white; 
+      padding: 20px 30px; 
+      border-radius: 20px; 
+      margin-bottom: 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .admin-header h1 { 
+      color: #5ec4bd; 
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+    
+    .logout-btn {
+      background: white;
+      color: #5ec4bd;
+      border: 2px solid #5ec4bd;
+      padding: 10px 20px;
+      border-radius: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Rubik', sans-serif;
+      font-size: 14px;
+    }
+    
+    .logout-btn:hover {
+      background: #5ec4bd;
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .tabs {
+      background: white;
+      padding: 8px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      display: flex;
+      gap: 8px;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Rubik', sans-serif;
+    }
+    
+    .tab-btn.active {
+      color: white;
+      background: #5ec4bd;
+      box-shadow: 0 2px 8px rgba(94, 196, 189, 0.3);
+    }
+    
+    .tab-btn:hover:not(.active) {
+      background: rgba(94, 196, 189, 0.1);
+      color: #5ec4bd;
+    }
+    
+    .tab-content {
+      display: none;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      color: #5ec4bd;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8f9f7;
+      font-weight: 600;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group label {
+      font-weight: 500;
+      color: #666;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 12px;
+      border: 2px solid #e8f9f7;
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: 'Rubik', sans-serif;
+      transition: all 0.2s;
+      background: #f8fdfc;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #5ec4bd;
+      background: white;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    
+    .btn-primary {
+      background: #5ec4bd;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 15px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Rubik', sans-serif;
+    }
+    
+    .btn-primary:hover {
+      background: #4eb5ad;
+      transform: scale(1.02);
+      box-shadow: 0 4px 15px rgba(94, 196, 189, 0.3);
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .product-card {
+      background: #f8fdfc;
+      border-radius: 15px;
+      padding: 18px;
+      border: 2px solid #e8f9f7;
+      transition: all 0.2s;
+    }
+    
+    .product-card:hover {
+      border-color: #5ec4bd;
+      box-shadow: 0 4px 20px rgba(94, 196, 189, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+    
+    .product-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .product-price {
+      background: #5ec4bd;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .product-desc {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    
+    .product-meta {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .meta-tag {
+      background: white;
+      border: 1px solid #e8f9f7;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: #5ec4bd;
+      font-weight: 500;
+    }
+    
+    .product-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .btn-edit,
+    .btn-delete {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Rubik', sans-serif;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    .btn-edit {
+      background: #7ae7c7;
+      color: white;
+    }
+    
+    .btn-edit:hover {
+      background: #5ec4bd;
+      transform: scale(1.05);
+    }
+    
+    .btn-delete {
+      background: #ffb3c1;
+      color: white;
+    }
+    
+    .btn-delete:hover {
+      background: #ff9aad;
+      transform: scale(1.05);
+    }
+    
+    .orders-table,
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #f8fdfc;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    
+    .orders-table th,
+    .orders-table td,
+    .users-table th,
+    .users-table td {
+      padding: 14px;
+      text-align: right;
+      border-bottom: 1px solid #e8f9f7;
+    }
+    
+    .orders-table th,
+    .users-table th {
+      background: #e8f9f7;
+      font-weight: 600;
+      color: #5ec4bd;
+      font-size: 13px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-pending {
+      background: #fff9e6;
+      color: #e6a700;
+    }
+    
+    .status-completed {
+      background: #e8f9f7;
+      color: #5ec4bd;
+    }
+    
+    .admin-badge {
+      background: #5ec4bd;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    
+    .btn-small {
+      padding: 7px 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Rubik', sans-serif;
+      transition: all 0.2s;
+    }
+    
+    .btn-success {
+      background: #7ae7c7;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #5ec4bd;
+      transform: scale(1.05);
+    }
+    
+    .btn-danger {
+      background: #ffb3c1;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #ff9aad;
+      transform: scale(1.05);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #5ec4bd;
+      opacity: 0.6;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #7ae7c7 0%, #5ec4bd 100%);
+      padding: 20px;
+      border-radius: 15px;
+      color: white;
+      box-shadow: 0 2px 15px rgba(94, 196, 189, 0.2);
+    }
+    
+    .stat-card h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+    
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    
+    .mood-category {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    /* Footer */
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 50;
+    }
+    
+    .site-footer p {
+      margin: 0;
+      color: #5ec4bd;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>🛡️ ניהול MarketMood</h1>
+      <button class="logout-btn" onclick="logout()">יציאה 🚪</button>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('products')">📦 מוצרים</button>
+      <button class="tab-btn" onclick="showTab('orders')">📋 הזמנות</button>
+      <button class="tab-btn" onclick="showTab('users')">👥 משתמשים</button>
+    </div>
+    
+    <!-- Products Tab -->
+    <div id="products-tab" class="tab-content active">
+      <div class="section-title">➕ הוספת מוצר חדש</div>
+      <form id="add-product-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שם המוצר *</label>
+            <input type="text" name="name" required maxlength="50" placeholder="לדוגמה: נרות ארומה מרגיעים">
+          </div>
+          <div class="form-group">
+            <label>מצב רוח *</label>
+            <select name="mood" required>
+              <option value="happy">😊 שמח</option>
+              <option value="sad">😢 עצוב</option>
+              <option value="neutral">😐 ניטרלי</option>
+              <option value="angry">😡 כועס</option>
+              <option value="love">💕 אהבה</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>מחיר (₪) *</label>
+            <input type="number" name="price" required min="1" step="0.01" placeholder="99">
+          </div>
+          <div class="form-group">
+            <label>אייקון (אמוג'י) *</label>
+            <input type="text" name="emoji" required maxlength="2" placeholder="🏖️" style="font-size: 24px; text-align: center;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>תיאור המוצר *</label>
+          <textarea name="desc" required placeholder="תיאור קצר של המוצר..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">הוסף מוצר ➕</button>
+      </form>
+      
+      <div class="section-title" style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
+        <span>רשימת מוצרים (<span id="products-count">0</span>)</span>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="cleanupDuplicates()" style="background: #ff6b9d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">🧹 נקה כפילויות</button>
+        </div>
+      </div>
+      <div class="products-grid" id="products-list"></div>
+    </div>
+    
+    <!-- Orders Tab -->
+    <div id="orders-tab" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="total-orders">0</div>
+          <div class="stat-label">סה"כ הזמנות</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-revenue">0 ₪</div>
+          <div class="stat-label">סה"כ הכנסות</div>
+        </div>
+      </div>
+      
+      <div class="section-title">📋 כל ההזמנות</div>
+      <div id="orders-container"></div>
+    </div>
+    
+    <!-- Users Tab -->
+    <div id="users-tab" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="total-users">0</div>
+          <div class="stat-label">סה"כ משתמשים</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-admins">0</div>
+          <div class="stat-label">מנהלי מערכת</div>
+        </div>
+      </div>
+      
+      <div class="section-title">👥 כל המשתמשים</div>
+      <div id="users-container"></div>
+    </div>
+  </div>
+  
+  <script>
+    // בדיקת הרשאות - רק מנהלים יכולים לגשת
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+    if (!currentUser || !currentUser.isAdmin) {
+      alert('⛔ גישה נדחתה! רק מנהלים יכולים לגשת לדף זה.');
+      window.location.href = 'login.html';
+      throw new Error('Unauthorized access');
+    }
+    
+    function showTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tab + '-tab').classList.add('active');
+      
+      if (tab === 'orders') loadOrders();
+      if (tab === 'users') loadUsers();
+    }
+    
+    function logout() {
+      sessionStorage.removeItem('currentUser');
+      alert('התנתקת בהצלחה! 👋');
+      window.location.href = 'login.html';
+    }
+    
+    function getProducts() {
+      // בדיקה אם זו הפעם הראשונה - אם כן, נעתיק את המוצרים הקבועים ל-localStorage
+      let allProducts = JSON.parse(localStorage.getItem('allProducts') || 'null');
+      
+      if (!allProducts) {
+        // פעם ראשונה - יצירת המוצרים הקבועים
+        const staticProducts = {
+        happy: [
+          { id: 'happy-1', name: 'פלייליסט אנרגטי', desc: 'אוסף שירים מרימי מצב רוח להמשך היום', price: 29, emoji: '🎵', mood: 'happy', isStatic: true },
+          { id: 'happy-2', name: 'משחק קלפים כיפי', desc: 'משחק קבוצתי מצחיק לערב עם חברים', price: 89, emoji: '🎮', mood: 'happy', isStatic: true },
+          { id: 'happy-3', name: 'קורס יוגה צחוק', desc: 'סדרת וידאו ליוגה משולבת צחוק', price: 149, emoji: '🧘', mood: 'happy', isStatic: true },
+          { id: 'happy-4', name: 'ערכת פיקניק משפחתי', desc: 'כל מה שצריך לפיקניק מושלם בטבע', price: 199, emoji: '🧺', mood: 'happy', isStatic: true },
+          { id: 'happy-5', name: 'סדנת ריקוד לטינו', desc: 'סדרת שיעורי ריקוד משמחים אונליין', price: 179, emoji: '💃', mood: 'happy', isStatic: true },
+          { id: 'happy-6', name: 'משחק קופסה למשפחה', desc: 'משחק אסטרטגיה מהנה לכל המשפחה', price: 129, emoji: '🎲', mood: 'happy', isStatic: true },
+          { id: 'happy-7', name: 'אוזניות בלוטוס צבעוניות', desc: 'אוזניות איכותיות עם צבעים עליזים', price: 249, emoji: '🎧', mood: 'happy', isStatic: true },
+          { id: 'happy-8', name: 'קורס צילום כיפי', desc: 'למד לצלם רגעים שמחים בצורה מקצועית', price: 299, emoji: '📸', mood: 'happy', isStatic: true },
+          { id: 'happy-9', name: 'ערכת יצירה לילדים', desc: 'כלים ליצירה משפחתית משותפת', price: 159, emoji: '🎨', mood: 'happy', isStatic: true },
+          { id: 'happy-10', name: 'מנוי למופעי סטנדאפ', desc: 'גישה למופעי קומדיה מצחיקים אונליין', price: 99, emoji: '😂', mood: 'happy', isStatic: true },
+          { id: 'happy-11', name: 'כדור פעילות ואנרגיה', desc: 'כדור כושר צבעוני למשחקים ופעילות', price: 119, emoji: '⚽', mood: 'happy', isStatic: true },
+          { id: 'happy-12', name: 'ספר בדיחות ופאנצ\'ים', desc: 'אוסף הבדיחות המצחיק בעברית', price: 69, emoji: '📖', mood: 'happy', isStatic: true },
+          { id: 'happy-13', name: 'פלייליסט מסיבות', desc: 'מוזיקה להתחלת מסיבה בכל מקום', price: 39, emoji: '🎤', mood: 'happy', isStatic: true },
+          { id: 'happy-14', name: 'ערכת בועות סבון ענקיות', desc: 'כיף לילדים ומבוגרים בחצר', price: 79, emoji: '🫧', mood: 'happy', isStatic: true },
+          { id: 'happy-15', name: 'מנוי לאפליקציית משחקים', desc: 'מאות משחקים משעשעים לכל הגילאים', price: 149, emoji: '🎮', mood: 'happy', isStatic: true }
+        ],
+        sad: [
+          { id: 'sad-1', name: 'שוקולד מריר איכותי', desc: 'מארז שוקולדים בלגיים מעולים', price: 79, emoji: '🍫', mood: 'sad', isStatic: true },
+          { id: 'sad-2', name: 'יומן רגשות מודרך', desc: 'מחברת עם שאלות מנחות לעיבוד רגשי', price: 49, emoji: '📔', mood: 'sad', isStatic: true },
+          { id: 'sad-3', name: 'נר ריח מרגיע', desc: 'נר לבנדר וקמומיל להרגעת החושים', price: 65, emoji: '🕯️', mood: 'sad', isStatic: true },
+          { id: 'sad-4', name: 'פלייליסט מנחם', desc: 'מוזיקה עדינה ומרגיעה לרגעים קשים', price: 29, emoji: '🎵', mood: 'sad', isStatic: true },
+          { id: 'sad-5', name: 'שמיכה רכה ומחממת', desc: 'שמיכת פליז איכותית לחיבוק', price: 189, emoji: '🛋️', mood: 'sad', isStatic: true },
+          { id: 'sad-6', name: 'קורס עיבוד רגשי', desc: 'מפגשים מוקלטים עם פסיכולוג', price: 299, emoji: '💭', mood: 'sad', isStatic: true },
+          { id: 'sad-7', name: 'תה צמחים מרגיע', desc: 'מבחר תה איכותי להרגעה', price: 59, emoji: '🍵', mood: 'sad', isStatic: true },
+          { id: 'sad-8', name: 'ספר שירה מרגש', desc: 'אוסף שירים מנחמים ויפים', price: 79, emoji: '📖', mood: 'sad', isStatic: true },
+          { id: 'sad-9', name: 'מדיטציה מודרכת להרגעה', desc: 'קבצי אודיו להרגעה עמוקה', price: 99, emoji: '🧘', mood: 'sad', isStatic: true },
+          { id: 'sad-10', name: 'כרית חיבוק טיפולית', desc: 'כרית רכה ומנחמת בצורת לב', price: 129, emoji: '💜', mood: 'sad', isStatic: true },
+          { id: 'sad-11', name: 'פאזל 1000 חלקים', desc: 'פעילות מרגיעה ומפרגנת', price: 89, emoji: '🧩', mood: 'sad', isStatic: true },
+          { id: 'sad-12', name: 'מארז טיפוח ספא ביתי', desc: 'מסכות ומוצרי טיפוח מפנקים', price: 169, emoji: '🧴', mood: 'sad', isStatic: true },
+          { id: 'sad-13', name: 'סרטונים מרגיעים מהטבע', desc: 'נופים ושקטים מדהימים', price: 49, emoji: '🎞️', mood: 'sad', isStatic: true },
+          { id: 'sad-14', name: 'ספר צביעה למבוגרים', desc: 'דפי מנדלה להרגעה ויצירה', price: 69, emoji: '🎨', mood: 'sad', isStatic: true },
+          { id: 'sad-15', name: 'מנוי לסיפורי שינה', desc: 'סיפורים מרגיעים לשינה טובה', price: 79, emoji: '📻', mood: 'sad', isStatic: true }
+        ],
+        neutral: [
+          { id: 'neutral-1', name: 'ספר מדיטציה למתחילים', desc: 'מדריך פשוט להתחלת תרגול מדיטציה', price: 89, emoji: '📖', mood: 'neutral', isStatic: true },
+          { id: 'neutral-2', name: 'אפליקציית מיינדפולנס', desc: 'גישה שנתית לאפליקציית הרגעה', price: 199, emoji: '📱', mood: 'neutral', isStatic: true },
+          { id: 'neutral-3', name: 'תה ירוק אורגני', desc: 'מבחר תה איכותי מרגיע', price: 55, emoji: '🍃', mood: 'neutral', isStatic: true },
+          { id: 'neutral-4', name: 'משטח יוגה איכותי', desc: 'משטח נוח ואיכותי לתרגול', price: 149, emoji: '🧘', mood: 'neutral', isStatic: true },
+          { id: 'neutral-5', name: 'קורס נשימה ורוגע', desc: 'טכניקות נשימה למיקוד וזרימה', price: 179, emoji: '🌬️', mood: 'neutral', isStatic: true },
+          { id: 'neutral-6', name: 'נר שעווה טבעי', desc: 'נר לטיהור אוויר ואווירה שקטה', price: 69, emoji: '🕯️', mood: 'neutral', isStatic: true },
+          { id: 'neutral-7', name: 'מחברת bullet journal', desc: 'מחברת מעוצבת לארגון ומחשבות', price: 59, emoji: '📓', mood: 'neutral', isStatic: true },
+          { id: 'neutral-8', name: 'מנוי פודקאסט פילוסופיה', desc: 'שיחות מעמיקות על החיים', price: 99, emoji: '🎧', mood: 'neutral', isStatic: true },
+          { id: 'neutral-9', name: 'ערכת זרעים לגינה', desc: 'גינון כטיפול וחיבור לטבע', price: 79, emoji: '🌱', mood: 'neutral', isStatic: true },
+          { id: 'neutral-10', name: 'אוזניות סינון רעשים', desc: 'לשקט מוחלט במהלך היום', price: 299, emoji: '🎧', mood: 'neutral', isStatic: true },
+          { id: 'neutral-11', name: 'סדנת מדיטציה מתקדמת', desc: 'העמקה בתרגול מיינדפולנס', price: 249, emoji: '🧘', mood: 'neutral', isStatic: true },
+          { id: 'neutral-12', name: 'מזרקת מים מרגיעה', desc: 'קישוט ביתי עם צלילי מים', price: 199, emoji: '🛋️', mood: 'neutral', isStatic: true },
+          { id: 'neutral-13', name: 'ספר פילוסופיה מודרנית', desc: 'חשיבה עמוקה על משמעות החיים', price: 89, emoji: '📕', mood: 'neutral', isStatic: true },
+          { id: 'neutral-14', name: 'מוזיקה אמביינטלית', desc: 'צלילים רקע למיקוד ושלווה', price: 49, emoji: '🎵', mood: 'neutral', isStatic: true },
+          { id: 'neutral-15', name: 'שמן ארומתרפיה', desc: 'שמנים אתריים לאיזון והרמוניה', price: 79, emoji: '💧', mood: 'neutral', isStatic: true }
+        ],
+        angry: [
+          { id: 'angry-1', name: 'כדור מתח לסחיטה', desc: 'כדור גומי לשחרור מתח מהידיים', price: 39, emoji: '⚾', mood: 'angry', isStatic: true },
+          { id: 'angry-2', name: 'תרגילי נשימה לכעס', desc: 'טכניקות נשימה להורדת עצבים', price: 79, emoji: '🌬️', mood: 'angry', isStatic: true },
+          { id: 'angry-3', name: 'יומן כתיבה טיפולית', desc: 'כתיבה חופשית לשחרור רגשות', price: 59, emoji: '✍️', mood: 'angry', isStatic: true },
+          { id: 'angry-4', name: 'שק אגרוף ביתי', desc: 'שק קטן לתרגול ושחרור תסכול', price: 299, emoji: '🥊', mood: 'angry', isStatic: true },
+          { id: 'angry-5', name: 'ספר ניהול כעסים', desc: 'מדריך מקצועי להבנת הכעס', price: 89, emoji: '📚', mood: 'angry', isStatic: true },
+          { id: 'angry-6', name: 'קורס תקשורת בריאה', desc: 'למד לבטא כעס בצורה בונה', price: 249, emoji: '🛡️', mood: 'angry', isStatic: true },
+          { id: 'angry-7', name: 'משחק וידאו לשחרור לחץ', desc: 'משחקים אקשן לשחרור אנרגיה', price: 149, emoji: '🎮', mood: 'angry', isStatic: true },
+          { id: 'angry-8', name: 'מנוי חדר כושר', desc: 'פעילות גופנית לשחרור כעס', price: 199, emoji: '💪', mood: 'angry', isStatic: true },
+          { id: 'angry-9', name: 'רוק רוגע - פלייליסט', desc: 'מוזיקה חזקה לשחרור רגשות', price: 29, emoji: '🎵', mood: 'angry', isStatic: true },
+          { id: 'angry-10', name: 'פעילות שבירה בטוחה', desc: 'כלים לשבירה מבוקרת ובטוחה', price: 129, emoji: '🔨', mood: 'angry', isStatic: true },
+          { id: 'angry-11', name: 'סדנת ניהול קונפליקטים', desc: 'כלים למצבים מאתגרים', price: 299, emoji: '📊', mood: 'angry', isStatic: true },
+          { id: 'angry-12', name: 'ריצה טיפולית - תוכנית', desc: 'ריצה כטיפול בכעס', price: 99, emoji: '🏃', mood: 'angry', isStatic: true },
+          { id: 'angry-13', name: 'ספר סיפורי השראה', desc: 'סיפורים על התגברות על קשיים', price: 79, emoji: '📖', mood: 'angry', isStatic: true },
+          { id: 'angry-14', name: 'שיעור קיקבוקסינג', desc: 'ספורט קרב לשחרור כעס', price: 149, emoji: '🥋', mood: 'angry', isStatic: true },
+          { id: 'angry-15', name: 'כפפות אגרוף מקצועיות', desc: 'ציוד לאימוני אגרוף', price: 199, emoji: '🥊', mood: 'angry', isStatic: true }
+        ],
+        love: [
+          { id: 'love-1', name: 'חבילת דייט רומנטי', desc: 'רעיונות לדייטים מושלמים בבית', price: 129, emoji: '💝', mood: 'love', isStatic: true },
+          { id: 'love-2', name: 'נרות ארומטיים זוגיים', desc: 'סט נרות ריח לאווירה רומנטית', price: 89, emoji: '🕯️', mood: 'love', isStatic: true },
+          { id: 'love-3', name: 'זר פרחים מיוחד', desc: 'זר ורדים אדומים למשלוח', price: 199, emoji: '💐', mood: 'love', isStatic: true },
+          { id: 'love-4', name: 'פלייליסט רומנטי', desc: 'שירי אהבה מושלמים לערב זוגי', price: 29, emoji: '🎵', mood: 'love', isStatic: true },
+          { id: 'love-5', name: 'שוקולדים בלגיים יוקרתיים', desc: 'מארז פרלינים מעוצב', price: 149, emoji: '🍫', mood: 'love', isStatic: true },
+          { id: 'love-6', name: 'טיפול זוגי ספא', desc: 'שעתיים של פינוק משותף', price: 599, emoji: '💆', mood: 'love', isStatic: true },
+          { id: 'love-7', name: 'מארז הפתעה רומנטי', desc: 'קופסה מלאה בהפתעות אהבה', price: 179, emoji: '🌹', mood: 'love', isStatic: true },
+          { id: 'love-8', name: 'ארוחת בוקר במיטה - מתכון', desc: 'מתכונים לארוחה רומנטית', price: 49, emoji: '🍳', mood: 'love', isStatic: true },
+          { id: 'love-9', name: 'יין איכותי לזוגות', desc: 'בקבוק יין מובחר לערב זוגי', price: 129, emoji: '🍷', mood: 'love', isStatic: true },
+          { id: 'love-10', name: 'שעון חול זוגי', desc: 'שעון חול דקורטיבי לבית', price: 89, emoji: '🕰️', mood: 'love', isStatic: true },
+          { id: 'love-11', name: 'ערכת ספא ביתית', desc: 'מוצרי טיפוח לפינוק זוגי', price: 219, emoji: '🧴', mood: 'love', isStatic: true },
+          { id: 'love-12', name: 'משחק זוגי מהנה', desc: 'משחק שאלות וחיבור זוגי', price: 89, emoji: '🎲', mood: 'love', isStatic: true },
+          { id: 'love-13', name: 'אפליקציית דייטים ביתיים', desc: 'רעיונות לדייטים מקוריים', price: 99, emoji: '📱', mood: 'love', isStatic: true },
+          { id: 'love-14', name: 'מסגרת תמונות זוגית', desc: 'מסגרת מעוצבת לתמונה משותפת', price: 249, emoji: '🖼️', mood: 'love', isStatic: true },
+          { id: 'love-15', name: 'קורס שפת אהבה', desc: 'למד לתקשר אהבה טוב יותר', price: 179, emoji: '💬', mood: 'love', isStatic: true }
+        ]
+      };
+      
+        // המרה למערך אחד
+        allProducts = Object.values(staticProducts).flat();
+        
+        // שמירה ל-localStorage
+        localStorage.setItem('allProducts', JSON.stringify(allProducts));
+      }
+      
+      return allProducts;
+    }
+    
+    function saveProducts(products) {
+      localStorage.setItem('adminProducts', JSON.stringify(products));
+    }
+    
+    // Regex validation patterns for products
+    const productNameRegex = /^[\u0590-\u05FFa-zA-Z0-9\s\-'״\"]{2,50}$/; // עברית/אנגלית/מספרים, 2-50 תווים
+    const priceRegex = /^\d+(\.\d{1,2})?$/; // מספר חיובי עם עד 2 ספרות אחרי הנקודה
+    const descRegex = /^[\u0590-\u05FFa-zA-Z0-9\s\-.,!?'״\"]{5,200}$/; // תיאור 5-200 תווים
+    const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u; // אמוג'י תקין
+    
+    document.getElementById('add-product-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      
+      const name = formData.get('name').trim();
+      const price = formData.get('price');
+      const desc = formData.get('desc').trim();
+      const emoji = formData.get('emoji').trim();
+      
+      // Regex validation
+      if (!productNameRegex.test(name)) {
+        alert('❌ שם מוצר לא תקין! השתמש ב-2-50 תווים (עברית/אנגלית/מספרים).');
+        return;
+      }
+      
+      if (!priceRegex.test(price) || parseFloat(price) < 1) {
+        alert('❌ מחיר לא תקין! הזן מספר חיובי (לדוגמה: 99 או 99.99).');
+        return;
+      }
+      
+      if (!descRegex.test(desc)) {
+        alert('❌ תיאור לא תקין! הזן 5-200 תווים.');
+        return;
+      }
+      
+      if (!emojiRegex.test(emoji)) {
+        alert('❌ אמוג\'י לא תקין! הזן אמוג\'י אחד (לדוגמה: 🎁 🎵 🍫).');
+        return;
+      }
+      
+      const product = {
+        id: Date.now().toString(),
+        name: name,
+        mood: formData.get('mood'),
+        price: parseFloat(price),
+        desc: desc,
+        emoji: emoji || '🎁',
+        img: 'admin-product',
+        isStatic: false
+      };
+      
+      // הוספה לכל המוצרים
+      const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+      allProducts.push(product);
+      localStorage.setItem('allProducts', JSON.stringify(allProducts));
+      
+      e.target.reset();
+      renderProducts();
+      alert('המוצר נוסף בהצלחה! ✅');
+    });
+    
+    function renderProducts() {
+      const products = getProducts();
+      const container = document.getElementById('products-list');
+      document.getElementById('products-count').textContent = products.length;
+      
+      if (products.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div style="font-size:60px">📦</div><p>אין מוצרים עדיין. הוסף את המוצר הראשון!</p></div>';
+        return;
+      }
+      
+      const moodEmojis = {
+        happy: '😊',
+        sad: '😢',
+        neutral: '😐',
+        angry: '😡',
+        love: '💕'
+      };
+      
+      const moodNames = {
+        happy: 'שמח',
+        sad: 'עצוב',
+        neutral: 'ניטרלי',
+        angry: 'כועס',
+        love: 'אהבה'
+      };
+      
+      // קיבוץ לפי מצב רוח
+      const grouped = {
+        happy: products.filter(p => p.mood === 'happy'),
+        sad: products.filter(p => p.mood === 'sad'),
+        neutral: products.filter(p => p.mood === 'neutral'),
+        angry: products.filter(p => p.mood === 'angry'),
+        love: products.filter(p => p.mood === 'love')
+      };
+      
+      let html = '';
+      
+      for (const [mood, items] of Object.entries(grouped)) {
+        if (items.length === 0) continue;
+        
+        html += `
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #667eea; font-size: 20px; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 10px;">
+              ${moodEmojis[mood]} ${moodNames[mood]} (${items.length} מוצרים)
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+              ${items.map(p => `
+                <div class="product-card">
+                  <div class="product-header">
+                    <div class="product-name">${p.emoji || '🎁'} ${p.name}</div>
+                    <div class="product-price">${p.price} ₪</div>
+                  </div>
+                  <div class="product-desc">${p.desc}</div>
+                  <div class="product-meta">
+                    <span class="meta-tag">${p.isStatic ? '📌 מוצר קבוע' : '✨ מוצר שלי'}</span>
+                    <span class="meta-tag">🆔 ${p.id.slice(0, 8)}</span>
+                  </div>
+                  <div class="product-actions">
+                    <button class="btn-edit" data-product-id="${p.id}">✏️ ערוך</button>
+                    <button class="btn-delete" data-product-id="${p.id}" data-is-static="${p.isStatic || false}">🗑️ מחק</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+      
+      // הוספת event listeners לכפתורי עריכה ומחיקה
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product-id');
+          editProduct(productId);
+        });
+      });
+      
+      document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product-id');
+          const isStatic = this.getAttribute('data-is-static') === 'true';
+          deleteProduct(productId, isStatic);
+        });
+      });
+    }
+    
+    function deleteProduct(id, isStatic) {
+      if (!confirm('האם אתה בטוח שברצונך למחוק מוצר זה?')) return;
+      
+      // מחיקה מכל המוצרים
+      const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+      const updatedProducts = allProducts.filter(p => p.id !== id);
+      localStorage.setItem('allProducts', JSON.stringify(updatedProducts));
+      
+      renderProducts();
+      alert('המוצר נמחק בהצלחה! 🗑️');
+    }
+    
+    function editProduct(id) {
+      // קריאת כל המוצרים
+      let allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+      
+      // חיפוש המוצר
+      const productIndex = allProducts.findIndex(p => p.id === id);
+      
+      if (productIndex === -1) {
+        alert('❌ מוצר לא נמצא!');
+        console.error('❌ המוצר לא נמצא:', id);
+        return;
+      }
+      
+      const product = allProducts[productIndex];
+      
+      const newName = prompt('שם מוצר חדש:', product.name);
+      if (!newName || newName.trim() === '') return;
+      
+      const newPriceStr = prompt('מחיר חדש (₪):', product.price);
+      if (!newPriceStr || newPriceStr.trim() === '') return;
+      
+      const newPrice = parseFloat(newPriceStr);
+      if (isNaN(newPrice) || newPrice <= 0) {
+        alert('❌ מחיר לא תקין!');
+        return;
+      }
+      
+      const newDesc = prompt('תיאור חדש:', product.desc);
+      if (!newDesc || newDesc.trim() === '') return;
+      
+      const newEmoji = prompt('אייקון (אמוג\'י):', product.emoji || '🎁');
+      const finalEmoji = newEmoji && newEmoji.trim() !== '' ? newEmoji.trim() : (product.emoji || '🎁');
+      
+      // עדכון המוצר ישירות במערך
+      allProducts[productIndex].name = newName.trim();
+      allProducts[productIndex].price = newPrice;
+      allProducts[productIndex].desc = newDesc.trim();
+      allProducts[productIndex].emoji = finalEmoji;
+      
+      // שמירה
+      localStorage.setItem('allProducts', JSON.stringify(allProducts));
+      
+      alert(`✅ המוצר עודכן!\n\n📦 ${newName}\n💰 ${newPrice} ₪`);
+      
+      // רענון הדף
+      window.location.reload();
+    }
+    
+    // פונקציה לניקוי כפילויות
+    function cleanupDuplicates() {
+      if (!confirm('🧹 האם לנקות את כל הכפילויות?\n\nהמערכת תמחק מוצרים עם אותו שם שחוזרים פעמיים.')) return;
+      
+      const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+      
+      // ניקוי כפילויות לפי שם - שומרים רק את הראשון מכל שם
+      const seenNames = new Set();
+      const uniqueProducts = [];
+      let duplicatesCount = 0;
+      
+      allProducts.forEach(product => {
+        const productName = product.name.trim().toLowerCase();
+        if (!seenNames.has(productName)) {
+          seenNames.add(productName);
+          uniqueProducts.push(product);
+        } else {
+          duplicatesCount++;
+        }
+      });
+      
+      localStorage.setItem('allProducts', JSON.stringify(uniqueProducts));
+      
+      if (duplicatesCount > 0) {
+        alert(`✅ ניקוי הושלם!\n\n🗑️ נמחקו ${duplicatesCount} מוצרים כפולים\n📦 נשארו ${uniqueProducts.length} מוצרים ייחודיים`);
+        window.location.reload(); // רענון הדף
+      } else {
+        alert('✅ לא נמצאו כפילויות!\n\nכל המוצרים ייחודיים.');
+      }
+    }
+    
+    
+    function loadOrders() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const allOrders = [];
+      
+      users.forEach(user => {
+        const userOrders = JSON.parse(localStorage.getItem(`orders_${user.id}`) || '[]');
+        userOrders.forEach(order => {
+          allOrders.push({ ...order, userName: user.name, userEmail: user.email });
+        });
+      });
+      
+      document.getElementById('total-orders').textContent = allOrders.length;
+      
+      const totalRevenue = allOrders.reduce((sum, order) => {
+        return sum + (order.items || []).reduce((s, item) => s + (item.price * item.quantity), 0);
+      }, 0);
+      document.getElementById('total-revenue').textContent = totalRevenue.toFixed(2) + ' ₪';
+      
+      const container = document.getElementById('orders-container');
+      
+      if (allOrders.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div style="font-size:60px">📋</div><p>אין הזמנות עדיין</p></div>';
+        return;
+      }
+      
+      container.innerHTML = `
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>מספר הזמנה</th>
+              <th>לקוח</th>
+              <th>תאריך</th>
+              <th>פריטים</th>
+              <th>סכום</th>
+              <th>סטטוס</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${allOrders.map(order => {
+              const total = (order.items || []).reduce((s, item) => s + (item.price * item.quantity), 0);
+              return `
+                <tr>
+                  <td>${order.id?.slice(0, 12) || 'N/A'}</td>
+                  <td>${order.userName}<br><small style="color:#999">${order.userEmail}</small></td>
+                  <td>${order.date ? new Date(order.date).toLocaleDateString('he-IL') : 'N/A'}</td>
+                  <td>${(order.items || []).length} פריטים</td>
+                  <td>${total.toFixed(2)} ₪</td>
+                  <td><span class="status-badge status-${order.status || 'pending'}">${order.status === 'completed' ? 'הושלם' : 'ממתין'}</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    function loadUsers() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      document.getElementById('total-users').textContent = users.length;
+      document.getElementById('total-admins').textContent = users.filter(u => u.isAdmin).length;
+      
+      const container = document.getElementById('users-container');
+      
+      if (users.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div style="font-size:60px">👥</div><p>אין משתמשים רשומים</p></div>';
+        return;
+      }
+      
+      container.innerHTML = `
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>שם</th>
+              <th>אימייל</th>
+              <th>סטטוס</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${users.map(user => `
+              <tr>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${user.isAdmin ? '<span class="admin-badge">מנהל</span>' : 'משתמש רגיל'}</td>
+                <td>
+                  ${!user.isAdmin ? `<button class="btn-small btn-success" onclick="makeAdmin('${user.id}')">הפוך למנהל</button>` : ''}
+                  ${user.id !== currentUser.id ? `<button class="btn-small btn-danger" onclick="deleteUser('${user.id}')">מחק</button>` : ''}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    function makeAdmin(userId) {
+      if (!confirm('האם להפוך משתמש זה למנהל?')) return;
+      
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.id === userId);
+      if (user) {
+        user.isAdmin = true;
+        localStorage.setItem('users', JSON.stringify(users));
+        loadUsers();
+        alert('המשתמש הפך למנהל! 👑');
+      }
+    }
+    
+    function deleteUser(userId) {
+      if (!confirm('האם למחוק משתמש זה? פעולה זו אינה הפיכה!')) return;
+      
+      const users = JSON.parse(localStorage.getItem('users') || '[]').filter(u => u.id !== userId);
+      localStorage.setItem('users', JSON.stringify(users));
+      loadUsers();
+      alert('המשתמש נמחק! 🗑️');
+    }
+    
+    renderProducts();
+  </script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+  </footer>
+</body>
+</html>

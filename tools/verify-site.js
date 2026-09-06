@@ -23,6 +23,7 @@ const OUT = path.join(__dirname, "..", "verify");
 // up in the running app's own DOM — the difference between "the iframe loaded"
 // and "the app works".
 const CASES = [
+  { id: "marketmood", expect: "HOW ARE YOU?" },
   { id: "helpdesk", expect: "התחברות" },
   { id: "taskman",  expect: "Welcome" },
   { id: "memory",   expect: "ברוכים" },
@@ -183,9 +184,10 @@ async function runCase(page, { id, expect }) {
     // src is set only once the load listener is attached, so read data-src too
     const src =
       (await frame.getAttribute("src")) || (await frame.getAttribute("data-src"));
+    const resolvedSrc = src ? new URL(src, page.url()).href : "";
     check(
-      !!src && src.startsWith("https://ruti-maman.github.io/"),
-      `${id}: iframe points at the published build (${src})`
+      resolvedSrc.startsWith("https://ruti-maman.github.io/"),
+      `${id}: iframe points at the published build (${resolvedSrc || src})`
     );
 
     let loaded = true;

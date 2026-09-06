@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>MarketMood - תודה על הרכישה!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Rubik', sans-serif; 
+      background: linear-gradient(135deg, #90ffe9 0%, #5ec4bd 100%);
+      min-height: 100vh; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 20px 20px 20px;
+    }
+    
+    /* Header Navigation */
+    .site-header {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1100px;
+      background: white;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      z-index: 500;
+      padding: 15px 25px;
+      border-radius: 20px;
+    }
+    
+    .nav-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .nav-btn {
+      background: white;
+      color: #5ec4bd;
+      padding: 12px 24px;
+      border-radius: 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s;
+      border: 2px solid #e0f9f5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(94, 196, 189, 0.1);
+    }
+    
+    .nav-btn:hover {
+      background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(94, 196, 189, 0.25);
+      border-color: #5ec4bd;
+    }
+    
+    .nav-btn.active {
+      background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+      color: white;
+      border-color: #5ec4bd;
+      box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+    }
+    
+    .nav-btn.admin {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: #667eea;
+    }
+    
+    .nav-btn.admin:hover {
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .thank-you-container {
+      background: white;
+      border-radius: 25px;
+      padding: 60px 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      text-align: center;
+      animation: slideIn 0.6s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .success-icon {
+      font-size: 100px;
+      margin-bottom: 30px;
+      animation: bounce 1s ease-in-out;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-30px); }
+      60% { transform: translateY(-15px); }
+    }
+    
+    h1 {
+      font-size: 36px;
+      color: #2c2c2c;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      font-size: 20px;
+      color: #555;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .message {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+      color: #2c2c2c;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+    
+    .btn {
+      padding: 14px 30px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    
+    .btn-primary {
+      background: #5ec4bd;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #4eb5ad;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(94, 196, 189, 0.4);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: #5ec4bd;
+      border: 2px solid #5ec4bd;
+    }
+    
+    .btn-secondary:hover {
+      background: #5ec4bd;
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .emoji-decoration {
+      font-size: 24px;
+      margin: 0 5px;
+    }
+    
+    .order-summary {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff9e6;
+      border-radius: 12px;
+      border: 2px dashed #ffd93d;
+    }
+    
+    .order-summary h3 {
+      color: #2c2c2c;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .order-items {
+      text-align: right;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .order-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    
+    .order-item:last-child {
+      border-bottom: none;
+    }
+    
+    .total-line {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #5ec4bd;
+      font-weight: 700;
+      font-size: 18px;
+      color: #5ec4bd;
+    }
+    
+    /* Footer */
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 50;
+    }
+    
+    .site-footer p {
+      margin: 0;
+      color: #5ec4bd;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <!-- Site Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-container">
+      <a href="../index.html" class="nav-btn">🏠 עמוד הבית</a>
+      <a href="product.html" class="nav-btn">🎬 חזרה לסרטון</a>
+      <a href="mood-tracker.html" class="nav-btn">📊 מעקב מצב רוח</a>
+      <a href="daily-challenge.html" class="nav-btn">⚡ אתגר יומי</a>
+      <a href="admin.html" id="admin-nav-link" class="nav-btn admin" style="display:none;">🛡️ מנהל</a>
+    </nav>
+  </header>
+
+  <!-- פרופיל משתמש -->
+  <div style="position: fixed; top: 20px; left: 20px; background: white; padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; z-index: 100;">
+    <div id="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;"></div>
+    <div>
+      <div id="user-name" style="font-weight: 600; color: #2c2c2c;"></div>
+      <div style="font-size: 12px; color: #888;">✅ מחובר</div>
+    </div>
+  </div>
+  
+  <div class="thank-you-container">
+    <div class="success-icon">🎉</div>
+    
+    <h1>תודה שקנית אצלנו!</h1>
+    
+    <p class="subtitle">
+      <span class="emoji-decoration">✨</span>
+      ההזמנה שלך התקבלה בהצלחה
+      <span class="emoji-decoration">✨</span>
+    </p>
+    
+    <div class="message">
+      נשמח לראותך שוב! <br>
+      ההזמנה שלך נשלחה למייל שלך עם כל הפרטים.<br>
+      תודה שבחרת ב-MarketMood להעצים את מצב הרוח שלך! 💖
+    </div>
+    
+    <div class="order-summary" id="order-summary">
+      <h3>סיכום ההזמנה שלך:</h3>
+      <div class="order-items" id="order-items"></div>
+      <div class="total-line" id="total-line"></div>
+    </div>
+  </div>
+  
+  <script type="module">
+    // בדיקה והצגת משתמש מחובר
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+    if (currentUser) {
+      document.getElementById('user-name').textContent = currentUser.name;
+      const initials = currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('user-avatar').textContent = initials;
+      
+      // הצגת לינק מנהל אם המשתמש הוא admin
+      const adminNavLink = document.getElementById('admin-nav-link');
+      if (currentUser.isAdmin && adminNavLink) {
+        adminNavLink.style.display = 'flex';
+      }
+    }
+    
+    // טעינת פרטי ההזמנה האחרונה
+    const lastOrder = JSON.parse(localStorage.getItem('lastOrder') || '[]');
+    const orderItemsContainer = document.getElementById('order-items');
+    const totalLine = document.getElementById('total-line');
+    
+    if (lastOrder && lastOrder.length > 0) {
+      let total = 0;
+      orderItemsContainer.innerHTML = lastOrder.map(item => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        return `
+          <div class="order-item">
+            <span>${item.name} × ${item.quantity}</span>
+            <span>${subtotal} ₪</span>
+          </div>
+        `;
+      }).join('');
+      
+      totalLine.textContent = `סה"כ: ${total} ₪`;
+    } else {
+      document.getElementById('order-summary').style.display = 'none';
+    }
+  </script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+  </footer>
+</body>
+</html>

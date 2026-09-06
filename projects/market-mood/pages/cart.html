@@ -1,0 +1,861 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>MarketMood - עגלת קניות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Rubik', sans-serif; background: #90ffe9; min-height: 100vh; padding-top: 110px; padding-bottom: 40px; padding-left: 20px; padding-right: 20px; }
+    
+    /* Header Navigation */
+    .site-header {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1100px;
+      background: white;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      z-index: 500;
+      padding: 15px 25px;
+      border-radius: 20px;
+    }
+    
+    .nav-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .nav-btn {
+      background: white;
+      color: #5ec4bd;
+      padding: 12px 24px;
+      border-radius: 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s;
+      border: 2px solid #e0f9f5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(94, 196, 189, 0.1);
+    }
+    
+    .nav-btn:hover {
+      background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(94, 196, 189, 0.25);
+      border-color: #5ec4bd;
+    }
+    
+    .nav-btn.active {
+      background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+      color: white;
+      border-color: #5ec4bd;
+      box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+    }
+    
+    .nav-btn.admin {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: #667eea;
+    }
+    
+    .nav-btn.admin:hover {
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; color: #2c2c2c; margin-bottom: 40px; }
+    .header h1 { font-size: 36px; margin-bottom: 10px; }
+    .header p { font-size: 18px; opacity: 0.8; color: #555; }
+    
+    .back-btn { display: inline-block; background: rgba(255,255,255,0.9); color: #5ec4bd; padding: 12px 24px; border-radius: 10px; text-decoration: none; margin-bottom: 20px; transition: background 0.2s; font-weight: 600; }
+    .back-btn:hover { background: rgba(255,255,255,1); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    
+    /* Search Box */
+    .search-container {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .search-box {
+      width: 100%;
+      padding: 16px 50px 16px 20px;
+      font-size: 16px;
+      font-family: 'Rubik', sans-serif;
+      border: 2px solid #e0f9f5;
+      border-radius: 15px;
+      background: white;
+      color: #2c2c2c;
+      box-shadow: 0 4px 12px rgba(94, 196, 189, 0.1);
+      transition: all 0.3s;
+    }
+    
+    .search-box:focus {
+      outline: none;
+      border-color: #5ec4bd;
+      box-shadow: 0 6px 20px rgba(94, 196, 189, 0.2);
+    }
+    
+    .search-box::placeholder {
+      color: #aaa;
+      font-weight: 500;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: #5ec4bd;
+      pointer-events: none;
+    }
+    
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    
+    .product-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    .product-img-placeholder { width: 100%; height: 180px; border-radius: 10px; margin-bottom: 15px; background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%); display: flex; align-items: center; justify-content: center; font-size: 64px; box-shadow: inset 0 2px 8px rgba(94, 196, 189, 0.2); }
+    .product-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #2c2c2c; }
+    .product-desc { font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.5; }
+    .product-price { font-size: 20px; font-weight: 700; color: #5ec4bd; margin-bottom: 15px; }
+    .product-price::after { content: ' ₪'; }
+    
+    .add-btn { width: 100%; padding: 12px; background: #5ec4bd; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Rubik', sans-serif; }
+    .add-btn:hover { transform: scale(1.05); background: #4eb5ad; box-shadow: 0 4px 12px rgba(94, 196, 189, 0.3); }
+    .add-btn:active { transform: scale(0.95); }
+    
+    .cart-summary { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .cart-summary h2 { font-size: 24px; margin-bottom: 20px; color: #2c2c2c; }
+    .cart-items { max-height: 400px; overflow-y: auto; margin-bottom: 20px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0; }
+    .cart-item:last-child { border-bottom: none; }
+    .item-info { flex: 1; }
+    .item-name { font-weight: 600; margin-bottom: 5px; }
+    .item-price { color: #5ec4bd; }
+    .item-controls { display: flex; gap: 10px; align-items: center; }
+    .qty-btn { background: #f0f0f0; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 16px; transition: background 0.2s; }
+    .qty-btn:hover { background: #5ec4bd; color: white; }
+    .qty-display { font-weight: 600; min-width: 30px; text-align: center; }
+    .remove-btn { background: #ff6b9d; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .remove-btn:hover { background: #ff5588; }
+    
+    .total { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-top: 2px solid #f0f0f0; margin-top: 20px; font-size: 22px; font-weight: 700; }
+    .total-amount { color: #5ec4bd; }
+    
+    .checkout-btn { width: 100%; padding: 16px; background: #5ec4bd; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Rubik', sans-serif; }
+    .checkout-btn:hover { transform: translateY(-2px); background: #4eb5ad; box-shadow: 0 8px 20px rgba(94, 196, 189, 0.4); }
+    .checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .empty-cart { text-align: center; padding: 60px 20px; color: #999; }
+    .empty-cart svg { font-size: 80px; margin-bottom: 20px; opacity: 0.3; }
+    
+    .user-profile {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      border-radius: 15px;
+      padding: 15px 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .profile-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: white;
+      font-weight: 700;
+    }
+    
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .profile-name {
+      font-weight: 700;
+      color: #2c2c2c;
+      font-size: 15px;
+    }
+    
+    .profile-badge {
+      font-size: 11px;
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      width: fit-content;
+    }
+    
+    .profile-badge.user {
+      background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+    }
+    
+    .profile-badge.guest {
+      background: linear-gradient(135deg, #ff6b9d 0%, #ff5588 100%);
+    }
+    
+    .login-icon {
+      cursor: pointer;
+      font-size: 20px;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      margin-right: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .login-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .logout-icon {
+      cursor: pointer;
+      font-size: 20px;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      margin-right: 8px;
+    }
+    
+    .logout-icon:hover {
+      background: #fff3f3;
+      transform: scale(1.1);
+    }
+    
+    .login-prompt {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    
+    .login-prompt h3 {
+      font-size: 22px;
+      color: #2c2c2c;
+      margin-bottom: 12px;
+    }
+    
+    .login-prompt p {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+    
+    .login-btn {
+      display: inline-block;
+      padding: 14px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Rubik', sans-serif;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Footer */
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 50;
+    }
+    
+    .site-footer p {
+      margin: 0;
+      color: #5ec4bd;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <!-- Site Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-container">
+      <a href="../index.html" class="nav-btn">🏠 עמוד הבית</a>
+      <a href="cart.html" class="nav-btn active" style="position: relative;">
+        🛒 עגלה
+        <span id="cartCount" style="position: absolute; top: -8px; left: -8px; background: #ff6b9d; color: white; border-radius: 50%; width: 22px; height: 22px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(255,107,157,0.4);">0</span>
+      </a>
+      <a href="mood-tracker.html" class="nav-btn">📊 מעקב מצב רוח</a>
+      <a href="daily-challenge.html" class="nav-btn">⚡ אתגר יומי</a>
+      <a href="admin.html" id="admin-nav-link" class="nav-btn admin" style="display:none;">🛡️ מנהל</a>
+    </nav>
+  </header>
+  
+  <!-- User Profile Card -->
+  <div class="user-profile" id="user-profile">
+    <div class="profile-avatar" id="profile-avatar">?</div>
+    <div class="profile-info">
+      <div class="profile-name" id="profile-name">אורח</div>
+      <span class="profile-badge" id="profile-badge" style="background: transparent; color: #4CAF50; padding: 0; font-weight: 600;">✓ מחובר</span>
+    </div>
+    <button onclick="logout()" style="background: #ff6b9d; color: white; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'Rubik', sans-serif;" id="logout-btn">יציאה</button>
+    <a href="login.html" style="display: none;" id="login-link">התחבר</a>
+  </div>
+  
+  <div class="container">
+    <div class="header">
+      <h1>🛒 עגלת הקניות שלך</h1>
+      <p id="mood-title">מוצרים מותאמים למצב הרוח שלך</p>
+    </div>
+    
+    <div id="products-section">
+      <h2 style="color: #2c2c2c; margin-bottom: 20px; font-size: 24px;">המוצרים המומלצים:</h2>
+      
+      <!-- Search Box -->
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="product-search" 
+          class="search-box" 
+          placeholder="חפש מוצרים שמתאימים למצב רוח שלך..."
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+    
+    <div class="cart-summary">
+      <h2>סיכום הזמנה</h2>
+      <div class="cart-items" id="cart-items"></div>
+      <div class="total">
+        <span>סה"כ לתשלום:</span>
+        <span class="total-amount" id="total-amount">0 ₪</span>
+      </div>
+      <button class="checkout-btn" id="checkout-btn">המשך לתשלום 💳</button>
+    </div>
+  </div>
+  
+  <!-- טעינת המוצרים מקובץ JavaScript -->
+  <script src="../load-products.js"></script>
+  
+  <script type="module">
+    // בדיקה מיידית - אם אין משתמש מחובר, מעבר להתחברות
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+    if (!currentUser) {
+      window.location.href = 'login.html';
+      throw new Error('No user logged in - redirecting to login');
+    }
+    
+    // עדכון פרופיל משתמש
+    function updateUserProfile() {
+      const user = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+      const checkoutBtn = document.getElementById('checkout-btn');
+      const logoutBtn = document.getElementById('logout-btn');
+      const loginLink = document.getElementById('login-link');
+      
+      if (user) {
+        // משתמש מחובר
+        if (checkoutBtn) checkoutBtn.disabled = false;
+        
+        // הצג כפתור יציאה, הסתר התחברות
+        if (logoutBtn) logoutBtn.style.display = 'block';
+        if (loginLink) loginLink.style.display = 'none';
+        
+        // עדכון פרטי המשתמש
+        const avatar = document.getElementById('profile-avatar');
+        const name = document.getElementById('profile-name');
+        const badge = document.getElementById('profile-badge');
+        const adminLink = document.getElementById('admin-link');
+        
+        if (avatar) {
+          const initials = user.name.charAt(0).toUpperCase();
+          avatar.textContent = initials;
+          avatar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+        if (name) name.textContent = user.name;
+        if (badge) {
+          badge.textContent = '✓ מחובר';
+          badge.style.color = '#4CAF50';
+        }
+        
+        // הצגת לינק מנהל בהדר אם זה מנהל
+        const adminNavLink = document.getElementById('admin-nav-link');
+        if (user.isAdmin && adminNavLink) {
+          adminNavLink.style.display = 'flex';
+        }
+      } else {
+        // אורח - לא מחובר - מעבר להתחברות
+        window.location.href = 'login.html';
+      }
+    }
+    
+    // פונקציית התנתקות
+    window.logout = function() {
+      if (confirm('האם אתה בטוח שברצונך להתנתק?')) {
+        // מחיקת כל ההיסטוריה
+        localStorage.removeItem('cart');
+        localStorage.removeItem('selectedMood');
+        localStorage.removeItem('lastOrder');
+        
+        // מחיקת היסטוריית מצבי רוח
+        const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+        if (currentUser) {
+          localStorage.removeItem(`mood_history_${currentUser.id}`);
+          localStorage.removeItem(`daily_challenge_${currentUser.id}`);
+        }
+        
+        sessionStorage.removeItem('currentUser');
+        alert('התנתקת בהצלחה! כל ההיסטוריה נמחקה 👋');
+        // מעבר להתחברות כי לא ניתן לקנות בלי משתמש
+        window.location.href = 'login.html';
+      }
+    };
+    
+    // אתחול עגלה מ-localStorage
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const mood = localStorage.getItem('selectedMood') || 'happy';
+    
+    // קריאת כל המוצרים מ-allProducts
+    const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+    
+    // מוצרים לפי מצב רוח (deprecated - kept for fallback only)
+    const products = {
+      happy: [
+        { id: 'happy-1', name: 'פלייליסט אנרגטי', desc: 'אוסף שירים מרימי מצב רוח להמשך היום', price: 29, img: 'https://via.placeholder.com/200/FFD93D/000?text=Music' },
+        { id: 'happy-2', name: 'משחק קלפים כיפי', desc: 'משחק קבוצתי מצחיק לערב עם חברים', price: 89, img: 'https://via.placeholder.com/200/6BCB77/FFF?text=Game' },
+        { id: 'happy-3', name: 'קורס יוגה צחוק', desc: 'סדרת וידאו ליוגה משולבת צחוק', price: 149, img: 'https://via.placeholder.com/200/FF6B9D/FFF?text=Yoga' },
+        { id: 'happy-4', name: 'ערכת פיקניק משפחתי', desc: 'כל מה שצריך לפיקניק מושלם בטבע', price: 199, img: 'https://via.placeholder.com/200/FFD93D/000?text=Picnic' },
+        { id: 'happy-5', name: 'סדנת ריקוד לטינו', desc: 'סדרת שיעורי ריקוד משמחים אונליין', price: 179, img: 'https://via.placeholder.com/200/6BCB77/FFF?text=Dance' },
+        { id: 'happy-6', name: 'משחק קופסה למשפחה', desc: 'משחק אסטרטגיה מהנה לכל המשפחה', price: 129, img: 'https://via.placeholder.com/200/FF6B9D/FFF?text=Board+Game' },
+        { id: 'happy-7', name: 'אוזניות בלוטוס צבעוניות', desc: 'אוזניות איכותיות עם צבעים עליזים', price: 249, img: 'https://via.placeholder.com/200/FFD93D/000?text=Headphones' },
+        { id: 'happy-8', name: 'קורס צילום כיפי', desc: 'למד לצלם רגעים שמחים בצורה מקצועית', price: 299, img: 'https://via.placeholder.com/200/6BCB77/FFF?text=Photo' },
+        { id: 'happy-9', name: 'ערכת יצירה לילדים', desc: 'כלים ליצירה משפחתית משותפת', price: 159, img: 'https://via.placeholder.com/200/FF6B9D/FFF?text=Art+Kit' },
+        { id: 'happy-10', name: 'מנוי למופעי סטנדאפ', desc: 'גישה למופעי קומדיה מצחיקים אונליין', price: 99, img: 'https://via.placeholder.com/200/FFD93D/000?text=Comedy' },
+        { id: 'happy-11', name: 'כדור פעילות ואנרגיה', desc: 'כדור כושר צבעוני למשחקים ופעילות', price: 119, img: 'https://via.placeholder.com/200/6BCB77/FFF?text=Ball' },
+        { id: 'happy-12', name: 'ספר בדיחות ופאנצ\'ים', desc: 'אוסף הבדיחות המצחיק בעברית', price: 69, img: 'https://via.placeholder.com/200/FF6B9D/FFF?text=Jokes' },
+        { id: 'happy-13', name: 'פלייליסט מסיבות', desc: 'מוזיקה להתחלת מסיבה בכל מקום', price: 39, img: 'https://via.placeholder.com/200/FFD93D/000?text=Party' },
+        { id: 'happy-14', name: 'ערכת בועות סבון ענקיות', desc: 'כיף לילדים ומבוגרים בחצר', price: 79, img: 'https://via.placeholder.com/200/6BCB77/FFF?text=Bubbles' },
+        { id: 'happy-15', name: 'מנוי לאפליקציית משחקים', desc: 'מאות משחקים משעשעים לכל הגילאים', price: 149, img: 'https://via.placeholder.com/200/FF6B9D/FFF?text=Games+App' }
+      ],
+      sad: [
+        { id: 'sad-1', name: 'שוקולד מריר איכותי', desc: 'מארז שוקולדים בלגיים מעולים', price: 79, img: 'https://via.placeholder.com/200/6F4E37/FFF?text=Chocolate' },
+        { id: 'sad-2', name: 'יומן רגשות מודרך', desc: 'מחברת עם שאלות מנחות לעיבוד רגשי', price: 49, img: 'https://via.placeholder.com/200/B4A7D6/FFF?text=Journal' },
+        { id: 'sad-3', name: 'נר ריח מרגיע', desc: 'נר לבנדר וקמומיל להרגעת החושים', price: 65, img: 'https://via.placeholder.com/200/9B59B6/FFF?text=Candle' },
+        { id: 'sad-4', name: 'פלייליסט מנחם', desc: 'מוזיקה עדינה ומרגיעה לרגעים קשים', price: 29, img: 'https://via.placeholder.com/200/6F4E37/FFF?text=Comfort+Music' },
+        { id: 'sad-5', name: 'שמיכה רכה ומחממת', desc: 'שמיכת פליז איכותית לחיבוק', price: 189, img: 'https://via.placeholder.com/200/B4A7D6/FFF?text=Blanket' },
+        { id: 'sad-6', name: 'קורס עיבוד רגשי', desc: 'מפגשים מוקלטים עם פסיכולוג', price: 299, img: 'https://via.placeholder.com/200/9B59B6/FFF?text=Therapy' },
+        { id: 'sad-7', name: 'תה צמחים מרגיע', desc: 'מבחר תה איכותי להרגעה', price: 59, img: 'https://via.placeholder.com/200/6F4E37/FFF?text=Herbal+Tea' },
+        { id: 'sad-8', name: 'ספר שירה מרגש', desc: 'אוסף שירים מנחמים ויפים', price: 79, img: 'https://via.placeholder.com/200/B4A7D6/FFF?text=Poetry' },
+        { id: 'sad-9', name: 'מדיטציה מודרכת להרגעה', desc: 'קבצי אודיו להרגעה עמוקה', price: 99, img: 'https://via.placeholder.com/200/9B59B6/FFF?text=Meditation' },
+        { id: 'sad-10', name: 'כרית חיבוק טיפולית', desc: 'כרית רכה ומנחמת בצורת לב', price: 129, img: 'https://via.placeholder.com/200/6F4E37/FFF?text=Pillow' },
+        { id: 'sad-11', name: 'פאזל 1000 חלקים', desc: 'פעילות מרגיעה ומפרגנת', price: 89, img: 'https://via.placeholder.com/200/B4A7D6/FFF?text=Puzzle' },
+        { id: 'sad-12', name: 'מארז טיפוח ספא ביתי', desc: 'מסכות ומוצרי טיפוח מפנקים', price: 169, img: 'https://via.placeholder.com/200/9B59B6/FFF?text=Spa+Kit' },
+        { id: 'sad-13', name: 'סרטונים מרגיעים מהטבע', desc: 'נופים ושקטים מדהימים', price: 49, img: 'https://via.placeholder.com/200/6F4E37/FFF?text=Nature' },
+        { id: 'sad-14', name: 'ספר צביעה למבוגרים', desc: 'דפי מנדלה להרגעה ויצירה', price: 69, img: 'https://via.placeholder.com/200/B4A7D6/FFF?text=Coloring' },
+        { id: 'sad-15', name: 'מנוי לסיפורי שינה', desc: 'סיפורים מרגיעים לשינה טובה', price: 79, img: 'https://via.placeholder.com/200/9B59B6/FFF?text=Stories' }
+      ],
+      neutral: [
+        { id: 'neutral-1', name: 'ספר מדיטציה למתחילים', desc: 'מדריך פשוט להתחלת תרגול מדיטציה', price: 89, img: 'https://via.placeholder.com/200/3498DB/FFF?text=Book' },
+        { id: 'neutral-2', name: 'אפליקציית מיינדפולנס', desc: 'גישה שנתית לאפליקציית הרגעה', price: 199, img: 'https://via.placeholder.com/200/2ECC71/FFF?text=App' },
+        { id: 'neutral-3', name: 'תה ירוק אורגני', desc: 'מבחר תה איכותי מרגיע', price: 55, img: 'https://via.placeholder.com/200/27AE60/FFF?text=Tea' },
+        { id: 'neutral-4', name: 'משטח יוגה איכותי', desc: 'משטח נוח ואיכותי לתרגול', price: 149, img: 'https://via.placeholder.com/200/3498DB/FFF?text=Yoga+Mat' },
+        { id: 'neutral-5', name: 'קורס נשימה ורוגע', desc: 'טכניקות נשימה למיקוד וזרימה', price: 179, img: 'https://via.placeholder.com/200/2ECC71/FFF?text=Breathing' },
+        { id: 'neutral-6', name: 'נר שעווה טבעי', desc: 'נר לטיהור אוויר ואווירה שקטה', price: 69, img: 'https://via.placeholder.com/200/27AE60/FFF?text=Candle' },
+        { id: 'neutral-7', name: 'מחברת bullet journal', desc: 'מחברת מעוצבת לארגון ומחשבות', price: 59, img: 'https://via.placeholder.com/200/3498DB/FFF?text=Journal' },
+        { id: 'neutral-8', name: 'מנוי פודקאסט פילוסופיה', desc: 'שיחות מעמיקות על החיים', price: 99, img: 'https://via.placeholder.com/200/2ECC71/FFF?text=Podcast' },
+        { id: 'neutral-9', name: 'ערכת זרעים לגינה', desc: 'גינון כטיפול וחיבור לטבע', price: 79, img: 'https://via.placeholder.com/200/27AE60/FFF?text=Seeds' },
+        { id: 'neutral-10', name: 'אוזניות סינון רעשים', desc: 'לשקט מוחלט במהלך היום', price: 299, img: 'https://via.placeholder.com/200/3498DB/FFF?text=Headphones' },
+        { id: 'neutral-11', name: 'קורס מיינדפולנס מודרך', desc: 'תוכנית 30 יום להכרות עם המיינדפולנס', price: 249, img: 'https://via.placeholder.com/200/2ECC71/FFF?text=Mindfulness' },
+        { id: 'neutral-12', name: 'שטיח מדיטציה', desc: 'שטיח נוח לישיבה ממושכת', price: 119, img: 'https://via.placeholder.com/200/27AE60/FFF?text=Mat' },
+        { id: 'neutral-13', name: 'ספר קריאה קלה', desc: 'רומן נעים לקריאה רגועה', price: 69, img: 'https://via.placeholder.com/200/3498DB/FFF?text=Novel' },
+        { id: 'neutral-14', name: 'מוזיקה אמביינט', desc: 'רקע מוזיקלי לעבודה או מנוחה', price: 39, img: 'https://via.placeholder.com/200/2ECC71/FFF?text=Ambient' },
+        { id: 'neutral-15', name: 'בקבוק מים מעוצב', desc: 'עידוד לשתייה בריאה לאורך היום', price: 89, img: 'https://via.placeholder.com/200/27AE60/FFF?text=Bottle' }
+      ],
+      angry: [
+        { id: 'angry-1', name: 'כדור לחץ טיפולי', desc: 'כדור סיליקון לשחרור מתחים', price: 39, img: 'https://via.placeholder.com/200/E74C3C/FFF?text=Ball' },
+        { id: 'angry-2', name: 'תרגילי נשימה מודרכים', desc: 'קורס אודיו לטכניקות הרגעה', price: 99, img: 'https://via.placeholder.com/200/E67E22/FFF?text=Breath' },
+        { id: 'angry-3', name: 'מחברת כתיבה טיפולית', desc: 'מחברת מעוצבת לשחרור רגשות בכתב', price: 59, img: 'https://via.placeholder.com/200/C0392B/FFF?text=Write' },
+        { id: 'angry-4', name: 'שק אגרוף ביתי', desc: 'שק אימון קל להתקנה בבית', price: 299, img: 'https://via.placeholder.com/200/E74C3C/FFF?text=Punching' },
+        { id: 'angry-5', name: 'קורס ניהול כעסים', desc: 'כלים מעשיים להתמודדות עם כעס', price: 249, img: 'https://via.placeholder.com/200/E67E22/FFF?text=Anger' },
+        { id: 'angry-6', name: 'כרית צעקות', desc: 'כרית מיוחדת לשחרור מתחים בצעקה', price: 89, img: 'https://via.placeholder.com/200/C0392B/FFF?text=Pillow' },
+        { id: 'angry-7', name: 'משחק ניפוץ צלחות וירטואלי', desc: 'שחרר כעסים במציאות מדומה', price: 49, img: 'https://via.placeholder.com/200/E74C3C/FFF?text=VR+Game' },
+        { id: 'angry-8', name: 'כדורי עיסוי טיפולי', desc: 'כדורים לשחרור מתחים פיזיים', price: 79, img: 'https://via.placeholder.com/200/E67E22/FFF?text=Massage' },
+        { id: 'angry-9', name: 'פלייליסט מוזיקה אגרסיבית', desc: 'רוק ומטאל לשחרור אנרגיות', price: 29, img: 'https://via.placeholder.com/200/C0392B/FFF?text=Rock' },
+        { id: 'angry-10', name: 'ערכת גבס לשבירה', desc: 'לוחות גבס קטנים לשבירה בטוחה', price: 119, img: 'https://via.placeholder.com/200/E74C3C/FFF?text=Break' },
+        { id: 'angry-11', name: 'אפליקציית מעקב כעסים', desc: 'זיהוי טריגרים ודפוסים', price: 99, img: 'https://via.placeholder.com/200/E67E22/FFF?text=Tracker' },
+        { id: 'angry-12', name: 'חבל קפיצה כבד', desc: 'פעילות אירובית לשחרור מתחים', price: 69, img: 'https://via.placeholder.com/200/C0392B/FFF?text=Jump+Rope' },
+        { id: 'angry-13', name: 'ספר CBT לכעסים', desc: 'טיפול קוגניטיבי התנהגותי', price: 89, img: 'https://via.placeholder.com/200/E74C3C/FFF?text=CBT' },
+        { id: 'angry-14', name: 'סדנת אומנויות לחימה', desc: 'ערוצי וידאו לאימוני קראטה', price: 199, img: 'https://via.placeholder.com/200/E67E22/FFF?text=Martial' },
+        { id: 'angry-15', name: 'כפפות אגרוף מקצועיות', desc: 'כפפות איכותיות לאימוני בוקס', price: 179, img: 'https://via.placeholder.com/200/C0392B/FFF?text=Gloves' }
+      ],
+      love: [
+        { id: 'love-1', name: 'כרטיס מתנה רומנטי', desc: 'כרטיס מתנה לארוחה זוגית', price: 299, img: 'https://via.placeholder.com/200/E91E63/FFF?text=Gift' },
+        { id: 'love-2', name: 'סט נרות לזוג', desc: 'מארז נרות ריח רומנטי', price: 129, img: 'https://via.placeholder.com/200/F06292/FFF?text=Candles' },
+        { id: 'love-3', name: 'ספר שירה וציטוטי אהבה', desc: 'אוסף שירים ומחשבות על אהבה', price: 69, img: 'https://via.placeholder.com/200/EC407A/FFF?text=Poetry' },
+        { id: 'love-4', name: 'פלייליסט רומנטי', desc: 'שירים לערב רומנטי', price: 29, img: 'https://via.placeholder.com/200/E91E63/FFF?text=Romance' },
+        { id: 'love-5', name: 'שוקולדים בקופסת לב', desc: 'שוקולדים איכותיים באריזה מיוחדת', price: 99, img: 'https://via.placeholder.com/200/F06292/FFF?text=Chocolate' },
+        { id: 'love-6', name: 'קורס עיסוי זוגי', desc: 'וידאו הדרכה לעיסוי רומנטי', price: 149, img: 'https://via.placeholder.com/200/EC407A/FFF?text=Massage' },
+        { id: 'love-7', name: 'זר פרחים משלוח', desc: 'זר ורדים אדומים עד הבית', price: 189, img: 'https://via.placeholder.com/200/E91E63/FFF?text=Flowers' },
+        { id: 'love-8', name: 'ספר בישול רומנטי', desc: 'מתכונים לארוחה זוגית', price: 79, img: 'https://via.placeholder.com/200/F06292/FFF?text=Cooking' },
+        { id: 'love-9', name: 'יין אדום מובחר', desc: 'בקבוק יין איכותי לערב מיוחד', price: 159, img: 'https://via.placeholder.com/200/EC407A/FFF?text=Wine' },
+        { id: 'love-10', name: 'שעון קיר זוגי', desc: 'שעון עיצובי עם ציטוט אהבה', price: 199, img: 'https://via.placeholder.com/200/D81B60/FFF?text=Clock' },
+        { id: 'love-11', name: 'ערכת ספא זוגית', desc: 'מוצרי טיפוח לזוג', price: 219, img: 'https://via.placeholder.com/200/F06292/FFF?text=Spa' },
+        { id: 'love-12', name: 'משחק זוגי אינטימי', desc: 'משחק שאלות לחיבור עמוק', price: 89, img: 'https://via.placeholder.com/200/EC407A/FFF?text=Game' },
+        { id: 'love-13', name: 'אפליקציית תכנון דייטים', desc: 'רעיונות מפתיעים לדייטים', price: 99, img: 'https://via.placeholder.com/200/E91E63/FFF?text=App' },
+        { id: 'love-14', name: 'מסגרת תמונה זוגית', desc: 'מסגרת דיגיטלית לתמונות משותפות', price: 249, img: 'https://via.placeholder.com/200/F06292/FFF?text=Frame' },
+        { id: 'love-15', name: 'קורס שפת אהבה', desc: 'למד לתקשר אהבה טוב יותר', price: 179, img: 'https://via.placeholder.com/200/EC407A/FFF?text=Language' }
+      ]
+    };
+    
+    
+    let moodProducts = allProducts.filter(p => p.mood === mood);
+    
+    // אם אין מוצרים ב-allProducts, השתמש במערך הקבוע כ-fallback
+    if (moodProducts.length === 0 && products[mood]) {
+      moodProducts = products[mood];
+    }
+    
+    
+    const moodEmojis = {
+      happy: ['🎵', '🎮', '🧘', '🧺', '💃', '�', '🎧', '📸', '🎨', '�', '⚽', '📖', '�', '🫧', '🎮'],
+      sad: ['🍫', '📔', '🕯️', '🎵', '🛋️', '💭', '🍵', '�', '🧘', '💜', '🧩', '🧴', '�️', '🎨', '📻'],
+      neutral: ['📖', '📱', '🍃', '🧘', '🌬️', '�️', '📓', '🎧', '�', '�', '🧘', '�️', '�', '🎵', '�'],
+      angry: ['⚾', '�️', '✍️', '🥊', '📚', '🛡️', '�', '💪', '🎵', '�', '📊', '�', '�', '🥋', '🥊'],
+      love: ['💝', '🕯️', '💐', '🎵', '🍫', '💆', '🌹', '🍳', '🍷', '�️', '🧴', '🎲', '�', '�️', '�']
+    };
+    
+    const currentMoodEmojis = moodEmojis[mood] || moodEmojis.neutral;
+    
+   
+    const moodNames = {
+      happy: 'שמח',
+      sad: 'עצוב',
+      neutral: 'רגוע',
+      angry: 'כועס',
+      love: 'מאוהב'
+    };
+    
+  
+    const searchBox = document.getElementById('product-search');
+    if (searchBox) {
+      const moodName = moodNames[mood] || 'רגוע';
+      searchBox.placeholder = `חפש מוצרים שמתאימים למצב רוח שלך - ${moodName} 🔍`;
+    }
+    
+    // משתנה לאחסון תוצאות סינון
+    let filteredProducts = [...moodProducts];
+    
+    // Regex for search validation - תווים תקינים בלבד
+    const searchRegex = /^[\u0590-\u05FFa-zA-Z0-9\s\-.,!?'״\"]*$/;
+    
+    // פונקציית חיפוש
+    function filterProducts(searchTerm) {
+      const term = searchTerm.trim();
+      
+      // בדיקת Regex - מונע תווים לא חוקיים
+      if (!searchRegex.test(term)) {
+        return; // לא מבצעים חיפוש עם תווים לא תקינים
+      }
+      
+      const lowerTerm = term.toLowerCase();
+      
+      if (lowerTerm === '') {
+        filteredProducts = [...moodProducts];
+      } else {
+        filteredProducts = moodProducts.filter(product => {
+          return product.name.toLowerCase().includes(lowerTerm) || 
+                 product.desc.toLowerCase().includes(lowerTerm);
+        });
+      }
+      
+      renderProducts();
+    }
+    
+    // האזנה לשדה חיפוש
+    if (searchBox) {
+      searchBox.addEventListener('input', (e) => {
+        filterProducts(e.target.value);
+      });
+    }
+    
+    // הצגת מוצרים
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      if (!grid) {
+        console.error('לא נמצא products-grid!');
+        return;
+      }
+      
+      if (filteredProducts.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666; font-size: 18px;">😕 לא נמצאו מוצרים מתאימים לחיפוש</div>';
+        return;
+      }
+      
+      grid.innerHTML = filteredProducts.map((p, index) => {
+        // אם יש אייקון במוצר (מוצר ממנהל), השתמש בו. אחרת, קח מהמערך
+        const icon = p.emoji || currentMoodEmojis[index] || '🎁';
+        
+        return `
+          <div class="product-card">
+            <div class="product-img-placeholder">${icon}</div>
+            <div class="product-name">${p.name}</div>
+            <div class="product-desc">${p.desc}</div>
+            <div class="product-price">${p.price}</div>
+            <button class="add-btn" onclick="addToCart('${p.id}')">הוסף לעגלה 🛒</button>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // הוספה לעגלה
+    window.addToCart = function(productId) {
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({ id: productId, quantity: 1 });
+      }
+      saveCart();
+      renderCart();
+    };
+    
+    // הצגת עגלה
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      const user = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+      
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="empty-cart"><div style="font-size:60px">🛒</div><p>העגלה שלך ריקה</p></div>';
+        document.getElementById('total-amount').textContent = '0 ₪';
+        document.getElementById('checkout-btn').disabled = true;
+        return;
+      }
+      
+      // קריאת allProducts מ-localStorage
+      const allProductsFromStorage = JSON.parse(localStorage.getItem('allProducts') || '[]');
+      let total = 0;
+      
+      container.innerHTML = cart.map(item => {
+        const product = allProductsFromStorage.find(p => p.id === item.id);
+        if (!product) {
+          return '';
+        }
+        const subtotal = product.price * item.quantity;
+        total += subtotal;
+        
+        return `
+          <div class="cart-item">
+            <div class="item-info">
+              <div class="item-name">${product.name}</div>
+              <div class="item-price">${product.price} ₪ × ${item.quantity} = ${subtotal} ₪</div>
+            </div>
+            <div class="item-controls">
+              <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+              <span class="qty-display">${item.quantity}</span>
+              <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+              <button class="remove-btn" onclick="removeItem('${item.id}')">הסר</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('total-amount').textContent = total + ' ₪';
+      document.getElementById('checkout-btn').disabled = false;
+      
+      // עדכון ספירת העגלה
+      updateCartCountDisplay();
+    }
+    
+    // שינוי כמות
+    window.changeQty = function(id, delta) {
+      const item = cart.find(i => i.id === id);
+      if (item) {
+        item.quantity += delta;
+        if (item.quantity <= 0) {
+          cart = cart.filter(i => i.id !== id);
+        }
+        saveCart();
+        renderCart();
+      }
+    };
+    
+    // הסרה מעגלה
+    window.removeItem = function(id) {
+      cart = cart.filter(i => i.id !== id);
+      saveCart();
+      renderCart();
+    };
+    
+    // שמירה ב-localStorage
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+    
+    // תשלום
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+      const user = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+      
+      // בדיקה אם המשתמש מחובר
+      if (!user) {
+        if (confirm('עליך להתחבר כדי להשלים את הרכישה.\nלעבור לדף התחברות?')) {
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+      
+      if (cart.length === 0) return;
+      
+      // הכנת פרטי ההזמנה - קריאת allProducts מ-localStorage
+      const allProductsFromStorage = JSON.parse(localStorage.getItem('allProducts') || '[]');
+      const orderDetails = cart.map(item => {
+        const product = allProductsFromStorage.find(p => p.id === item.id);
+        if (!product) {
+          console.error('מוצר לא נמצא בהזמנה:', item.id);
+          return null;
+        }
+        return {
+          name: product.name,
+          price: product.price,
+          quantity: item.quantity
+        };
+      }).filter(item => item !== null); // הסרת מוצרים שלא נמצאו
+      
+      // יצירת אובייקט הזמנה מלא
+      const order = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        items: orderDetails,
+        total: orderDetails.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        status: 'completed'
+      };
+      
+      // שמירת ההזמנה להיסטוריית המשתמש
+      const userOrders = JSON.parse(localStorage.getItem(`orders_${user.id}`) || '[]');
+      userOrders.push(order);
+      localStorage.setItem(`orders_${user.id}`, JSON.stringify(userOrders));
+      
+      // שמירת ההזמנה האחרונה (לדף תודה)
+      localStorage.setItem('lastOrder', JSON.stringify(orderDetails));
+      
+      // ניקוי עגלה
+      cart = [];
+      saveCart();
+      
+      // מעבר לדף תודה
+      window.location.href = 'thank-you.html';
+    });
+    
+    // אתחול - נדחה עד לאחר טעינת הדום
+    document.addEventListener('DOMContentLoaded', function() {
+      updateUserProfile();
+      renderProducts();
+      renderCart();
+      updateCartCountDisplay();
+    });
+    
+    // משתנה לניקוי טיימר עדכון עגלה
+    let cartUpdateInterval = null;
+    
+    // פונקציה לעדכון אוטומטי של העגלה (אם יש שינויים מדף אחר)
+    function startCartAutoUpdate() {
+      // ניקוי טיימר קודם
+      if (cartUpdateInterval) {
+        clearInterval(cartUpdateInterval);
+      }
+      
+      // עדכון כל 5 שניות
+      cartUpdateInterval = setInterval(() => {
+        const updatedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        // בדוק אם יש שינוי
+        if (JSON.stringify(cart) !== JSON.stringify(updatedCart)) {
+          cart = updatedCart;
+          renderCart();
+        }
+      }, 5000);
+    }
+    
+    // עצירת עדכון אוטומטי
+    function stopCartAutoUpdate() {
+      if (cartUpdateInterval) {
+        clearInterval(cartUpdateInterval);
+        cartUpdateInterval = null;
+      }
+    }
+    
+    // התחלת עדכון אוטומטי
+    startCartAutoUpdate();
+    
+    // עדכון ספירת העגלה בזמן אמת
+    function updateCartCountDisplay() {
+      // בדיקה אם המשתמש מחובר
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+      const cartCountEl = document.getElementById('cartCount');
+      
+      if (!currentUser) {
+        // לא מחובר - הסתר עיגול
+        if (cartCountEl) {
+          cartCountEl.style.display = 'none';
+        }
+        return;
+      }
+      
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      if (cartCountEl) {
+        cartCountEl.textContent = totalItems;
+        cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+      }
+    }
+    
+    // ניקוי כשעוזבים את הדף
+    window.addEventListener('beforeunload', () => {
+      stopCartAutoUpdate();
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+  </footer>
+</body>
+</html>
+

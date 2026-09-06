@@ -1,0 +1,507 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarketMood - התחברות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Rubik', sans-serif; 
+      background: #90ffe9;
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      padding: 120px 20px 20px 20px;
+    }
+    
+    /* Header Navigation */
+    .site-header {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1100px;
+      background: white;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      z-index: 500;
+      padding: 15px 25px;
+      border-radius: 20px;
+    }
+    
+    .nav-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .nav-btn {
+      background: white;
+      color: #5ec4bd;
+      padding: 12px 24px;
+      border-radius: 15px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s;
+      border: 2px solid #e0f9f5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(94, 196, 189, 0.1);
+    }
+    
+    .nav-btn:hover {
+      background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(94, 196, 189, 0.25);
+      border-color: #5ec4bd;
+    }
+    
+    .nav-btn.active {
+      background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+      color: white;
+      border-color: #5ec4bd;
+      box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+    }
+    
+    .nav-btn.admin {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: #667eea;
+    }
+    
+    .nav-btn.admin:hover {
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .container { 
+      background: white; 
+      padding: 50px 40px; 
+      border-radius: 25px; 
+      max-width: 450px; 
+      width: 100%; 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    
+    h1 { 
+      text-align: center; 
+      color: #2c2c2c; 
+      font-size: 32px; 
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #7a7a7a;
+      margin-bottom: 35px;
+      font-size: 15px;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 16px;
+      font-weight: 600;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Rubik', sans-serif;
+    }
+    
+    .tab.active {
+      color: #5ec4bd;
+      border-bottom-color: #5ec4bd;
+    }
+    
+    .form-container { display: none; }
+    .form-container.active { display: block; }
+    
+    .form-group { 
+      margin-bottom: 25px; 
+    }
+    
+    .form-group label { 
+      display: block; 
+      margin-bottom: 8px; 
+      color: #555; 
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .form-group input { 
+      width: 100%; 
+      padding: 14px 16px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 12px; 
+      font-size: 15px; 
+      transition: border-color 0.2s;
+      font-family: 'Rubik', sans-serif;
+    }
+    
+    .form-group input:focus { 
+      outline: none; 
+      border-color: #5ec4bd; 
+    }
+    
+    .admin-mode-container {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      transition: all 0.3s;
+    }
+    
+    .admin-mode-container:has(input:checked) {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+      border-color: rgba(102, 126, 234, 0.4);
+    }
+    
+    .admin-mode-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #764ba2;
+      cursor: pointer;
+    }
+    
+    .admin-mode-container label {
+      font-size: 14px;
+      color: #764ba2;
+      font-weight: 600;
+    }
+    
+    .btn-submit { 
+      width: 100%; 
+      padding: 16px; 
+      background: #5ec4bd;
+      border: none; 
+      border-radius: 12px; 
+      color: white; 
+      font-size: 17px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+      font-family: 'Rubik', sans-serif;
+    }
+    
+    .btn-submit:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 20px rgba(94, 196, 189, 0.4);
+      background: #4eb5ad;
+    }
+    
+    .btn-submit:active { 
+      transform: translateY(0); 
+    }
+    
+    .error-msg {
+      background: #ffe6e6;
+      color: #d32f2f;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .error-msg.show { display: block; }
+    
+    .success-msg {
+      background: #e6ffe6;
+      color: #2e7d32;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .success-msg.show { display: block; }
+    
+    /* Footer */
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 50;
+    }
+    
+    .site-footer p {
+      margin: 0;
+      color: #5ec4bd;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <!-- Site Header Navigation -->
+  <header class="site-header">
+    <nav class="nav-container">
+      <a href="../index.html" class="nav-btn">🏠 עמוד הבית</a>
+      <a href="product.html" class="nav-btn">🎬 סרטון</a>
+      <a href="mood-tracker.html" class="nav-btn">📊 מעקב מצב רוח</a>
+      <a href="daily-challenge.html" class="nav-btn">⚡ אתגר יומי</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>ברוכים הבאים ל-MarketMood!</h1>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('login')">התחברות</button>
+      <button class="tab" onclick="showTab('register')">הרשמה</button>
+    </div>
+    
+    <div id="error-msg" class="error-msg"></div>
+    <div id="success-msg" class="success-msg"></div>
+    
+    <!-- טופס התחברות -->
+    <div id="login-form-container" class="form-container active">
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">אימייל</label>
+          <input type="email" id="login-email" required placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="login-password">סיסמה</label>
+          <input type="password" id="login-password" required placeholder="הזן סיסמה" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-submit">התחבר 🚀</button>
+      </form>
+    </div>
+    
+    <!-- טופס הרשמה -->
+    <div id="register-form-container" class="form-container">
+      <form id="register-form">
+        <div class="form-group">
+          <label for="register-name">שם מלא</label>
+          <input type="text" id="register-name" required placeholder="שם מלא" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="register-email">אימייל</label>
+          <input type="email" id="register-email" required placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="register-password">סיסמה</label>
+          <input type="password" id="register-password" required placeholder="בחר סיסמה חזקה" autocomplete="new-password" minlength="4">
+        </div>
+        <button type="submit" class="btn-submit">הירשם ✨</button>
+      </form>
+    </div>
+  </div>
+  
+  <script type="module">
+    // יצירת מנהל ברירת מחדל אוטומטית
+    function initializeDefaultAdmin() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      // בדיקה אם המנהל כבר קיים
+      const adminExists = users.some(u => u.email === 'admin@marketmood.com');
+      
+      if (!adminExists) {
+        // הוספת המנהל
+        users.push({
+          id: 'admin-001',
+          name: 'Admin',
+          email: 'admin@marketmood.com',
+          password: 'admin123',
+          isAdmin: true
+        });
+        localStorage.setItem('users', JSON.stringify(users));
+
+
+      } else {
+
+      }
+    }
+    
+    // הרצת האתחול
+    initializeDefaultAdmin();
+    
+    // החלפת טאבים - הגדרה כפונקציה גלובלית
+    window.showTab = function(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active'));
+      
+      if (tab === 'login') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('login-form-container').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('register-form-container').classList.add('active');
+      }
+      
+      hideMessages();
+    };
+    
+    // משתנים לניקוי טיימרים
+    let errorTimeout = null;
+    let redirectTimeout = null;
+    
+    function showError(msg) {
+      const errorEl = document.getElementById('error-msg');
+      errorEl.textContent = msg;
+      errorEl.classList.add('show');
+      
+      // ניקוי טיימר קודם אם קיים
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+      }
+      
+      // הודעה נעלמת אחרי 4 שניות
+      errorTimeout = setTimeout(() => {
+        errorEl.classList.remove('show');
+        errorTimeout = null;
+      }, 4000);
+    }
+    
+    function showSuccess(msg) {
+      const successEl = document.getElementById('success-msg');
+      successEl.textContent = msg;
+      successEl.classList.add('show');
+    }
+    
+    function hideMessages() {
+      // ניקוי טיימרים
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+        errorTimeout = null;
+      }
+      if (redirectTimeout) {
+        clearTimeout(redirectTimeout);
+        redirectTimeout = null;
+      }
+      
+      document.getElementById('error-msg').classList.remove('show');
+      document.getElementById('success-msg').classList.remove('show');
+    }
+    
+    // Regex validation patterns
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex = /^.{4,}$/; // לפחות 4 תווים
+    const nameRegex = /^[\u0590-\u05FFa-zA-Z\s]{2,50}$/; // עברית או אנגלית, 2-50 תווים
+    
+    // התחברות
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      hideMessages();
+      
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      
+      // Regex validation
+      if (!emailRegex.test(email)) {
+        showError('פורמט אימייל לא תקין. נסה שוב.');
+        return;
+      }
+      
+      if (!passwordRegex.test(password)) {
+        showError('הסיסמה חייבת להכיל לפחות 4 תווים.');
+        return;
+      }
+      
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (user) {
+        // שמירה ב-sessionStorage (נמחק בסגירת דפדפן)
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        
+        // ניתוב אוטומטי לפי סוג המשתמש
+        if (user.isAdmin) {
+          showSuccess('התחברת כמנהל! מעבר לפאנל ניהול... 🛡️');
+          redirectTimeout = setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 1000);
+        } else {
+          showSuccess('התחברת בהצלחה! מעבר לחנות... 🎉');
+          redirectTimeout = setTimeout(() => {
+            window.location.href = 'cart.html';
+          }, 1000);
+        }
+      } else {
+        showError('אימייל או סיסמה שגויים. נסה שוב.');
+      }
+    });
+    
+    // הרשמה
+    document.getElementById('register-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      hideMessages();
+      
+      const name = document.getElementById('register-name').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+      
+      // Regex validation
+      if (!nameRegex.test(name)) {
+        showError('שם לא תקין. השתמש באותיות בלבד (עברית/אנגלית), 2-50 תווים.');
+        return;
+      }
+      
+      if (!emailRegex.test(email)) {
+        showError('פורמט אימייל לא תקין. דוגמה: user@example.com');
+        return;
+      }
+      
+      if (!passwordRegex.test(password)) {
+        showError('הסיסמה חייבת להכיל לפחות 4 תווים.');
+        return;
+      }
+      
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      if (users.find(u => u.email === email)) {
+        showError('משתמש עם אימייל זה כבר קיים. נסה להתחבר.');
+        return;
+      }
+      
+      const newUser = { 
+        id: Date.now().toString(), 
+        name, 
+        email, 
+        password, 
+        isAdmin: false 
+      };
+      
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+      // שמירה ב-sessionStorage (נמחק בסגירת דפדפן)
+      sessionStorage.setItem('currentUser', JSON.stringify(newUser));
+      
+      showSuccess('נרשמת בהצלחה! מעבר לחנות...');
+      redirectTimeout = setTimeout(() => {
+        window.location.href = 'cart.html';
+      }, 1000);
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+  </footer>
+</body>
+</html>

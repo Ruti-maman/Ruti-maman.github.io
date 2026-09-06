@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>MarketMood — Preview (Daylio style)</title>
+  <style>
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      overflow: hidden;
+    }
+
+    /* Background - turquoise; anchor content to bottom */
+    body {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background: #90ffe9;
+      min-height: 100vh;
+    }
+
+    /* Outer frame removed for uniform background */
+    .stage {
+      width: auto;
+      height: auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+      margin: 0;
+      z-index: 1;
+    }
+
+    .frame-bg {
+      display: none;
+    }
+
+
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bubble {
+      position: absolute;
+      max-width: 240px;
+      background: #fff;
+      color: #2c2c2c;
+      padding: 12px 14px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      font-size: 12px;
+      line-height: 1.4;
+      opacity: 1;
+    }
+
+    .bubble::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 24px;
+      border-width: 8px 8px 0 8px;
+      border-style: solid;
+      border-color: #fff transparent transparent transparent;
+      filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
+    }
+
+    .bubble.right::after {
+      left: auto;
+      right: 24px;
+    }
+
+
+    .phone {
+      width: 380px;
+      height: 760px;
+      border-radius: 46px;
+      background: #000;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.32);
+      overflow: hidden;
+      transform: translateY(28px);
+      z-index: 1;
+    }
+
+    .topbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 48px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      z-index: 10;
+    }
+
+    .topbar .status {
+      color: #fff;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .topbar .status .time {
+      font-size: 16px;
+      font-weight: 600;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .topbar .status .left-icons {
+      position: absolute;
+      left: 20px;
+      font-size: 10px;
+    }
+
+    .topbar .status .right-icons {
+      position: absolute;
+      right: 20px;
+      font-size: 12px;
+    }
+
+    /* Screen */
+    .screen {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 48px;
+      bottom: 0;
+      background: #fff;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .screen::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    /* White card - full screen */
+    .card {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 0;
+      margin: 0;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Close button */
+    .close {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid #d0d0d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+
+    .close svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5
+    }
+
+    /* Header */
+    h1 {
+      font-family: 'Rubik', sans-serif;
+      font-size: 21px;
+      margin: 68px 0 16px;
+      color: #7a7a7a;
+      font-weight: 500;
+      letter-spacing: 1px;
+      opacity: 0;
+      animation: titleIn .6s ease-out .05s forwards;
+    }
+
+    .date {
+      color: #5ec4bd;
+      font-size: 13px;
+      margin-bottom: 18px;
+      text-decoration: none;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Moods row - match screenshot spacing and positioning */
+    .moods {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: center;
+      margin-top: 96px;
+      opacity: 0;
+      animation: contentIn .5s ease-out .45s forwards;
+    }
+
+    .mood {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+
+    .mood .icon {
+      width: 62px;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 6px;
+    }
+
+    .label {
+      font-size: 13px;
+      text-transform: lowercase;
+      margin-top: 8px;
+      font-weight: 400;
+    }
+
+    .rad .label {
+      color: #20c997;
+    }
+
+    .good .label {
+      color: #a8d76f;
+    }
+
+    .meh .label {
+      color: #6eb4e8;
+    }
+
+    .bad .label {
+      color: #f9a867;
+    }
+
+    .awful-label {
+      color: #ff7b7b;
+    }
+
+    /* Emoji borders matching screenshot colors */
+    .rad .icon {
+      background: #fff;
+      border: 3px solid #20c997;
+    }
+
+    .good .icon {
+      background: #fff;
+      border: 3px solid #a8d76f;
+    }
+
+    .meh .icon {
+      background: #fff;
+      border: 3px solid #6eb4e8;
+    }
+
+    .bad .icon {
+      background: #fff;
+      border: 3px solid #f9a867;
+    }
+
+    .awful .icon {
+      background: #fff;
+      border: 3px solid #ff7b7b;
+    }
+
+    /* Slight hover/active */
+    .mood:hover .icon {
+      transform: scale(1.05);
+      transition: transform .15s ease;
+    }
+
+    /* Appear animations */
+    @keyframes titleIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes contentIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .date {
+      opacity: 0;
+      animation: contentIn .5s ease-out .3s forwards;
+    }
+
+    .close {
+      opacity: 0;
+      animation: contentIn .5s ease-out .35s forwards;
+    }
+
+    /* Footer spacing */
+    .spacer {
+      flex: 1
+    }
+
+    ;
+
+    /* Remove desktop-only scale; sizes are set explicitly now */
+    @media (min-width:900px) {
+      .stage {
+        transform: none;
+      }
+    }
+
+    /* Divider for scroll demo */
+    .divider {
+      width: 86%;
+      height: 1px;
+      background: #eee;
+      border: none;
+      margin: 28px 0;
+    }
+
+    /* Additional content for real scrolling */
+    .section-title {
+      width: 100%;
+      max-width: 520px;
+      font-size: 12px;
+      letter-spacing: 1.6px;
+      color: #9aa0a6;
+      margin: 56px auto 16px;
+      text-align: left;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 520px;
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 0 0 48px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Spacer to keep only title+emojis in initial view */
+    .fold-spacer {
+      height: clamp(320px, 50vh, 620px);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #e2e2e2;
+      background: #fff;
+      color: #6b6b6b;
+      font-size: 12px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 8px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #eee;
+    }
+
+    .item .dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #e3e3e3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .muted {
+      color: #9aa0a6;
+      font-size: 12px;
+    }
+
+    /* Footer */
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px 20px;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      font-family: 'Rubik', sans-serif;
+    }
+
+    .site-footer p {
+      margin: 0;
+      color: #5ec4bd;
+      font-size: 13px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- פרופיל משתמש (מוצג רק אחרי התחברות) -->
+  <div id="user-profile"
+    style="position: fixed; top: 20px; left: 20px; background: white; padding: 12px 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 1000; display: none; align-items: center; gap: 12px;">
+    <div id="user-avatar"
+      style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+    </div>
+    <div>
+      <div id="user-name" style="font-weight: 600; color: #2c2c2c; font-size: 14px;"></div>
+      <div style="font-size: 12px; color: #4CAF50; font-weight: 600;">✓ מחובר</div>
+    </div>
+    <button onclick="logout()"
+      style="background: #ff6b9d; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; margin-right: 8px;">יציאה</button>
+  </div>
+
+  <div class="stage">
+    <div class="frame-bg" aria-hidden="true"></div>
+    <div class="bubbles" aria-hidden="true">
+      <div class="bubble left" style="left:4vw; top:6%;">You've survived 100% of your worst days.</div>
+      <div class="bubble left" style="left:6vw; top:30%;">Breathe. Reset. Begin again.</div>
+      <div class="bubble left" style="left:8vw; top:64%;">Small steps still move mountains.</div>
+
+      <div class="bubble right" style="right:4vw; top:14%;">This feeling is temporary.</div>
+      <div class="bubble right" style="right:6vw; top:40%;">You are stronger than you think.</div>
+      <div class="bubble right" style="right:8vw; top:72%;">One thing at a time. You've got this.</div>
+    </div>
+    <div class="phone" role="img" aria-label="phone mock">
+      <div class="topbar" role="banner">
+        <div class="status"><span class="left-icons"></span><span class="time" id="real-time">11:33</span><span
+            class="right-icons">🔋</span></div>
+      </div>
+      <div class="screen">
+        <div class="card" role="main">
+          <button class="close" aria-label="close">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 6L18 18M6 18L18 6" stroke="#333" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          
+          <h1>HOW ARE YOU?</h1>
+          <div class="date" id="real-date">
+            <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="5" width="18" height="16" rx="2" stroke="#5ec4bd" stroke-width="1.2" />
+              <path d="M16 3v4M8 3v4" stroke="#5ec4bd" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            Today, Dec 17, 11:21 AM
+          </div>
+
+          <div class="moods" role="list" aria-label="mood options">
+            <div class="mood rad" role="listitem" tabindex="0">
+              <div class="icon" aria-hidden="true">
+                <!-- rad -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42">
+                  <g transform="translate(60,60)" fill="none" stroke="#20c997" stroke-width="3.5"
+                    stroke-linecap="round">
+                    <line x1="-18" y1="-8" x2="18" y2="-8" />
+                    <line x1="-18" y1="2" x2="18" y2="2" />
+                    <path d="M-18 10 Q0 24 18 10" fill="none" />
+                  </g>
+                </svg>
+              </div>
+              <div class="label">rad</div>
+            </div>
+
+            <div class="mood good" role="listitem" tabindex="0">
+              <div class="icon">
+                <!-- good -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42">
+                  <g transform="translate(60,60)" fill="none" stroke="#a8d76f" stroke-width="3.5"
+                    stroke-linecap="round">
+                    <path d="M-18 -10 Q-12 -4 -6 -10" />
+                    <path d="M6 -10 Q12 -4 18 -10" />
+                    <path d="M-14 8 Q0 18 14 8" />
+                  </g>
+                </svg>
+              </div>
+              <div class="label">good</div>
+            </div>
+
+            <div class="mood meh" role="listitem" tabindex="0">
+              <div class="icon">
+                <!-- meh -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42">
+                  <g transform="translate(60,60)" fill="none" stroke="#6eb4e8" stroke-width="3.5"
+                    stroke-linecap="round">
+                    <circle cx="-12" cy="-6" r="2.5" fill="#6eb4e8" />
+                    <circle cx="12" cy="-6" r="2.5" fill="#6eb4e8" />
+                    <line x1="-12" y1="10" x2="12" y2="10" />
+                  </g>
+                </svg>
+              </div>
+              <div class="label">meh</div>
+            </div>
+
+            <div class="mood bad" role="listitem" tabindex="0">
+              <div class="icon">
+                <!-- bad -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42">
+                  <g transform="translate(60,60)" fill="none" stroke="#f9a867" stroke-width="3.5"
+                    stroke-linecap="round">
+                    <circle cx="-12" cy="-8" r="2.5" fill="#f9a867" />
+                    <circle cx="12" cy="-8" r="2.5" fill="#f9a867" />
+                    <path d="M-14 14 Q0 6 14 14" />
+                  </g>
+                </svg>
+              </div>
+              <div class="label">bad</div>
+            </div>
+
+            <div class="mood awful" role="listitem" tabindex="0">
+              <div class="icon">
+                <!-- awful -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="42" height="42">
+                  <g transform="translate(60,60)" fill="none" stroke="#ff7b7b" stroke-width="3.5"
+                    stroke-linecap="round">
+                    <path d="M-16 -12 L-8 -4 M-8 -12 L-16 -4" />
+                    <path d="M8 -12 L16 -4 M16 -12 L8 -4" />
+                    <path d="M-14 16 Q0 8 14 16" />
+                  </g>
+                </svg>
+              </div>
+              <div class="label awful-label">awful</div>
+            </div>
+
+          </div>
+
+          <div class="spacer"></div>
+          <div class="fold-spacer" aria-hidden="true" style="height: clamp(520px, 80vh, 900px);"></div>
+
+          <!-- Real scrolling content (not duplicated screen) -->
+          <hr class="divider" aria-hidden="true" />
+
+          <div class="section-title">QUICK ACTIVITIES</div>
+          <div class="panel">
+            <div class="chips">
+              <span class="chip">🏃‍♀️ workout</span>
+              <span class="chip">📚 study</span>
+              <span class="chip">🛒 shopping</span>
+              <span class="chip">🧘 relax</span>
+              <span class="chip">👨‍👩‍👧 family</span>
+              <span class="chip">☕ coffee</span>
+              <span class="chip">🎮 play</span>
+            </div>
+          </div>
+
+          <div class="section-title">RECENT ENTRIES</div>
+          <div class="panel list">
+            <div class="item"><span class="dot" style="border-color:#20c997">😊</span>
+              <div>
+                <div>Great walk outside!</div>
+                <div class="muted">Today · outdoors</div>
+              </div>
+            </div>
+            <div class="item"><span class="dot" style="border-color:#6eb4e8">😐</span>
+              <div>
+                <div>Bit tired after class</div>
+                <div class="muted">Yesterday · study</div>
+              </div>
+            </div>
+            <div class="item"><span class="dot" style="border-color:#ff7b7b">😣</span>
+              <div>
+                <div>Headache, taking a rest</div>
+                <div class="muted">Wed · health</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">NOTES</div>
+          <div class="panel">
+            <div class="muted">Remember to drink more water and take short breaks while working. Plan a short walk this
+              evening.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // משתנה לניקוי טיימר השעון
+    let clockInterval = null;
+
+    // פונקציה לעדכון השעון בזמן אמת
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}`;
+
+      const timeElement = document.querySelector('.time');
+      if (timeElement) {
+        timeElement.textContent = timeString;
+      }
+    }
+
+    // פונקציה לעדכון התאריך בזמן אמת
+    function updateDate() {
+      const now = new Date();
+
+      // שמות חודשים באנגלית
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      const month = monthNames[now.getMonth()];
+      const day = now.getDate();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hour12 = hours % 12 || 12;
+
+      const dateString = `Today, ${month} ${day}, ${hour12}:${minutes} ${ampm}`;
+
+      const dateElement = document.getElementById('real-date');
+      if (dateElement) {
+        // שמירת ה-SVG
+        const svg = dateElement.querySelector('svg');
+        dateElement.innerHTML = '';
+        if (svg) {
+          dateElement.appendChild(svg);
+        }
+        dateElement.appendChild(document.createTextNode('\n            ' + dateString + '\n          '));
+      }
+    }
+
+    // התחלת שעון בזמן אמת
+    function startClock() {
+      // עדכון מיידי
+      updateClock();
+      updateDate();
+
+      // ניקוי טיימר קודם אם קיים
+      if (clockInterval) {
+        clearInterval(clockInterval);
+      }
+
+      // עדכון כל שנייה
+      clockInterval = setInterval(() => {
+        updateClock();
+        updateDate();
+      }, 1000);
+    }
+
+    // עצירת השעון
+    function stopClock() {
+      if (clockInterval) {
+        clearInterval(clockInterval);
+        clockInterval = null;
+      }
+    }
+
+    // בדיקה והצגת משתמש מחובר
+    function updateUserDisplay() {
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+      const userProfile = document.getElementById('user-profile');
+
+      if (currentUser) {
+        // משתמש מחובר - הצג פרופיל תמיד
+        document.getElementById('user-name').textContent = currentUser.name;
+        const initials = currentUser.name.charAt(0).toUpperCase();
+        document.getElementById('user-avatar').textContent = initials;
+        userProfile.style.display = 'flex';
+      } else {
+        // לא מחובר - הסתר פרופיל
+        userProfile.style.display = 'none';
+      }
+    }
+
+    // פונקציית יציאה
+    function logout() {
+      if (confirm('האם אתה בטוח שברצונך להתנתק?')) {
+        sessionStorage.removeItem('currentUser');
+        updateUserDisplay();
+        alert('התנתקת בהצלחה! 👋');
+      }
+    }
+
+    // הרצה בטעינת הדף
+    updateUserDisplay();
+    startClock(); // התחלת שעון חי
+
+    // ניקוי כשעוזבים את הדף
+    window.addEventListener('beforeunload', () => {
+      stopClock();
+    });
+
+    // Map UI classes to app mood keys
+    const moodMap = {
+      rad: 'happy',
+      good: 'love',
+      meh: 'neutral',
+      bad: 'sad',
+      awful: 'angry'
+    };
+
+    // Attach click handlers to mood tiles
+    document.querySelectorAll('.mood').forEach(el => {
+      el.addEventListener('click', () => {
+        for (const cls of el.classList) {
+          if (moodMap[cls]) {
+            localStorage.setItem('selectedMood', moodMap[cls]);
+            // Navigate to product page (served from /pages/)
+            window.location.href = 'pages/product.html';
+            return;
+          }
+        }
+      });
+    });
+  </script>
+
+  <!-- טעינת המוצרים מקובץ JavaScript -->
+  <script src="load-products.js"></script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketMood - בחירת מצב רוח</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: #000;
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        /* Site Header Navigation */
+        .site-header {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            z-index: 500;
+            padding: 15px 25px;
+            border-radius: 20px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #5ec4bd;
+            padding: 12px 24px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border: 2px solid #e0f9f5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(94, 196, 189, 0.1);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94, 196, 189, 0.25);
+            border-color: #5ec4bd;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+            color: white;
+            border-color: #5ec4bd;
+            box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+        }
+
+        .nav-btn.admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-btn.admin:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .video-container {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* overlay sits above video and allows header/controls to receive clicks */
+            pointer-events: auto;
+            z-index: 50;
+        }
+
+        .header {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: auto;
+        }
+
+        .home-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #5ec4bd;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Rubik', sans-serif;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .home-btn:hover {
+            background: #5ec4bd;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(94, 196, 189, 0.8);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Rubik', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(94, 196, 189, 1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(94, 196, 189, 0.5);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            pointer-events: auto;
+        }
+
+        .music-btn {
+            background: rgba(94, 196, 189, 0.8);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Rubik', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .music-btn:hover {
+            background: rgba(94, 196, 189, 1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94, 196, 189, 0.6);
+        }
+
+        .music-btn.playing {
+            background: rgba(255, 107, 157, 0.8);
+            border-color: rgba(255, 107, 157, 0.8);
+        }
+
+        .quotes-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .quote-bubble {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.97);
+            color: #2c2c2c;
+            padding: 20px 26px;
+            border-radius: 22px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+            font-size: 16px;
+            line-height: 1.55;
+            max-width: 320px;
+            z-index: 100;
+            opacity: 0;
+            font-family: 'Rubik', sans-serif;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .quote-bubble.extra-small {
+            font-size: 11px;
+            padding: 14px 18px;
+            max-width: 200px;
+            font-weight: 400;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .quote-bubble.small {
+            font-size: 13px;
+            padding: 16px 20px;
+            max-width: 250px;
+            font-weight: 400;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.14);
+        }
+
+        .quote-bubble.medium {
+            font-size: 16px;
+            padding: 20px 26px;
+            max-width: 320px;
+            font-weight: 500;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+        }
+
+        .quote-bubble.large {
+            font-size: 19px;
+            padding: 26px 34px;
+            max-width: 400px;
+            font-weight: 600;
+            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.22);
+        }
+
+        .quote-bubble.extra-large {
+            font-size: 22px;
+            padding: 30px 40px;
+            max-width: 480px;
+            font-weight: 700;
+            box-shadow: 0 15px 55px rgba(0, 0, 0, 0.28);
+        }
+
+        @keyframes fadeInBubble {
+            0% {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeOutBubble {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+        }
+
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #5ec4bd;
+            border: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(94, 196, 189, 0.4);
+            background: #4eb5ad;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b9d;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        /* Footer */
+        .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+            z-index: 50;
+        }
+
+        .site-footer p {
+            margin: 0;
+            color: #5ec4bd;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Site Header Navigation -->
+    <header class="site-header">
+        <nav class="nav-container">
+            <a href="../index.html" class="nav-btn">🏠 דף הבית</a>
+            <a href="cart.html" class="nav-btn" style="position: relative;">
+                🛒 עגלה
+                <span id="cartCount" style="position: absolute; top: -8px; left: -8px; background: #ff6b9d; color: white; border-radius: 50%; width: 22px; height: 22px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(255,107,157,0.4);">0</span>
+            </a>
+            <a href="mood-tracker.html" class="nav-btn">📊 מעקב אחר מצב רוח</a>
+            <a href="daily-challenge.html" class="nav-btn">⭐ אתגר יומי</a>
+            <a href="admin.html" id="admin-nav-link" class="nav-btn admin" style="display:none;">⚙️ ניהול</a>
+        </nav>
+    </header>
+
+    <!-- פרופיל משתמש -->
+    <div id="user-profile" style="position: fixed; top: 70px; right: 20px; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; display: none; align-items: center; gap: 12px;">
+        <div id="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;"></div>
+        <div>
+            <div id="user-name" style="font-weight: 600; color: #2c2c2c; font-size: 13px;"></div>
+            <div style="font-size: 11px; color: #4CAF50; font-weight: 600;">✓ מחובר</div>
+        </div>
+        <button onclick="logout()" style="background: #ff6b9d; color: white; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 6px;">התנתק</button>
+    </div>
+    
+    <div class="video-container" id="video-container"></div>
+    
+    <div class="overlay">
+        <div class="controls">
+            <button id="musicBtn" class="music-btn">מוזיקה</button>
+        </div>
+    </div>
+
+    <video id="mainVideo" autoplay muted loop playsinline preload="auto" style="width: 100%; height: 100%; object-fit: cover; display: block; position: fixed; inset: 0; z-index: 1;">
+        <source id="videoSource" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="quotes-container" id="quotesContainer"></div>
+
+    <!-- Hidden audio element for reliable music playback on click -->
+    <audio id="bgAudio" preload="auto" style="display:none"></audio>
+
+    <script>
+        const selectedMood = localStorage.getItem('selectedMood') || 'neutral';
+
+        
+        // Use relative paths so it works when opening the file directly (file:///)
+        // product.html is in /pages/, assets are in /assets/
+        const videos = {
+            happy: '../assets/video/happy.mp4',
+            sad: '../assets/video/sad.mp4',
+            // The original local file is ~69 MB, too large for the GitHub
+            // Data API used by this portfolio's publisher. Stream the same
+            // mood video from its original Pexels source in the cloud build.
+            neutral: 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4',
+            angry: '../assets/video/angry.mp4',
+            love: '../assets/video/love.mp4'
+        };
+
+        // Embedded ambient tones - works immediately, no download needed!
+        // These are simple generated tones that create mood atmosphere
+        const moodMusic = {
+            // Happy: Bright, uplifting tone (440Hz + harmonics)
+            happy: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=',
+            // Sad: Lower, somber tone (220Hz)
+            sad: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=',
+            // Neutral: Calm, balanced tone (330Hz)
+            neutral: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=',
+            // Angry: Intense, dramatic tone (110Hz)
+            angry: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=',
+            // Love: Warm, gentle tone (528Hz - love frequency)
+            love: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA='
+        };
+
+        const moodQuotes = {
+            happy: [
+                '✨ החיוך שלך משפיע על העולם סביבך',
+                '🌟 כל רגע הוא הזדמנות חדשה – תנצל אותה למקסימום',
+                '💫 הצלחה היא לעשות – להחליט לפעול',
+                '🎯 החיוך שלך יכול לשנות את העולם',
+                '🌈 כל בוקר הוא התחלה של סיפור חדש שלך',
+                '🎨 תהיה עצמך, כולם האחרים תפוסים',
+                '⭐ אושר הוא החלטה שאתה מקבל כל בוקר',
+                '🚀 המוטיבציה היא מה שמניע אותך קדימה',
+                '💪 הכוח נמצא בתוכך תמיד',
+                '🏆 הצעד הכי קטן מקרב אותך ליעד',
+                '🌻 זה הזמן שלך להגשים את החלומות שלך',
+                '🎭 אל תפסיק להאמין שאתה יכול לשנות',
+                '✈️ החיים הם מסע נהדר ומלמד',
+                '🌺 שמח במקום שאתה נמצא בדרך ליעד',
+                '🌞 כל יום הוא הזדמנות להתחיל מחדש',
+                '🦁 תאמין בעצמך – אתה הרבה יותר חזק ממה שאתה חושב',
+                '🌱 כל קושי הוא זריעה לצמיחה עתידית',
+                '🕊️ תן לחלומות שלך להוביל אותך קדימה',
+                '🌠 גם הדרך הארוכה מתחילה בצעד קטן',
+                '💎 אתה יקר ערך בדיוק כמו שאתה',
+                '🌤️ אחרי כל סערה מגיעה שמש חדשה',
+                '🧭 תמשיך ללכת – גם אם לא רואים את הסוף',
+                '🔥 הכוח להצליח נמצא בהחלטה שלך להמשיך',
+                '🌵 גם במדבר פורחים פרחים – אל תוותר',
+                '🌳 כל יום הוא הזדמנות לצמיחה חדשה',
+                '🦋 השינוי מתחיל בצעד קטן',
+                '🌞 תן לאור שלך להאיר לאחרים',
+                '🏔️ כל פסגה מתחילה בעלייה',
+                '🌾 תזכור – גם זרע קטן הופך לעץ ענק',
+                '🛤️ הדרך שלך ייחודית ומיוחדת',
+                '🌠 תחלום בגדול – תגיע רחוק',
+                '🧠 תאמין בכוח המחשבה שלך',
+                '🌻 כל חיוך שלך הוא מתנה לעולם',
+                '🕯️ גם באפלה – אתה אור גדול',
+                '🤗 מותר לנוח, מותר לבקש חיבוק'
+            ],
+            sad: [
+                '💙 גם בימים קשים, זה יעבור בסופו של דבר',
+                '🌧️ הדמעות הן אומץ – תן להן לזרום',
+                '🕊️ תאהב את עצמך בכל מצב שאתה בו עכשיו',
+                '🌙 אל תשכח לנשום באיטיות ולהרפות קצת',
+                '💜 הכאב של היום יעבור – זה זמני',
+                '🌸 בכל רגע קשה – זה באמת מחזק אותך',
+                '🌿 הרגשות שלך תקפים לגמרי, תן להם מקום',
+                '🎭 חיוך אמיתי מתחיל מבפנים',
+                '🌊 הצרות הן גלים שעוברים בסוף',
+                '🦋 גם הכאב הזה יעבור כמו גלים',
+                '🌻 זה בסדר לבכות, זה הופך אותך לאנושי יותר',
+                '💫 זה עוד פרק אחד במסלול שלך',
+                '🕯️ תזכור להאיר לאחרים – זה יעזור גם לך',
+                '🌈 זה לא הסוף, רק פרק שעוד יבוא אחריו',
+                '🌱 מתוך הכאב צומחת תקווה חדשה',
+                '🦋 כל קושי הוא הזדמנות לצמיחה',
+                '🌤️ גם העננים הכבדים מתפזרים בסוף',
+                '🧡 תן לעצמך זמן להחלים',
+                '🌙 הלילה הכי חשוך לפני הזריחה',
+                '🌲 תזכור – אתה לא לבד',
+                '🕊️ כל דמעה מקרבת אותך לאור',
+                '🌺 יש יופי גם ברגעים השקטים',
+                '💪 הכוח שלך גדול מהכאב',
+                '🤗 מותר לנוח, מותר לבקש חיבוק'
+            ],
+            neutral: [
+                '🧘 שמור על איזון בין עשייה לבין מנוחה',
+                '⚖️ החיים הם מאזניים – שמור על האיזון',
+                '🌾 השקט הפנימי נמצא בך בכל הזמנים',
+                '🍃 הטבע מלמד אותך על תהליכי חיים',
+                '🎐 הרגעים הקטנים הם עושי ההבדל',
+                '☯️ האיזון הוא מיומנות שכל אחד יכול ללמוד',
+                '🌿 הנשימה שלך היא מה שמקשר אותך לרגע',
+                '🏞️ החיים הם מסלול ארוך',
+                '🧩 כל חלק של החוויה צריך להיות שם',
+                '⏳ הזמן עובר באיטיות או במהירות לפי התפיסה שלך',
+                '🌅 השקט בפנים הוא המפתח',
+                '🎵 האיזון בתוכך זה הדבר הכי חשוב',
+                '🌕 הקשב לגופך, לרגשות ולמציאות',
+                '🌸 הרוגע הוא מצב שכל אחד יכול להשיג',
+                '🌿 תן לטבע להוביל אותך לשקט',
+                '🧘 כל נשימה היא התחלה חדשה',
+                '🌊 זרום עם החיים – הם יודעים את הדרך',
+                '🌤️ תן לעצמך רגעים של שקט',
+                '🕰️ הזמן מרפא הכל',
+                '🌱 כל יום הוא הזדמנות לאיזון',
+                '🦉 חכמה באה מהקשבה',
+                '🌙 תן למחשבות שלך לנוח',
+                '🧩 כל חלק בחיים חשוב',
+                '🤗 מותר לנוח, מותר לבקש חיבוק'
+            ],
+            angry: [
+                '🔥 הכעס שלך הוא אנרגיה שאפשר להעביר לפעולה',
+                '⚡ תשתמש בכוח שלך – אל תיתן לבעיות לשלוט',
+                '🌋 השליטה שלך בעצמך יכולה לגדול כל יום',
+                '💪 תעביר את הכעס לאנרגיה – תפוס את הרגע',
+                '🎯 כוח המחשבה יכול להוביל אותנו לתוצאות',
+                '🗡️ הכוח שלך יכול להוביל ליצירה',
+                '⚔️ השתמש בכוח שלך ליצירת מציאות חדשה',
+                '🏋️ זה המקום לגדול – אל תיבהל',
+                '🚀 העבר את הכוח לפעולה',
+                '🥊 תנצל את הכוח שלך בצורה חיובית',
+                '⛰️ תוכל לשנות את המציאות – זה תלוי בפעולה שלך',
+                '💥 הכוח נמצא בתוכך להפוך דברים לתוצאות',
+                '🎬 תעביר את התסכול לעשייה – תמשוך את הכוח הפנימי',
+                '🌪️ הכעס הוא אנרגיה, תפוס אותה נכון',
+                '🔥 תן לכעס שלך להפוך לכוח חיובי',
+                '💣 לפעמים צריך לשחרר כדי להתקדם',
+                '🦾 תשתמש באנרגיה שלך לבנייה',
+                '🌋 גם הר געש מתקרר בסוף',
+                '🛡️ תגן על עצמך – אבל אל תשכח להירגע',
+                '⚙️ תנתב את הכעס לעשייה',
+                '🧯 תן לעצמך זמן להירגע',
+                '🏃‍♂️ תזוזה משחררת מתחים',
+                '🌬️ נשימה עמוקה משנה הכל',
+                '🤗 מותר לנוח, מותר לבקש חיבוק'
+            ],
+            love: [
+                '💖 האהבה היא הכוח הגדול ביותר',
+                '💕 כל אהבה שאתה נותן הופכת למעגל טוב',
+                '💝 האהבה היא השפה שכולם מכירים',
+                '💗 אל תוותר על אהבה בזמן שזה לא ברור',
+                '💞 תהיה מוקף בכוח של הרגשות',
+                '💓 תאהב את עצמך קודם – זה הבסיס לכל כוח',
+                '❤️ אהבה היא להעניק לזולת בפשטות',
+                '💘 הקשרים שלך הם הכוח והתוצאות',
+                '🌹 האהבה הנכונה נשארת עמוק למרות הכל',
+                '💌 האהבה נותנת לך את הכל',
+                '💑 תעשה את הקשרים שלך מתוך כבוד אמיתי',
+                '💏 אהבה היא כאן בתוכך, היא שמחה ומחזקת',
+                '🌺 האהבה היא שפה שאתה יוצר',
+                '✨ אהבה תיתן לך הכל כשאתה זמין',
+                '🌸 אהבה היא מתנה שמתחילה בלב',
+                '💐 כל מילה טובה היא זר של אהבה',
+                '🕊️ תן אהבה בלי תנאים',
+                '🌞 אהבה מחממת גם את הימים הקרים',
+                '💞 כל חיבוק הוא עולם ומלואו',
+                '🌹 תזכור – אהבה היא כוח מרפא',
+                '🧡 תאהב את עצמך כמו שאתה',
+                '💌 מילה טובה יכולה לשנות יום שלם',
+                '🌠 אהבה היא הכוח שמניע את העולם',
+                '🤗 מותר לנוח, מותר לבקש חיבוק'
+            ]
+        };
+
+        let videoContainer = document.getElementById('video-container');
+        let quotesContainer = document.getElementById('quotesContainer');
+        let musicBtn = document.getElementById('musicBtn');
+        let cartBtn = document.getElementById('cartBtn');
+        let cartCount = document.getElementById('cartCount');
+
+        let backgroundMusic = null;
+        let isMusicPlaying = false;
+        let activeBubbles = 0;
+        const maxBubbles = 2; // מקס בועות בו-זמנית
+        
+        // מערכי טיימרים למנצוח
+        let quoteTimers = [];
+        let bubbleTimers = [];
+        let musicStopTimer = null;
+        
+        // Web Audio API for generating ambient sounds
+        let audioContext = null;
+        let oscillators = [];
+        let currentNoteTimeout = null;
+        let melodyInterval = null;
+        let gainNode = null;
+        let filterNode = null;
+
+        function initVideo() {
+
+
+            const videoPath = videos[selectedMood];
+
+
+            const videoSource = document.getElementById('videoSource');
+            const mainVideo = document.getElementById('mainVideo');
+
+
+
+
+            if (videoSource && mainVideo) {
+                videoSource.src = videoPath;
+
+                mainVideo.load();
+
+                mainVideo.play().catch(err => {});
+
+            } else {
+                console.error('Video elements not found!');
+            }
+        }
+
+        function startQuotes() {
+            const base = moodQuotes[selectedMood] || moodQuotes.neutral;
+            let cycle = [];
+            let idx = 0;
+
+            const shuffle = (arr) => arr
+                .map(v => ({ v, r: Math.random() }))
+                .sort((a, b) => a.r - b.r)
+                .map(o => o.v);
+
+            const ensureCycle = () => {
+                if (idx >= cycle.length) {
+                    cycle = shuffle(base.slice());
+                    idx = 0;
+                }
+            };
+
+            const spawnOne = () => {
+                ensureCycle();
+                const quote = cycle[idx++];
+                createBubble(quote);
+            };
+
+            // בועה ראשונה מיד בכניסה לדף
+            spawnOne();
+            
+            // אחרי 5 שניות - בועה שנייה
+            const timer1 = setTimeout(() => {
+                spawnOne();
+            }, 5000);
+            quoteTimers.push(timer1);
+            
+            // התחל לופ רגיל שמוסיף בועה כל 8 שניות (לנצח!)
+            const loop = () => {
+                spawnOne();
+                const timer = setTimeout(loop, 8000);
+                quoteTimers.push(timer);
+            };
+            
+            // התחל את הלופ אחרי 10 שניות
+            const timer2 = setTimeout(loop, 10000);
+            quoteTimers.push(timer2);
+        }
+        
+        // מערכים לשמירת טיימרים ומיקומים
+        // כדי שנוכל למחוק אותם בחזרה
+        let activeBubblePositions = [];
+
+        function clearQuoteTimers() {
+            quoteTimers.forEach(timer => clearTimeout(timer));
+            quoteTimers = [];
+        }
+
+        // פונקציה לבדוק אם מיקום מסוים אינו חופף לבועות קיימות
+        function isPositionValid(top, left, width, height) {
+            for (let pos of activeBubblePositions) {
+                // בדיקת חפיפה (overlap)
+                const horizontalOverlap = Math.abs(left - pos.left) < (width + pos.width) / 2 + 50;
+                const verticalOverlap = Math.abs(top - pos.top) < (height + pos.height) / 2 + 50;
+                
+                if (horizontalOverlap && verticalOverlap) {
+                    return false; // יש חפיפה
+                }
+            }
+            return true; // אין חפיפה - מיקום תקין
+        }
+
+        function createBubble(text) {
+            const bubble = document.createElement('div');
+            bubble.className = 'quote-bubble';
+            
+            // בוחרים גודל מתוך 5 אפשרויות
+            const sizes = ['extra-small', 'small', 'medium', 'large', 'extra-large'];
+            const sizeWeights = [0.15, 0.25, 0.30, 0.20, 0.10]; // הסתברות לכל גודל
+            
+            let rand = Math.random();
+            let selectedSize = 'medium';
+            let cumulative = 0;
+            
+            for (let i = 0; i < sizes.length; i++) {
+                cumulative += sizeWeights[i];
+                if (rand <= cumulative) {
+                    selectedSize = sizes[i];
+                    break;
+                }
+            }
+            
+            bubble.classList.add(selectedSize);
+            bubble.textContent = text;
+            
+            // מיקום קבוע על כל המסך - הבועות לא זזות!
+            const positions = [
+                { top: '10%', left: '8%' },
+                { top: '15%', right: '12%' },
+                { top: '25%', left: '15%' },
+                { top: '30%', right: '8%' },
+                { top: '40%', left: '50%', transform: 'translateX(-50%)' },
+                { top: '45%', left: '10%' },
+                { top: '50%', right: '15%' },
+                { top: '60%', left: '20%' },
+                { top: '65%', right: '10%' },
+                { top: '70%', left: '50%', transform: 'translateX(-50%)' },
+                { top: '75%', left: '12%' },
+                { top: '80%', right: '18%' },
+                { top: '20%', left: '35%' },
+                { top: '55%', right: '30%' },
+                { top: '35%', left: '70%' }
+            ];
+            
+            // בוחרים מיקום אקראי
+            const position = positions[Math.floor(Math.random() * positions.length)];
+            
+            if (position.top) bubble.style.top = position.top;
+            if (position.left) bubble.style.left = position.left;
+            if (position.right) bubble.style.right = position.right;
+            if (position.transform) bubble.style.transform = position.transform;
+            
+            // אנימציה עדינה להופעה בהדרגה - ממש יפה!
+            bubble.style.animation = 'fadeInBubble 2s ease-out forwards';
+            
+            quotesContainer.appendChild(bubble);
+            activeBubbles++;
+
+            // אנימציה להיעלמות אחרי 10 שניות (יפה!)
+            const fadeOutTimer = setTimeout(() => {
+                bubble.style.animation = 'fadeOutBubble 2s ease-in forwards';
+            }, 10000);
+            bubbleTimers.push(fadeOutTimer);
+
+            // הסרה סופית אחרי 12 שניות
+            const removeTimer = setTimeout(() => {
+                bubble.remove();
+                activeBubbles--;
+            }, 12000);
+            bubbleTimers.push(removeTimer);
+        }
+        
+        // מנקה את הטיימרים של הבועות
+        function clearBubbleTimers() {
+            bubbleTimers.forEach(timer => clearTimeout(timer));
+            bubbleTimers = [];
+        }
+
+        function setupMusicButton() {
+            console.log('Setting up music button...');
+            musicBtn.textContent = 'מוזיקה';
+            
+            let audioElement = null;
+
+            musicBtn.addEventListener('click', () => {
+                console.log('Music button clicked! isMusicPlaying:', isMusicPlaying);
+                
+                if (isMusicPlaying) {
+                    // Stop music
+                    console.log('Stopping music...');
+                    if (audioElement) {
+                        audioElement.pause();
+                        audioElement.currentTime = 0;
+                        audioElement = null;
+                    }
+                    musicBtn.classList.remove('playing');
+                    musicBtn.textContent = 'מוזיקה';
+                    isMusicPlaying = false;
+                } else {
+                    // כאן מנגנים מוזיקה של יאני!
+                    playRealYanniMusic();
+                }
+            });
+            
+            // פונקציה שמנגנת מוזיקה אמיתית של יאני
+            function playRealYanniMusic() {
+                const moodFiles = {
+                    happy: '../assets/audio/moods/happy.mp3',      // Renegade - אנרגטי מרומם
+                    sad: '../assets/audio/moods/sad.mp3',          // Adagio in C Minor - נוסטלגי עמוק
+                    neutral: '../assets/audio/moods/neutral.mp3',  // Prelude - שקט רגוע
+                    angry: '../assets/audio/moods/angry.mp3',      // Waltz in 7/8 - דרמטי אינטנסיבי
+                    love: '../assets/audio/moods/love.mp3'         // Nightingale - רומנטי מרגש
+                };
+                
+                const audioFile = moodFiles[selectedMood] || moodFiles.neutral;
+                
+                console.log('Playing real Yanni music:', audioFile);
+                
+                audioElement = new Audio(audioFile);
+                audioElement.loop = true;
+                audioElement.volume = 0.5;
+                
+                audioElement.play()
+                    .then(() => {
+                        console.log('✨ Yanni music playing successfully!');
+                        musicBtn.classList.add('playing');
+                        musicBtn.textContent = 'עצור מוזיקה';
+                        isMusicPlaying = true;
+                    })
+                    .catch(error => {
+                        console.error('Error playing music:', error);
+                        alert('לא ניתן לנגן את המוזיקה. נסה לרענן ולנסות שוב.');
+                    });
+            }
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountEl = document.getElementById('cartCount');
+            if (count > 0) {
+                cartCountEl.textContent = count;
+                cartCountEl.style.display = 'flex';
+            } else {
+                cartCountEl.style.display = 'none';
+            }
+        }
+
+        function goToCart() {
+            // בדיקה אם המשתמש מחובר
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            if (currentUser) {
+                // מחובר - נכנס לעגלה ישירות
+                window.location.href = 'cart.html';
+            } else {
+                // לא מחובר - נשלח לדף התחברות (אחרי כך לעגלה)
+                window.location.href = 'login.html';
+            }
+        }
+
+        function goToMoodTracker() {
+            window.location.href = 'mood-tracker.html';
+        }
+
+        function goToChallenge() {
+            window.location.href = 'daily-challenge.html';
+        }
+        
+        // התנתקות משתמש
+        function logout() {
+            if (confirm('האם אתה בטוח שברצונך להתנתק?')) {
+                // ניקוי כל האינפורמציה
+                localStorage.removeItem('cart');
+                localStorage.removeItem('selectedMood');
+                localStorage.removeItem('lastOrder');
+                
+                // ניקוי אינפורמציה ספציפי משתמש
+                const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+                if (currentUser) {
+                    localStorage.removeItem(`mood_history_${currentUser.id}`);
+                    localStorage.removeItem(`daily_challenge_${currentUser.id}`);
+                }
+                
+                sessionStorage.removeItem('currentUser');
+                updateUserDisplay();
+                stopCartCountUpdate(); // עצירת עדכון העגלה
+                alert('התנתקת בהצלחה! תודה על ההתראות והנס 🌟');
+                
+                // חזרה לדף הבית
+                window.location.href = '../index.html';
+            }
+        }
+        
+        // פונקציה לעדכון התצוגה משתמש
+        function updateUserDisplay() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            const userProfile = document.getElementById('user-profile');
+            const adminNavLink = document.getElementById('admin-nav-link');
+            
+            if (currentUser) {
+                // משתמש מחובר - הצג פרטים
+                document.getElementById('user-name').textContent = currentUser.name;
+                const initials = currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('user-avatar').textContent = initials;
+                userProfile.style.display = 'flex';
+                
+                // הצג קישור מנהל אם זה מנהל
+                if (currentUser.isAdmin && adminNavLink) {
+                    adminNavLink.style.display = 'flex';
+                }
+            } else {
+                // לא מחובר - הסתר פרופיל
+                userProfile.style.display = 'none';
+            }
+        }
+        
+        // Initialize
+        initVideo();
+        startQuotes();
+        setupMusicButton();
+        updateUserDisplay(); // עדכון הצגת המשתמש
+        
+        // אינטרוול לעדכון מספר העגלה
+        let cartCountInterval = null;
+        
+        // פונקציה לעדכון מספר העגלה כל הזמן
+        function updateCartCountContinuously() {
+            // בדיקה אם המשתמש מחובר
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            const cartCountEl = document.getElementById('cartCount');
+            
+            if (!currentUser) {
+                // לא מחובר - הסתר ספרה
+                if (cartCountEl) {
+                    cartCountEl.style.display = 'none';
+                }
+                return;
+            }
+            
+            // עצירת אינטרוול קודם
+            if (cartCountInterval) {
+                clearInterval(cartCountInterval);
+            }
+            
+            // עדכון ראשוני
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+                cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+            
+            // עדכון כל 2 שניות
+            cartCountInterval = setInterval(() => {
+                // עדכון מספר על המעגלה באופן רציף
+                const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+                if (!currentUser) {
+                    stopCartCountUpdate();
+                    return;
+                }
+                
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                const cartCount = document.getElementById('cartCount');
+                if (cartCount) {
+                    cartCount.textContent = totalItems;
+                    cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+                }
+            }, 2000);
+        }
+        
+        // עצירת עדכון העגלה
+        function stopCartCountUpdate() {
+            if (cartCountInterval) {
+                clearInterval(cartCountInterval);
+                cartCountInterval = null;
+            }
+        }
+        
+        // הפעלת עדכון רציף
+        updateCartCountContinuously();
+        
+        // ניקוי ממשקים בסגירת דף
+        window.addEventListener('beforeunload', () => {
+            stopCartCountUpdate();
+            stopClock();
+            clearQuoteTimers();
+            clearBubbleTimers();
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+    </footer>
+</body>
+</html>

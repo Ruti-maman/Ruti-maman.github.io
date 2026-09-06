@@ -29,6 +29,10 @@ const VIEWPORT = { width: 1280, height: 800 };
 // live builds from the site on 2026-09-02.
 const TARGETS = [
   {
+    id: "marketmood",
+    url: `${BASE}/projects/market-mood/`,
+  },
+  {
     id: "memory",
     url: `${BASE}/memory-game/`,
     // The entry form is not the project; the board is.

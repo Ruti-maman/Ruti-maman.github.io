@@ -1,0 +1,769 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אתגר יומי - MarketMood</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
+            color: #2c2c2c;
+            min-height: 100vh;
+            padding: 110px 20px 20px 20px;
+            overflow-x: hidden;
+        }
+
+        /* Site Header Navigation */
+        .site-header {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1100px;
+            background: white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            z-index: 500;
+            padding: 15px 25px;
+            border-radius: 20px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn-header {
+            background: white;
+            color: #5ec4bd;
+            padding: 12px 24px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border: 2px solid #e0f9f5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(94, 196, 189, 0.1);
+        }
+
+        .nav-btn-header:hover {
+            background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94, 196, 189, 0.25);
+            border-color: #5ec4bd;
+        }
+
+        .nav-btn-header.active {
+            background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+            color: white;
+            border-color: #5ec4bd;
+            box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+        }
+
+        .nav-btn-header.admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-btn-header.admin:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            color: #90ffe9;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(144, 255, 233, 0.3);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: #5ec4bd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-family: 'Rubik', sans-serif;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            background: #90ffe9;
+            color: #2c2c2c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(144, 255, 233, 0.3);
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(144, 255, 233, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(144, 255, 233, 0.6); }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .streak-card {
+            background: rgba(144, 255, 233, 0.1);
+            border: 2px solid #5ec4bd;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .streak-label {
+            color: #90ffe9;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .streak-number {
+            font-size: 3em;
+            color: #5ec4bd;
+            font-weight: bold;
+            animation: countUp 1s ease-out forwards;
+        }
+
+        .streak-fire {
+            font-size: 2em;
+            margin-top: 10px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .challenge-card {
+            background: rgba(94, 196, 189, 0.1);
+            border: 2px solid #5ec4bd;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .challenge-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .challenge-title {
+            color: #90ffe9;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .challenge-description {
+            color: #ddd;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .challenge-mood-note {
+            background: rgba(144, 255, 233, 0.1);
+            border-left: 4px solid #90ffe9;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            color: #90ffe9;
+            font-size: 0.95em;
+        }
+
+        .progress-bar {
+            background: rgba(144, 255, 233, 0.1);
+            border: 2px solid #5ec4bd;
+            border-radius: 20px;
+            height: 40px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #5ec4bd 0%, #90ffe9 100%);
+            border-radius: 18px;
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .progress-text {
+            color: #90ffe9;
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 2.5em;
+            color: #5ec4bd;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .challenge-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .start-btn, .complete-btn, .skip-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Rubik', sans-serif;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-btn, .complete-btn {
+            background: linear-gradient(135deg, #5ec4bd 0%, #90ffe9 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .start-btn:hover, .complete-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(144, 255, 233, 0.4);
+        }
+
+        .skip-btn {
+            background: rgba(144, 255, 233, 0.1);
+            color: #90ffe9;
+            border: 2px solid #90ffe9;
+        }
+
+        .skip-btn:hover {
+            background: rgba(144, 255, 233, 0.2);
+        }
+
+        .completed-state {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .completed-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: celebration 0.6s ease-out;
+        }
+
+        @keyframes celebration {
+            0% { transform: scale(0) rotate(0deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .completed-text {
+            color: #90ffe9;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .comeback-btn {
+            background: #5ec4bd;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Rubik', sans-serif;
+            font-size: 1em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .comeback-btn:hover {
+            background: #90ffe9;
+            color: #2c2c2c;
+            transform: scale(1.05);
+        }
+
+        .no-challenge {
+            text-align: center;
+            padding: 60px 20px;
+            color: #90ffe9;
+        }
+
+        .no-challenge-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-challenge p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .challenge-card {
+                padding: 25px;
+            }
+
+            .challenge-icon {
+                font-size: 2.5em;
+            }
+
+            .challenge-title {
+                font-size: 1.2em;
+            }
+
+            .challenge-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Footer */
+        .site-footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 12px 20px;
+          text-align: center;
+          box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+          z-index: 50;
+        }
+        
+        .site-footer p {
+          margin: 0;
+          color: #5ec4bd;
+          font-size: 13px;
+          font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Site Header Navigation -->
+    <header class="site-header">
+        <nav class="nav-container">
+            <a href="../index.html" class="nav-btn-header">🏠 עמוד הבית</a>
+            <a href="product.html" class="nav-btn-header">🎬 חזרה לסרטון</a>
+            <a href="cart.html" class="nav-btn-header" style="position: relative;">
+                🛒 עגלה
+                <span id="cartCount" style="position: absolute; top: -8px; left: -8px; background: #ff6b9d; color: white; border-radius: 50%; width: 22px; height: 22px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(255,107,157,0.4);">0</span>
+            </a>
+            <a href="mood-tracker.html" class="nav-btn-header">📊 מעקב מצב רוח</a>
+            <a href="admin.html" id="admin-nav-link" class="nav-btn-header admin" style="display:none;">🛡️ מנהל</a>
+        </nav>
+    </header>
+
+    <div class="header">
+        <h1>⚡ אתגר יומי</h1>
+        <p style="color: #90ffe9; margin-top: 10px;">אתגר חדש כל יום לשיפור מצב הרוח</p>
+    </div>
+
+    <div class="nav-links" style="display: none;">
+        <button class="nav-btn" onclick="window.location.href='product.html'">← חזור לוידאו</button>
+        <button class="nav-btn" onclick="window.location.href='../index.html'">🏠 בית</button>
+        <button class="nav-btn" onclick="window.location.href='mood-tracker.html'">📊 מעקב מצב רוח</button>
+    </div>
+
+    <div class="container">
+        <div class="streak-card">
+            <div class="streak-label">🔥 סדרה רציפה</div>
+            <div class="streak-number" id="streakCount">0</div>
+            <div class="streak-fire">🔥</div>
+        </div>
+
+        <div id="challengeContainer"></div>
+    </div>
+
+    <script>
+        const moodEmojis = {
+            happy: '😊',
+            sad: '😔',
+            neutral: '😐',
+            angry: '😠',
+            love: '🥰'
+        };
+
+        const challenges = {
+            happy: {
+                title: 'שפלו את הטובה שלכם',
+                icon: '🌞',
+                description: 'שתפו משהו טוב עם חבר. זה יעזור לכם להחזיק בשמחה שלכם.',
+                time: 300 // 5 minutes
+            },
+            sad: {
+                title: 'טיול הקלה',
+                icon: '🚶',
+                description: 'צאו לטיול קצר בחוץ. גם 10 דקות יכולות להרים את המצב.',
+                time: 600 // 10 minutes
+            },
+            neutral: {
+                title: 'כתיבה מהנפש',
+                icon: '📝',
+                description: 'כתבו 3 דברים שאתם בעבורם אסיריים. זה עוזר לשנות את הפרספקטיבה.',
+                time: 480 // 8 minutes
+            },
+            angry: {
+                title: 'דם עמוק עמוק',
+                icon: '🧘',
+                description: 'תרגלו נשימה עמוקה: 4 שניות קלט, חזיקו 4, ו-4 שניות שחרור.',
+                time: 300 // 5 minutes
+            },
+            love: {
+                title: 'תגיד "תודה"',
+                icon: '💌',
+                description: 'שלחו הודעה למישהו שחשוב לכם. הם יישמחו לשמוע ממכם.',
+                time: 180 // 3 minutes
+            }
+        };
+
+        class DailyChallenge {
+            constructor() {
+                this.currentChallenge = null;
+                this.isActive = false;
+                this.timeRemaining = 0;
+                this.timerInterval = null;
+                this.confettiTimers = []; // מערך לניקוי טיימרי קונפטי
+            }
+
+            getMoodChallenge(mood) {
+                return challenges[mood] || challenges.neutral;
+            }
+
+            getTodayKey() {
+                const today = new Date();
+                return `dailyChallenge_${today.toDateString()}`;
+            }
+
+            isCompletedToday() {
+                return localStorage.getItem(this.getTodayKey()) === 'completed';
+            }
+
+            markCompleted() {
+                localStorage.setItem(this.getTodayKey(), 'completed');
+                this.updateStreak();
+            }
+
+            getStreak() {
+                return parseInt(localStorage.getItem('challengeStreak') || '0');
+            }
+
+            updateStreak() {
+                const lastCompletedKey = 'lastChallengeDate';
+                const today = new Date().toDateString();
+                const lastCompleted = localStorage.getItem(lastCompletedKey);
+
+                let streak = this.getStreak();
+
+                if (lastCompleted) {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+
+                    if (lastCompleted === yesterday.toDateString()) {
+                        streak++;
+                    } else if (lastCompleted !== today) {
+                        streak = 1;
+                    }
+                } else {
+                    streak = 1;
+                }
+
+                localStorage.setItem('challengeStreak', streak);
+                localStorage.setItem(lastCompletedKey, today);
+            }
+
+            startChallenge() {
+                this.isActive = true;
+                this.timeRemaining = this.currentChallenge.time;
+                this.startTimer();
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.timeRemaining--;
+
+                    if (this.timeRemaining <= 0) {
+                        this.completeChallenge();
+                    }
+
+                    this.render();
+                }, 1000);
+            }
+
+            completeChallenge() {
+                clearInterval(this.timerInterval);
+                this.isActive = false;
+                this.markCompleted();
+                this.celebrateCompletion();
+            }
+
+            skipChallenge() {
+                clearInterval(this.timerInterval);
+                this.isActive = false;
+                this.render();
+            }
+
+            celebrateCompletion() {
+                this.createConfetti();
+                this.render();
+            }
+
+            createConfetti() {
+                const confettiCount = 50;
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.textContent = ['🎉', '✨', '🌟', '💫', '🎊'][Math.floor(Math.random() * 5)];
+                    confetti.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-50px';
+                    confetti.style.animation = `fall ${Math.random() * 2 + 2}s linear forwards`;
+                    document.body.appendChild(confetti);
+
+                    const confettiTimer = setTimeout(() => confetti.remove(), 3000);
+                    this.confettiTimers.push(confettiTimer);
+                }
+            }
+            
+            // ניקוי טיימרי קונפטי
+            clearConfettiTimers() {
+                this.confettiTimers.forEach(timer => clearTimeout(timer));
+                this.confettiTimers = [];
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            render() {
+                const container = document.getElementById('challengeContainer');
+                const mood = localStorage.getItem('selectedMood') || 'neutral';
+                const challenge = this.getMoodChallenge(mood);
+
+                if (this.isCompletedToday() && !this.isActive) {
+                    container.innerHTML = `
+                        <div class="challenge-card">
+                            <div class="completed-state">
+                                <div class="completed-icon">🎉</div>
+                                <div class="completed-text">כל הכבוד!</div>
+                                <p style="color: #ddd; margin-bottom: 20px;">השלמתם את האתגר של היום. חזרו מחר לאתגר חדש!</p>
+                                <button class="comeback-btn" onclick="window.location.href='product.html'">
+                                    חזרו לוידאו
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (this.isActive) {
+                    const progress = ((challenge.time - this.timeRemaining) / challenge.time) * 100;
+                    container.innerHTML = `
+                        <div class="challenge-card">
+                            <div class="challenge-icon">${challenge.icon}</div>
+                            <div class="challenge-title">${challenge.title}</div>
+                            <div class="challenge-description">${challenge.description}</div>
+                            
+                            <div class="timer">${this.formatTime(this.timeRemaining)}</div>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progress}%">
+                                    <span>${Math.floor(progress)}%</span>
+                                </div>
+                            </div>
+
+                            <div class="challenge-actions">
+                                <button class="start-btn" onclick="challenge.completeChallenge()">
+                                    ✓ סיימתי
+                                </button>
+                                <button class="skip-btn" onclick="challenge.skipChallenge()">
+                                    דלג
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="challenge-card">
+                            <div class="challenge-icon">${challenge.icon}</div>
+                            <div class="challenge-title">${challenge.title}</div>
+                            <div class="challenge-description">${challenge.description}</div>
+                            
+                            <div class="challenge-mood-note">
+                                💡 אתגר מיוחד ל${moodEmojis[mood]} מצב ${Object.keys(moodEmojis).find(k => moodEmojis[k] === moodEmojis[mood]) === mood ? '' : ''} רוח
+                            </div>
+
+                            <div class="challenge-actions">
+                                <button class="start-btn" onclick="challenge.startChallenge()">
+                                    🚀 התחלו
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        const challenge = new DailyChallenge();
+
+        function renderStreak() {
+            document.getElementById('streakCount').textContent = challenge.getStreak();
+        }
+
+        window.addEventListener('load', () => {
+            // הצגת לינק מנהל אם המשתמש הוא admin
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            const adminNavLink = document.getElementById('admin-nav-link');
+            if (currentUser && currentUser.isAdmin && adminNavLink) {
+                adminNavLink.style.display = 'flex';
+            }
+            
+            renderStreak();
+            challenge.currentChallenge = challenge.getMoodChallenge(localStorage.getItem('selectedMood') || 'neutral');
+            challenge.render();
+        });
+
+        // Add confetti fall animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // עדכון ספירת העגלה בזמן אמת
+        function updateCartCountDisplay() {
+            // בדיקה אם המשתמש מחובר
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            const cartCountEl = document.getElementById('cartCount');
+            
+            if (!currentUser) {
+                // לא מחובר - הסתר עיגול
+                if (cartCountEl) {
+                    cartCountEl.style.display = 'none';
+                }
+                return;
+            }
+            
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (cartCountEl) {
+                cartCountEl.textContent = totalItems;
+                cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        }
+        
+        // קריאה ראשונית ועדכון כל 2 שניות
+        updateCartCountDisplay();
+        setInterval(updateCartCountDisplay, 2000);
+    </script>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+    </footer>
+</body>
+</html>

@@ -1822,6 +1822,15 @@ taskman:
  + '<div class="rw"><span class="pil">Angular 21</span><span class="pil mu">Vitest ✓</span></div>'
  + '</div></div>',
 
+marketmood:
+ '<div class="win"><div class="win-bar"><i></i><i></i><i></i><b>MarketMood · TypeScript</b></div><div class="win-body">'
+ + '<div class="rw"><span class="ts gw">HOW ARE YOU?</span><span class="pil ok">happy</span></div>'
+ + '<div class="chips"><span class="pil">😄 שמח</span><span class="pil">😌 רגוע</span><span class="pil">💜 אהבה</span></div>'
+ + '<div class="hr"></div>'
+ + '<div class="rw"><span class="ls">mood</span><span class="ar">›</span><span class="ls">products</span><span class="ar">›</span><span class="ls">cart</span></div>'
+ + '<div class="rw"><span class="pil mu">LocalStorage</span><span class="gw"></span><span class="pil">RTL</span></div>'
+ + '</div></div>',
+
 country:
  '<div class="phone"><span class="ntc"></span>'
  + '<div class="fld">Israel</div><span class="flg"></span>'
@@ -1963,6 +1972,26 @@ RM.PROJECTS = [
        "A structure built to grow: components, services and configuration kept apart."]},
  stack:["Angular 21","TypeScript","Vitest","Angular CLI"]},
 
+{id:"marketmood", cats:["frontend","data"], hue:"#36C7B0", mk:"marketmood", src:"cv",
+ repos:[], demos:[],
+ he:{cat:"פרונטאנד · TypeScript", title:"MarketMood — חנות לפי מצב רוח",
+  pitch:"חוויית קנייה אינטראקטיבית שמתאימה מוצרים, וידאו ומוזיקה למצב הרוח שבוחרים.",
+  desc:"אפליקציית e-commerce מלאה שרצה בדפדפן ומציעה מסלול אישי לפי מצב הרוח. היא כוללת הרשמה והתחברות, קטלוג מוצרים מותאם, חיפוש וסינון, עגלת קניות, השלמת הזמנה, מעקב מצב רוח ואתגר יומי. לצד המשתמש קיים ממשק מנהל לניהול מוצרים, משתמשים והזמנות, כשהנתונים נשמרים מקומית וממשיכים בין ביקורים.",
+  flow:["מצב רוח","התאמה אישית","עגלה","הזמנה","ניהול"],
+  bul:["TypeScript עם מודלים ושירותים נפרדים למשתמשים, מוצרים, עגלה ואחסון.",
+       "LocalStorage שומר משתמשים, מוצרים, עגלה והזמנות בלי צורך בשרת חיצוני.",
+       "ממשק מנהל מלא להוספה, עריכה ומחיקה של מוצרים ולמעקב אחר הפעילות.",
+       "ממשק RTL רספונסיבי עם ולידציה, תוויות נגישות ומדיה משתנה לפי מצב הרוח."]},
+ en:{cat:"Frontend · TypeScript", title:"MarketMood — Mood-Based Store",
+  pitch:"An interactive shopping experience that matches products, video and music to the mood you choose.",
+  desc:"A complete browser-based e-commerce app built around a personalized mood flow. It includes registration and sign-in, tailored product discovery, search and filtering, a shopping cart, checkout, mood tracking and a daily challenge. A separate admin interface manages products, users and orders, while local persistence keeps the experience working across visits without an external server.",
+  flow:["mood","personalize","cart","checkout","admin"],
+  bul:["TypeScript models and dedicated services for users, products, cart state and storage.",
+       "LocalStorage persists users, products, carts and orders without an external backend.",
+       "A complete admin area for product CRUD and oversight of users and orders.",
+       "Responsive RTL UI with form validation, accessible labels and mood-specific media."]},
+ stack:["TypeScript","JavaScript","HTML5","CSS3","LocalStorage","Regex"]},
+
 {id:"algos", cats:["backend"], hue:"#8B7DF0", mk:"algos", src:"gh",
  repos:[{n:"Algorithm",u:GH+"Algorithm"}], demos:[],
  he:{cat:"יסודות · C#", title:"אלגוריתמים ומבני נתונים",
@@ -2042,6 +2071,9 @@ RM.PROJECTS = [
    at 1280x800 so the preview can never letterbox or stretch.
    `hint` is what a visitor needs in order to get past a login screen. */
 RM.LIVE = {
+  marketmood: {url:"projects/market-mood/", shot:"shots/marketmood.jpg",
+               hint:{he:"בחרו מצב רוח כדי להיכנס למסלול הקנייה המותאם. כל הנתונים נשמרים מקומית בדפדפן.",
+                     en:"Choose a mood to enter the tailored shopping flow. All data is stored locally in the browser."}},
   memory:   {url:"https://ruti-maman.github.io/memory-game/",     shot:"shots/memory.jpg"},
   // Straight to the board rather than the app root: the app has no route
   // guards, and landing a visitor on an empty login form would not match the
@@ -4076,7 +4108,7 @@ function byId(id){ for(var i=0;i<P.length;i++){ if(P[i].id===id) return P[i]; } 
 function match(p){
   if(filter==="all") return true;
   if(filter==="gh") return p.repos.length>0;
-  if(filter==="demo") return p.demos.length>0;
+  if(filter==="demo") return !!RM.LIVE[p.id] || p.demos.length>0;
   if(filter==="run") return !!RM.DEMOS[p.id];
   return p.cats.indexOf(filter)>-1;
 }
@@ -4145,7 +4177,7 @@ function renderFilters(){
     .filter(function(k){
       if(k==="all" || k==="gh") return true;
       if(k==="run")  return P.some(function(p){ return RM.DEMOS[p.id]; });
-      if(k==="demo") return P.some(function(p){ return p.demos.length; });
+      if(k==="demo") return P.some(function(p){ return RM.LIVE[p.id] || p.demos.length; });
       return present[k];
     });
   $("filters").innerHTML = keys.map(function(k){
@@ -4325,7 +4357,7 @@ function itemHTML(p,n){
   var t = d(), c = p[lang];
   var badge = '';
   if(RM.DEMOS[p.id]) badge += '<span class="run">&#9654; '+esc(t.runnable)+'</span>';
-  if(p.demos.length) badge += '<em><i></i>'+esc(t.liveDemo)+'</em>';
+  if(RM.LIVE[p.id] || p.demos.length) badge += '<em><i></i>'+esc(t.liveDemo)+'</em>';
   else if(p.repos.length) badge += '<em>'+GHI+'</em>';
   return '<button class="itm" type="button" data-id="'+p.id+'" style="--h:'+p.hue+'">'
     +   '<span class="no">'+("0"+n).slice(-2)+'</span>'
@@ -4520,7 +4552,7 @@ function buildSheet(p){
   });
   var notes = "";
   if(p.demoNote) notes += '<p class="note">'+esc(p.demoNote[lang])+"</p>";
-  if(!p.repos.length && !p.demos.length) notes += '<p class="note">'+esc(p.src==="work"?t.privNote:t.cvNote)+"</p>";
+  if(!p.repos.length && !p.demos.length && !lv) notes += '<p class="note">'+esc(p.src==="work"?t.privNote:t.cvNote)+"</p>";
 
   return '<button class="x-btn" type="button" id="xBtn" aria-label="'+esc(t.close)+'">'
     +   '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'

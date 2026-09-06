@@ -1,0 +1,692 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעקב מצב רוח - MarketMood</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
+            color: #2c2c2c;
+            min-height: 100vh;
+            padding: 110px 20px 20px 20px;
+            overflow-x: hidden;
+        }
+
+        /* Site Header Navigation */
+        .site-header {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1100px;
+            background: white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            z-index: 500;
+            padding: 15px 25px;
+            border-radius: 20px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn-header {
+            background: white;
+            color: #5ec4bd;
+            padding: 12px 24px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border: 2px solid #e0f9f5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(94, 196, 189, 0.1);
+        }
+
+        .nav-btn-header:hover {
+            background: linear-gradient(135deg, #e0f9f5 0%, #c5f3ec 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94, 196, 189, 0.25);
+            border-color: #5ec4bd;
+        }
+
+        .nav-btn-header.active {
+            background: linear-gradient(135deg, #5ec4bd 0%, #4eb5ad 100%);
+            color: white;
+            border-color: #5ec4bd;
+            box-shadow: 0 4px 15px rgba(94, 196, 189, 0.4);
+        }
+
+        .nav-btn-header.admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-btn-header.admin:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            color: #90ffe9;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(144, 255, 233, 0.3);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: #5ec4bd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-family: 'Rubik', sans-serif;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            background: #90ffe9;
+            color: #2c2c2c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(144, 255, 233, 0.3);
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(144, 255, 233, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(144, 255, 233, 0.6); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(144, 255, 233, 0.1);
+            border: 2px solid #5ec4bd;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .stat-card h3 {
+            color: #90ffe9;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            color: #5ec4bd;
+            font-weight: bold;
+            animation: countUp 1s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .mood-chart {
+            background: rgba(144, 255, 233, 0.05);
+            border: 2px solid #5ec4bd;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            color: #90ffe9;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 300px;
+            gap: 15px;
+            padding: 20px 10px;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .bar {
+            width: 60px;
+            background: linear-gradient(180deg, #90ffe9 0%, #5ec4bd 100%);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(144, 255, 233, 0.3);
+            animation: barRise 1s ease-out backwards;
+        }
+
+        .bar:hover {
+            filter: brightness(1.2);
+            transform: scaleY(1.05);
+        }
+
+        .bar.happy { animation-delay: 0.1s; }
+        .bar.sad { animation-delay: 0.2s; }
+        .bar.neutral { animation-delay: 0.3s; }
+        .bar.angry { animation-delay: 0.4s; }
+        .bar.love { animation-delay: 0.5s; }
+
+        @keyframes barRise {
+            from {
+                height: 0;
+                opacity: 0;
+            }
+            to {
+                height: var(--height, 100%);
+                opacity: 1;
+            }
+        }
+
+        .bar-label {
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: #90ffe9;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .bar-count {
+            font-size: 1.2em;
+            margin-top: 5px;
+            color: #5ec4bd;
+        }
+
+        .mood-emoji {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .timeline {
+            background: rgba(144, 255, 233, 0.05);
+            border: 2px solid #5ec4bd;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .timeline-title {
+            color: #90ffe9;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .timeline-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(94, 196, 189, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #5ec4bd;
+            animation: slideIn 0.5s ease-out backwards;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: rgba(94, 196, 189, 0.2);
+            border-left-color: #90ffe9;
+            transform: translateX(-10px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(8) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(9) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(10) { animation-delay: 1s; }
+
+        .timeline-emoji {
+            font-size: 2em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .timeline-info {
+            flex: 1;
+        }
+
+        .timeline-mood {
+            color: #90ffe9;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .timeline-time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #90ffe9;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .clear-btn {
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Rubik', sans-serif;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .clear-btn:hover {
+            background: #ff5280;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Footer */
+        .site-footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 12px 20px;
+          text-align: center;
+          box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+          z-index: 50;
+        }
+        
+        .site-footer p {
+          margin: 0;
+          color: #5ec4bd;
+          font-size: 13px;
+          font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Site Header Navigation -->
+    <header class="site-header">
+        <nav class="nav-container">
+            <a href="../index.html" class="nav-btn-header">🏠 עמוד הבית</a>
+            <a href="product.html" class="nav-btn-header">🎬 חזרה לסרטון</a>
+            <a href="cart.html" class="nav-btn-header" style="position: relative;">
+                🛒 עגלה
+                <span id="cartCount" style="position: absolute; top: -8px; left: -8px; background: #ff6b9d; color: white; border-radius: 50%; width: 22px; height: 22px; display: none; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; box-shadow: 0 2px 8px rgba(255,107,157,0.4);">0</span>
+            </a>
+            <a href="daily-challenge.html" class="nav-btn-header">⚡ אתגר יומי</a>
+            <a href="admin.html" id="admin-nav-link" class="nav-btn-header admin" style="display:none;">🛡️ מנהל</a>
+        </nav>
+    </header>
+
+    <div class="header">
+        <h1>📊 מעקב מצב רוח</h1>
+        <p style="color: #90ffe9; margin-top: 10px;">עקבו אחרי התפתחות מצב הרוח שלכם</p>
+    </div>
+
+    <div class="nav-links" style="display: none;">
+        <button class="nav-btn" onclick="window.location.href='product.html'">← חזור לוידאו</button>
+        <button class="nav-btn" onclick="window.location.href='../index.html'">🏠 בית</button>
+        <button class="nav-btn" onclick="window.location.href='daily-challenge.html'">⚡ אתגר יומי</button>
+    </div>
+
+    <div class="container">
+        <div class="stats-row" id="statsRow"></div>
+
+        <div class="mood-chart">
+            <div class="chart-title">📈 התפלגות מצבי רוח</div>
+            <div class="chart-container" id="chartContainer"></div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-title">📅 ציר הזמן</div>
+            <div id="timelineContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const moodEmojis = {
+            happy: '😊',
+            sad: '😔',
+            neutral: '😐',
+            angry: '😠',
+            love: '🥰'
+        };
+
+        const moodNames = {
+            happy: 'שמח',
+            sad: 'עצוב',
+            neutral: 'ניטרלי',
+            angry: 'כועס',
+            love: 'אוהב'
+        };
+
+        function initializeMoodHistory() {
+            let history = JSON.parse(localStorage.getItem('moodHistory')) || [];
+            return history;
+        }
+
+        function addMoodEntry() {
+            const selectedMood = localStorage.getItem('selectedMood') || 'neutral';
+            const history = initializeMoodHistory();
+            const now = new Date();
+
+            history.push({
+                mood: selectedMood,
+                timestamp: now.toISOString(),
+                readable: now.toLocaleString('he-IL', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })
+            });
+
+            localStorage.setItem('moodHistory', JSON.stringify(history));
+            render();
+        }
+
+        function getMoodStats(history) {
+            const stats = {
+                happy: 0,
+                sad: 0,
+                neutral: 0,
+                angry: 0,
+                love: 0,
+                total: history.length,
+                currentMood: localStorage.getItem('selectedMood') || 'neutral'
+            };
+
+            history.forEach(entry => {
+                if (stats[entry.mood] !== undefined) {
+                    stats[entry.mood]++;
+                }
+            });
+
+            return stats;
+        }
+
+        function renderStats(stats) {
+            const statsRow = document.getElementById('statsRow');
+            statsRow.innerHTML = `
+                <div class="stat-card">
+                    <h3>סה"כ בדיקות</h3>
+                    <div class="stat-value">${stats.total}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>מצב רוח עכשווי</h3>
+                    <div class="stat-value">${moodEmojis[stats.currentMood]}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>מצב רוח זה שבוע</h3>
+                    <div class="stat-value">${getThisWeekCount()}</div>
+                </div>
+            `;
+        }
+
+        function getThisWeekCount() {
+            const history = initializeMoodHistory();
+            const now = new Date();
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            return history.filter(entry => {
+                const entryDate = new Date(entry.timestamp);
+                return entryDate >= weekAgo;
+            }).length;
+        }
+
+        function renderChart(stats) {
+            const chartContainer = document.getElementById('chartContainer');
+            const moods = ['happy', 'sad', 'neutral', 'angry', 'love'];
+            const maxCount = Math.max(...moods.map(m => stats[m]), 1);
+
+            chartContainer.innerHTML = moods.map(mood => {
+                const count = stats[mood];
+                const height = (count / maxCount) * 100;
+                return `
+                    <div class="bar-group">
+                        <div class="bar ${mood}" style="--height: ${height}%;">
+                            <div style="color: white; font-weight: bold; padding: 10px 0; text-align: center;">
+                                ${count > 0 ? count : ''}
+                            </div>
+                        </div>
+                        <div class="bar-label">
+                            <div class="mood-emoji">${moodEmojis[mood]}</div>
+                            <div>${moodNames[mood]}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTimeline(history) {
+            const timelineContainer = document.getElementById('timelineContainer');
+
+            if (history.length === 0) {
+                timelineContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>עדיין אין היסטוריה. בחרו מצב רוח לתחילת הרישום!</p>
+                        <button class="nav-btn" onclick="window.location.href='product.html'">
+                            בחרו מצב רוח
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const recentHistory = [...history].reverse().slice(0, 10);
+
+            timelineContainer.innerHTML = `
+                <div class="timeline-items">
+                    ${recentHistory.map(entry => `
+                        <div class="timeline-item">
+                            <div class="timeline-emoji">${moodEmojis[entry.mood]}</div>
+                            <div class="timeline-info">
+                                <div class="timeline-mood">${moodNames[entry.mood]}</div>
+                                <div class="timeline-time">${entry.readable}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="clear-btn" onclick="clearHistory()">🗑️ נקה היסטוריה</button>
+            `;
+        }
+
+        function clearHistory() {
+            if (confirm('האם אתה בטוח שברצונך למחוק את כל ההיסטוריה?')) {
+                localStorage.removeItem('moodHistory');
+                render();
+            }
+        }
+
+        function render() {
+            const history = initializeMoodHistory();
+            const stats = getMoodStats(history);
+
+            renderStats(stats);
+            renderChart(stats);
+            renderTimeline(history);
+        }
+
+        // Auto-add mood entry when page loads (if mood was just selected)
+        window.addEventListener('load', () => {
+            // הצגת לינק מנהל אם המשתמש הוא admin
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            const adminNavLink = document.getElementById('admin-nav-link');
+            if (currentUser && currentUser.isAdmin && adminNavLink) {
+                adminNavLink.style.display = 'flex';
+            }
+            
+            const selectedMood = localStorage.getItem('selectedMood');
+            if (selectedMood) {
+                addMoodEntry();
+                // לא מוחקים את selectedMood כדי שהסרטון ימשיך להציג את אותו מצב רוח
+            }
+            render();
+        });
+        
+        // עדכון ספירת העגלה בזמן אמת
+        function updateCartCountDisplay() {
+            // בדיקה אם המשתמש מחובר
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            const cartCountEl = document.getElementById('cartCount');
+            
+            if (!currentUser) {
+                // לא מחובר - הסתר עיגול
+                if (cartCountEl) {
+                    cartCountEl.style.display = 'none';
+                }
+                return;
+            }
+            
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (cartCountEl) {
+                cartCountEl.textContent = totalItems;
+                cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        }
+        
+        // קריאה ראשונית ועדכון כל 2 שניות
+        updateCartCountDisplay();
+        setInterval(updateCartCountDisplay, 2000);
+    </script>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>© MarketMood 2025. כל הזכויות שמורות.</p>
+    </footer>
+</body>
+</html>
