@@ -612,11 +612,38 @@
 
 
             if (videoSource && mainVideo) {
+                // Keep the mood video running continuously behind the quotes.
+                mainVideo.autoplay = true;
+                mainVideo.loop = true;
+                mainVideo.muted = true;
+                mainVideo.defaultMuted = true;
+                mainVideo.playsInline = true;
+                mainVideo.setAttribute('autoplay', '');
+                mainVideo.setAttribute('loop', '');
+                mainVideo.setAttribute('muted', '');
+                mainVideo.setAttribute('playsinline', '');
+
+                const resumeVideo = () => {
+                    if (!document.hidden && mainVideo.paused) {
+                        mainVideo.play().catch(() => {});
+                    }
+                };
+
+                // `loop` handles normal playback; these listeners recover from
+                // browser pauses and from devices that do not honor loop reliably.
+                mainVideo.addEventListener('ended', () => {
+                    mainVideo.currentTime = 0;
+                    resumeVideo();
+                });
+                mainVideo.addEventListener('pause', resumeVideo);
+                mainVideo.addEventListener('canplay', resumeVideo);
+                document.addEventListener('visibilitychange', resumeVideo);
+
                 videoSource.src = videoPath;
 
                 mainVideo.load();
 
-                mainVideo.play().catch(err => {});
+                resumeVideo();
 
             } else {
                 console.error('Video elements not found!');
