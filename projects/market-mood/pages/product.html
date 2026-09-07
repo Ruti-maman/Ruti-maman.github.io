@@ -405,6 +405,7 @@
     <!-- Hidden audio element for reliable music playback on click -->
     <audio id="bgAudio" preload="auto" style="display:none"></audio>
 
+    <script src="../assets/video/mood-video.js?v=1"></script>
     <script>
         const selectedMood = localStorage.getItem('selectedMood') || 'neutral';
 
@@ -412,14 +413,14 @@
         // Use relative paths so it works when opening the file directly (file:///)
         // product.html is in /pages/, assets are in /assets/
         const videos = {
-            happy: '../assets/video/mood-background.dat',
-            sad: '../assets/video/mood-background.dat',
-            neutral: '../assets/video/mood-background.dat',
-            angry: '../assets/video/mood-background.dat',
-            love: '../assets/video/mood-background.dat'
+            happy: 'embedded',
+            sad: 'embedded',
+            neutral: 'embedded',
+            angry: 'embedded',
+            love: 'embedded'
         };
 
-        const fallbackVideo = videos.neutral;
+        const fallbackVideo = 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4';
         let videoObjectUrl = null;
 
         // Embedded ambient tones - works immediately, no download needed!
@@ -648,15 +649,21 @@
                 const setPlayableSource = async (path) => {
                     if (videoObjectUrl) URL.revokeObjectURL(videoObjectUrl);
 
-                    const response = await fetch(path, { cache: 'force-cache' });
-                    if (!response.ok) throw new Error(`Video data failed: ${response.status}`);
-                    const bytes = await response.arrayBuffer();
-                    videoObjectUrl = URL.createObjectURL(
-                        new Blob([bytes], { type: 'video/mp4' })
-                    );
-
                     videoSource.removeAttribute('src');
-                    mainVideo.src = videoObjectUrl;
+                    if (path === 'embedded') {
+                        if (!window.MOOD_VIDEO_BASE64) throw new Error('Embedded video is unavailable');
+                        const binary = atob(window.MOOD_VIDEO_BASE64);
+                        const bytes = new Uint8Array(binary.length);
+                        for (let index = 0; index < binary.length; index++) {
+                            bytes[index] = binary.charCodeAt(index);
+                        }
+                        videoObjectUrl = URL.createObjectURL(
+                            new Blob([bytes], { type: 'video/mp4' })
+                        );
+                        mainVideo.src = videoObjectUrl;
+                    } else {
+                        mainVideo.src = path;
+                    }
                     mainVideo.load();
                     await mainVideo.play();
                 };
