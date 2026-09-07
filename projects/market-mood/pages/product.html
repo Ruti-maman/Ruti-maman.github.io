@@ -405,7 +405,7 @@
     <!-- Hidden audio element for reliable music playback on click -->
     <audio id="bgAudio" preload="auto" style="display:none"></audio>
 
-    <script src="../assets/video/mood-video.js?v=1"></script>
+    <script src="../assets/video/mood-video.js?v=2"></script>
     <script>
         const selectedMood = localStorage.getItem('selectedMood') || 'neutral';
 
@@ -413,14 +413,14 @@
         // Use relative paths so it works when opening the file directly (file:///)
         // product.html is in /pages/, assets are in /assets/
         const videos = {
-            happy: 'embedded',
-            sad: 'embedded',
-            neutral: 'embedded',
-            angry: 'embedded',
-            love: 'embedded'
+            happy: 'happy',
+            sad: 'sad',
+            neutral: 'neutral',
+            angry: 'angry',
+            love: 'love'
         };
 
-        const fallbackVideo = 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4';
+        const fallbackVideo = 'neutral';
         let videoObjectUrl = null;
 
         // Embedded ambient tones - works immediately, no download needed!
@@ -650,9 +650,8 @@
                     if (videoObjectUrl) URL.revokeObjectURL(videoObjectUrl);
 
                     videoSource.removeAttribute('src');
-                    if (path === 'embedded') {
-                        if (!window.MOOD_VIDEO_BASE64) throw new Error('Embedded video is unavailable');
-                        const binary = atob(window.MOOD_VIDEO_BASE64);
+                    if (window.MOOD_VIDEOS && window.MOOD_VIDEOS[path]) {
+                        const binary = atob(window.MOOD_VIDEOS[path]);
                         const bytes = new Uint8Array(binary.length);
                         for (let index = 0; index < binary.length; index++) {
                             bytes[index] = binary.charCodeAt(index);
@@ -662,7 +661,7 @@
                         );
                         mainVideo.src = videoObjectUrl;
                     } else {
-                        mainVideo.src = path;
+                        throw new Error(`Embedded video is unavailable for ${path}`);
                     }
                     mainVideo.load();
                     await mainVideo.play();
