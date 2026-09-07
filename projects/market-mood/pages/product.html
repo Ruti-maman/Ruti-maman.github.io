@@ -412,15 +412,14 @@
         // Use relative paths so it works when opening the file directly (file:///)
         // product.html is in /pages/, assets are in /assets/
         const videos = {
-            happy: 'https://raw.githubusercontent.com/Ruti-maman/Ruti-maman.github.io/main/projects/market-mood/assets/video/happy.mp4',
-            sad: 'https://raw.githubusercontent.com/Ruti-maman/Ruti-maman.github.io/main/projects/market-mood/assets/video/sad.mp4',
+            happy: 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4',
+            sad: 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4',
             neutral: 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4',
-            angry: 'https://raw.githubusercontent.com/Ruti-maman/Ruti-maman.github.io/main/projects/market-mood/assets/video/angry.mp4',
-            love: 'https://raw.githubusercontent.com/Ruti-maman/Ruti-maman.github.io/main/projects/market-mood/assets/video/love.mp4'
+            angry: 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4',
+            love: 'https://videos.pexels.com/video-files/854190/854190-hd_1920_1080_25fps.mp4'
         };
 
         const fallbackVideo = videos.neutral;
-        let videoObjectUrl = null;
 
         // Embedded ambient tones - works immediately, no download needed!
         // These are simple generated tones that create mood atmosphere
@@ -646,30 +645,10 @@
                 document.addEventListener('visibilitychange', resumeVideo);
 
                 const setPlayableSource = async (path) => {
-                    if (videoObjectUrl) {
-                        URL.revokeObjectURL(videoObjectUrl);
-                        videoObjectUrl = null;
-                    }
-
-                    // NetFree blocks MP4 files on github.io. Raw GitHub is
-                    // reachable, so fetch the bytes and give the Blob the
-                    // correct media type before handing it to the video tag.
-                    if (path.includes('raw.githubusercontent.com')) {
-                        const response = await fetch(path, { cache: 'force-cache' });
-                        if (!response.ok) throw new Error(`Video download failed: ${response.status}`);
-                        const bytes = await response.arrayBuffer();
-                        videoObjectUrl = URL.createObjectURL(
-                            new Blob([bytes], { type: 'video/mp4' })
-                        );
-                        videoSource.removeAttribute('src');
-                        mainVideo.src = videoObjectUrl;
-                    } else {
-                        mainVideo.removeAttribute('src');
-                        videoSource.src = path;
-                    }
-
+                    videoSource.removeAttribute('src');
+                    mainVideo.src = path;
                     mainVideo.load();
-                    resumeVideo();
+                    await mainVideo.play();
                 };
 
                 try {
@@ -1034,7 +1013,6 @@
         
         // ניקוי ממשקים בסגירת דף
         window.addEventListener('beforeunload', () => {
-            if (videoObjectUrl) URL.revokeObjectURL(videoObjectUrl);
             stopCartCountUpdate();
             stopClock();
             clearQuoteTimers();
